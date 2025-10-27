@@ -1,0 +1,109 @@
+:root {
+    --main-body-color: #009E73;
+    --article-color: #F0E442;
+}
+
+h1 {
+    text-align: center;
+    color: black;
+    font-size: 1.5rem;
+    font-weight: 900;
+
+}
+
+h2 {
+    text-align: center;
+    color: black;
+    font-size: 1.2rem;
+}
+
+h3 {
+    text-align: left;
+    font-size: 1rem;
+    align-self: flex-start;  /* align h3 to the left within its container, so it can align left although the parent container is centered */
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    justify-content: center;
+    align-items: center; /* Flexbox alignment*/
+    width: 100%;
+    font-family: monospace;
+    display: flex;
+    flex-direction: column;
+}
+
+#body_section {
+    background-color: var(--main-body-color);
+    width: 80vw;
+    justify-content: center;    /* Centers children vertically */
+    align-items: center;        /* Centers children horizontally */
+    display: flex;
+    flex-direction: column;     /* Stack children vertically */
+
+}
+
+.body_article {
+    width: 60vw;
+    background-color: var(--article-color);
+    margin: 0 auto;                                 /* center the container. 0=top/bottom auto=left/right */
+    display: flex;                                  /* Make it a flex container */
+    flex-direction: column;                         /* Stack children vertically */
+    justify-content: center;                        /* Center children vertically */
+    align-items: center;                            /* Center children horizontally */
+    text-align: left;
+}
+
+.sim-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;                /* Center children horizontally */
+    justify-content: center;            /* Center children vertically */
+}
+
+.canvas-container {
+    background-color: var(--main-body-color);
+    display: block;
+    border-radius: 0.5rem;
+    border: black 2px solid;
+    max-width: 100%;                /* never bigger than the original canvas resolution, 100 percent of the parent container (@body-article) */
+    height: auto;                   /* maintain aspect ratio */
+}
+
+/* Mobile responsiveness */ 
+@media (max-width: 768px) {
+    #body_section {
+        width: 95vw;
+    }
+
+    .body_article {
+        width: 90vw;
+    }
+}
+
+/* tablet */
+@media (min-width: 768px) and (max-width: 1024px) {
+    #body_section {
+        width: 85vw;
+    }
+
+    .body_article {
+        width: 75vw;
+    }
+}
+
+/* desktop */
+@media (min-width: 1025px) {
+    #body_section {
+        width: 1000px;
+    }
+
+    .body_article {
+        width: 80%;
+    }
+}
+
+
+

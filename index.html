@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Cholera Simulation</title>
+        <link rel="stylesheet" href="style.css">
+        <script src="https://cdn.jsdelivr.net/npm/roughjs@latest/bundled/rough.js"></script>
+
+    </head>
+
+    <body>
+
+        <section id="header">
+            <div class="container">
+
+            </div>
+        </section>
+
+        <section id="body_section">
+            <div class="container">
+                <h1>Simulating Cholera</h1>
+
+                <h2>What can we do to minimise cholera spread?</h2>
+                <div class="body_article">
+                    <h3>Part 1</h3>
+                    <br>
+                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+                    <div id="sim1-wrapper" class="sim-wrapper">
+                        <canvas id="choleraSim1" class="canvas-container"></canvas>
+                        <div class="sim-control-button">
+                            <button id="start-button" class="sim-control-button" type="button">start</button>
+                            <button id="reset-button" class="sim-control-button" type="button">reset</button>
+                            <button id="pause-button" class="sim-control-button" type="button">pause</button>
+                        </div>
+                        <div id="sim1-control" class="sim1-control">
+                            <button id="contaminate-water-button" class="sim-control-button" type="button">Contaminate Water</button>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </section>
+
+        <script src="simulation/sim1.js"></script>
+    </body>
+</html>
