@@ -18,10 +18,10 @@ const school = {x: canvas.width/2, y: canvas.height/2};
 
 const house = {x: 150, y: 150}
 
-const agent = {
-    x: house.x+40,          // Agent initial x position
-    y: house.y+40,          // Agent initial y position
-    speed: 2,                // Agent movement speed
+let agent = {
+    x: house.x+10,          // Agent initial x position
+    y: house.y+10,          // Agent initial y position
+    speed: 1.5,                // Agent movement speed
     target: 'school'         // Agent target location
 }
 
@@ -35,63 +35,81 @@ const schoolWaterBody = {
     y: school.y+60
 }
 
+
 function updateAgentMovement() {
     // simple movement towards target
-    const target = agent.target === 'house' ? house : school;
+    const target = agent.target === 'school'
+    ? {x: school.x, y: school.y} 
+    : {x: house.x, y: house.y};
 
     // Calculate direction vector
     const dx = target.x - agent.x;
     const dy = target.y - agent.y;
-    const distance = Math.sqrt(dx*dx + dy*dy);
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    // Check if the agent is close enough to the target
+    if (distance < agent.speed) {
+        // switch target
+        agent.target = agent.target === 'school' ? 'house' : 'school';
+        return;
+    }
+
+    // calculate agent step
+    const stepX = (dx / distance) * agent.speed;
+    const stepY = (dy / distance) * agent.speed;
+
+    // make agent move closer to the step
+    agent.x += stepX;
+    agent.y += stepY;
 }
 
 function drawWaterbody() {
-    // draw house waterbody
-    ctx.beginPath();
-    ctx.arc(houseWaterBody.x, houseWaterBody.y, 15, 0, Math.PI * 2);
-    ctx.strokeStyle = 'blue';
-    ctx.stroke();
-    roughCanvas.circle(houseWaterBody.x, houseWaterBody.y, 30, {
-        fill: 'lightblue',
-        fillStyle: 'hachure',
-        hachureAngle: 60,
-        hachureGap: 2
-    })
+    
+ctx.strokeStyle = 'black';
+    ctx.lineWidth = 1.5;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round'; 
 
     // draw house waterbody
     ctx.beginPath();
-    ctx.arc(schoolWaterBody.x, schoolWaterBody.y, 15, 0, Math.PI * 2);
-    ctx.strokeStyle = 'blue';
+    ctx.arc(houseWaterBody.x, houseWaterBody.y, 15, 0, Math.PI * 2);
+    ctx.fillStyle = 'lightblue';
+    ctx.fill();
+    ctx.strokeStyle = 'black';
     ctx.stroke();
-    roughCanvas.circle(schoolWaterBody.x, schoolWaterBody.y, 30, {
-        fill: 'lightblue',
-        fillStyle: 'hachure',
-        hachureAngle: 60,
-        hachureGap: 2
-    })
+
+    // draw school waterbody
+    ctx.beginPath();
+    ctx.arc(schoolWaterBody.x, schoolWaterBody.y, 15, 0, Math.PI * 2);
+    ctx.fillStyle = 'lightblue';
+    ctx.fill();
+    ctx.strokeStyle = 'black';
+    ctx.stroke();
 
 }
 
 function drawSchool() {
-    // draw rectangle
-    roughCanvas.rectangle(school.x - 10, school.y - 10, 20, 20, {
-        stroke: 'black',
-        fill: 'lightblue',
-        fillStyle: 'hachure',
-        fillWeight: 1,
-        hachureAngle: 60,
-        hachureGap: 2
-    })
+    // set the stroke style
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 1.5;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
 
-    // draw second rectangle 
-     roughCanvas.rectangle(school.x + 10, school.y - 10, 22, 20, {
-        stroke: 'black',
-        fill: 'lightblue',
-        fillStyle: 'hachure',
-        fillWeight: 1,
-        hachureAngle: 60,
-        hachureGap: 2
-    })
+    // draw rectangle
+    ctx.beginPath();
+    ctx.rect(school.x - 10, school.y - 10, 20, 20);
+    ctx.fillStyle = 'yellow';
+    ctx.fill();
+    ctx.strokeStyle = 'black';
+    ctx.stroke();
+
+    // draw back rectangle
+    ctx.beginPath();
+    ctx.rect(school.x + 10, school.y - 10, 22, 20);
+    ctx.fillStyle = 'yellow';
+    ctx.fill();
+    ctx.strokeStyle = 'black';
+    ctx.stroke();
 
     // draw roof
     ctx.beginPath();
@@ -99,38 +117,38 @@ function drawSchool() {
     ctx.lineTo(school.x+10, school.y-10);
     ctx.lineTo(school.x, school.y-20);
     ctx.closePath();
+    ctx.fillStyle = 'yellow';
+    ctx.fill();
     ctx.strokeStyle = 'black';
     ctx.lineWidth = 1.5;
     ctx.stroke();
 
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
+    // draw back roof 
+    ctx.beginPath();
+    ctx.moveTo(school.x+10, school.y-10);
+    ctx.lineTo(school.x+32, school.y-10);
+    ctx.lineTo(school.x+22, school.y-20);
+    ctx.lineTo(school.x, school.y-20);
+    ctx.closePath();
+    ctx.fillStyle = 'yellow';
+    ctx.fill();
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
 
-    // draw back roof
-    roughCanvas.polygon([[school.x+10, school.y-10], [school.x+30, school.y-10], [school.x+22, school.y-20], [school.x, school.y-20]], {
-        stroke: 'black',
-        fill: 'lightblue',
-        fillStyle: 'hachure',
-        fillWeight: 1,
-        hachureAngle: 60,
-        hachureGap: 2
-    })
 }  
 
 function drawHouse() {
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 1.5;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+
     // draw rectangle
-    roughCanvas.rectangle(house.x - 10, house.y - 10, 20, 20, {
-        stroke: 'black',
-        fill: 'lightblue',
-        fillStyle: 'hachure',
-        fillWeight: 1,
-        hachureAngle: 60,
-        hachureGap: 2
-    })
+    ctx.beginPath();
     ctx.rect(house.x - 10, house.y - 10, 20, 20);
-    ctx.fillStyle = 'lightblue';
+    ctx.fillStyle = 'yellow';
     ctx.fill();
-    ctx.lineWidth = 1;
     ctx.strokeStyle = 'black';
     ctx.stroke();
 
@@ -140,13 +158,13 @@ function drawHouse() {
     ctx.lineTo(house.x+10, house.y-10);
     ctx.lineTo(house.x, house.y-20);
     ctx.closePath();
+    ctx.fillStyle = 'yellow';
+    ctx.fill();
     ctx.strokeStyle = 'black';
     ctx.lineWidth = 1.5;
     ctx.stroke();
 
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-
+    //
 }
 
 function drawAgent() {
@@ -202,7 +220,7 @@ let animationId = null;
 
 // Declare Animation function
 function animate() {
-    // Update agent movement
+    // Update agent position based on movement logic
     updateAgentMovement();
 
     // Redraw the scene
@@ -212,9 +230,78 @@ function animate() {
     animationId = requestAnimationFrame(animate)
 }
 
+// track agent simulation state
+let isRunning = false;              // track simulation running state
 
-// Start the animation
-animationId = requestAnimationFrame(animate)
+// connect with button on html
+const startButton = document.getElementById('start-button');
+const pauseButton = document.getElementById('pause-button');
+const resetButton = document.getElementById('reset-button');
 
+// add event listeners to buttons
+startButton.addEventListener('click', startSimulation);
+pauseButton.addEventListener('click', pauseSimulation);
+resetButton.addEventListener('click', resetSimulation);
+
+// Control helpers to start the animation
+function startSimulation() {
+    if (isRunning) return;
+
+    // change the state 
+    isRunning = true;
+    
+    // change helper button mode
+    startButton.disabled = true;
+    pauseButton.disabled = false;
+    resetButton.disabled = false;
+
+    // start the animation
+    animationId = requestAnimationFrame(animate);
+}
+
+// Control helpers to pause the animation
+function pauseSimulation() {
+    if (!isRunning) return;
+
+    // change the state
+    isRunning = false;
+
+    // change helper button mode
+    startButton.disabled = false;
+    pauseButton.disabled = true;
+    resetButton.disabled = false;
+
+    // cancel the animation frame
+    cancelAnimationFrame(animationId);              // stop the animation
+}
+
+// Control helpers to reset the animation
+function resetSimulation() {
+    // change the state
+    isRunning = false;
+
+    // change helper button mode
+    startButton.disabled = false;
+    pauseButton.disabled = true;
+    resetButton.disabled = true;
+
+
+    // Stop the animation frame
+    cancelAnimationFrame(animationId);
+
+    // reset agent position
+    agent.x = house.x+10;
+    agent.y = house.y+10;
+    agent.target = 'school';
+
+    // redraw the initial scene
+    drawScene();
+
+
+}
+
+// initial UI state and render with disabled pause button
+pauseButton.disabled = true;            // cannot pause until the simulation is running
+resetButton.disabled = true;             // cannot reset until the simulation is running
 
 drawScene();
