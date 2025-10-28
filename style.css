@@ -72,6 +72,12 @@ body {
     height: auto;                   /* maintain aspect ratio */
 }
 
+.sim-control-button.active {
+    background-color: #dc3545;
+    color: white;
+    font-weight: bold;
+}
+
 /* Mobile responsiveness */ 
 @media (max-width: 768px) {
     #body_section {
