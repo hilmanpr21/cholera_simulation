@@ -24,25 +24,46 @@
                 <h2>What can we do to minimise cholera spread?</h2>
                 <div class="body_article">
                     <h3>Part 1</h3>
-                    <br>
                     <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
                     <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
                     <div id="sim1-wrapper" class="sim-wrapper">
                         <canvas id="choleraSim1" class="canvas-container"></canvas>
-                        <div class="sim-control-button">
+                        <div class="sim-control-button-collection">
                             <button id="start-button" class="sim-control-button" type="button">start</button>
                             <button id="reset-button" class="sim-control-button" type="button">reset</button>
                             <button id="pause-button" class="sim-control-button" type="button">pause</button>
                         </div>
-                        <div id="sim1-control" class="sim1-control">
+                        <div id="sim1-control-button" class="sim1-control-button">
                             <button id="contaminate-water-button" class="sim-control-button" type="button">Contaminate Water</button>
                         </div>
                     </div>
+
+                    <br>
+                    <br>
+                    <h3>Part 2</h3>
+                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+                    <div id="sim1-wrapper" class="sim-wrapper">
+                        <canvas id="choleraSim2" class="canvas-container"></canvas>
+                        <div class="sim-control-button-collection">
+                            <button id="start-button-sim2" class="sim-control-button" type="button">start</button>
+                            <button id="reset-button-sim2" class="sim-control-button" type="button">reset</button>
+                            <button id="pause-button-sim2" class="sim-control-button" type="button">pause</button>
+                        </div>
+                        <div id="sim2-control-button" class="sim-control-button">
+                            <input type="range" id="sim2-neighbour-number" min="4" max="10" value="10" step="1" class="sim-slider">
+                            <label for="sim2-neighbour-number">Number of Neighbors: <span id="sim2-neighbour-label">5</span> </label>
+                        </div>
+                        <br>
+                        <br>
+                    </div>
+                    
                     
                 </div>
             </div>
         </section>
 
         <script src="simulation/sim1.js"></script>
+        <script src="simulation/sim2.js"></script>
     </body>
 </html>

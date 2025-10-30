@@ -1,6 +1,7 @@
 :root {
-    --main-body-color: #009E73;
-    --article-color: #F0E442;
+    --main-body-color: #efefef;
+    --article-color: #cdff18;
+    --canvas-bg-color: #f7f7f7;
 }
 
 h1 {
@@ -64,7 +65,7 @@ body {
 }
 
 .canvas-container {
-    background-color: var(--main-body-color);
+    background-color: var(--canvas-bg-color);
     display: block;
     border-radius: 0.5rem;
     border: black 2px solid;
@@ -72,10 +73,45 @@ body {
     height: auto;                   /* maintain aspect ratio */
 }
 
+.sim-control-button-collection {
+    display: flex;
+    gap: 1rem;                      /* space between buttons */
+    margin-top: 1rem;               /* space above the button collection */
+    width: 100%
+}
+
+.sim-control-button-collection .sim-control-button{
+    flex: 1;                       /* make buttons grow equally to fill the container */
+    padding: 0.5rem 1rem;         /* padding inside buttons */
+    border-radius: 0.2rem ;       /* rounded corners */
+    border: #007bff solid 2px;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    font-weight: 900;
+    font-family: monospace;
+}
+
+.sim-control-button:hover {
+    background-color: #dc3545;;
+}
+
 .sim-control-button.active {
-    background-color: #dc3545;
+    background-color: white;
     color: white;
     font-weight: bold;
+}
+
+.sim-control-button:disabled {
+    background-color: grey;
+    cursor: not-allowed;
+}
+
+#sim1-control-button {
+    flex: 1;
+    width: 100%;
+    margin-top: 10px;
 }
 
 /* Mobile responsiveness */ 
