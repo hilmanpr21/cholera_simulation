@@ -32,8 +32,8 @@
         {x: 500, y: 200},               //position 5
         {x: 100, y: 200},               //position 6
         {x: 375, y: 40},               //position 7
-        {x: 225, y: 340},               //position 8
-        {x: 375, y: 340},               //position 9
+        {x: 225, y: 360},               //position 8
+        {x: 375, y: 360},               //position 9
         {x: 225, y: 40}                //position 10
     ];
 
@@ -47,7 +47,7 @@
 
     // initialise housewater bodies array corresponding to each house (offset from each house)
     const houseWaterBodies = houses.map((house, index) => ({
-        x: house.x-60,
+        x: house.x > canvas.width / 2 ? house.x + 60 : house.x - 60,
         y: house.y,
         isContaminated: false,
         contaminatedTime: 0,
@@ -61,7 +61,7 @@
         speed: 1.5,
         itinerary: ['school', 'schoolWater', 'school', 'house', 'houseWater', 'house'],
         stepIndex: 0,                           // current index in the itinerary
-        isInfected: false,                      // track agent infection state   
+        isInfected: index === 1 || index === 2 ? true : false,                      // track agent infection state
         houseId: index,                         // associate agent to the house
         isActive: true                          // track if agent is still active in the simulation based on slider input
     }));    
