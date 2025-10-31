@@ -20,7 +20,9 @@
     const schoolWaterBody = {
         x: school.x,
         y: school.y+60,
-        isContaminated: false           // track waterbody contamination state 
+        isContaminated: false,           // track waterbody contamination state
+        infectedVisitCount: 0,           // track number of infected agent visit to the waterbody
+        contaminationThreshold:2        // threshold of infected visit to contaminate the waterbody
     }
 
     // predefined house position distributed around the school
@@ -110,6 +112,9 @@
 
                 // check if agent contaminate house waterbody
                 checkHouseWaterContamination(label, agentIndex);
+                
+                // check if infected agent visit school waterbody to contaminate it
+                contaminateSchoolWaterbody(label, agentIndex);
 
                 // advance move to the next itinerary
                 agent.stepIndex = (agent.stepIndex + 1) % agent.itinerary.length;           // add the stepIndex once agent get into the current target
@@ -135,12 +140,27 @@
 
     // declare house waterbody contamination logic
     function checkHouseWaterContamination(targetLocationInput, agentIndex) {
+        // Check if agent is visiting their house waterbody and is infected
         if (targetLocationInput === 'houseWater' && agents[agentIndex].isInfected) {
             // contaminate the house waterbody
             houseWaterBodies[agentIndex].isContaminated = true;
 
             // start tracking contamination duration
             houseWaterBodies[agentIndex].contaminatedTime = 0;
+        }
+    }
+
+    // declare funstion to contaminate school waterbody based on infected agent visit count
+    function contaminateSchoolWaterbody(targetLocationInput, agentIndex) {
+        // check if infected agent visit count exceed the thresholds
+        if  (targetLocationInput === 'schoolWater' && agents[agentIndex].isInfected && !schoolWaterBody.isContaminated) {
+            // incerement infected visit count
+            schoolWaterBody.infectedVisitCount += 1;
+
+            //check if threshold is reached
+            if (schoolWaterBody.infectedVisitCount >= schoolWaterBody.contaminationThreshold) {
+                schoolWaterBody.isContaminated = true;
+            }
         }
     }
 
@@ -459,11 +479,12 @@
             agent.x = houses[index].x + 10;
             agent.y = houses[index].y + 10;
             agent.stepIndex = 0;
-            agent.isInfected = false;
+            agent.isInfected = index === 1 || index === 2 ? true : false;
         });
 
         // reset  waterbody contamination state
         schoolWaterBody.isContaminated = false;
+        schoolWaterBody.infectedVisitCount = 0;
         houseWaterBodies.forEach(waterBody => {
             waterBody.isContaminated = false;
             waterBody.contaminatedTime = 0;
