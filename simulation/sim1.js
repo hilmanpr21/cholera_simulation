@@ -15,14 +15,35 @@
     canvas.width = 600;   // Internal resolution
     canvas.height = 400;  // Internal resolution
 
+    /**
+     * School location at the center of the canvas
+     * @type {{x: number, y: number}}
+     */
     const school = {x: canvas.width/2, y: canvas.height/2};
 
+    /**
+     * House object representing a single household
+     * @type {{x: number, y: number, isInfected: boolean}}
+     * @property {number} x - X coordinate of the house
+     * @property {number} y - Y coordinate of the house
+     * @property {boolean} isInfected - Infection state of the house
+     */
     const house = {
         x: 100, 
         y: 100,
         isInfected: false
     }
 
+    /**
+     * Agent object representing a person moving between locations
+     * @type {{x: number, y: number, speed: number, itinerary: string[], stepIndex: number, isInfected: boolean}}
+     * @property {number} x - Current X position
+     * @property {number} y - Current Y position
+     * @property {number} speed - Movement speed in pixels per frame
+     * @property {string[]} itinerary - Array of location labels to visit in sequence
+     * @property {number} stepIndex - Current position in the itinerary
+     * @property {boolean} isInfected - Whether the agent is infected with cholera
+     */
     let agent = {
         x: house.x+10,          // Agent initial x position
         y: house.y+10,          // Agent initial y position
@@ -32,6 +53,14 @@
         isInfected: false,         // track agent infection state
     }
 
+    /**
+     * House water body near the house
+     * @type {{x: number, y: number, isContaminated: boolean, contaminatedTime: number}}
+     * @property {number} x - X coordinate
+     * @property {number} y - Y coordinate
+     * @property {boolean} isContaminated - Contamination state
+     * @property {number} contaminatedTime - Duration of contamination in milliseconds
+     */
     const houseWaterBody = {
         x: house.x-60,
         y: house.y,
@@ -39,18 +68,40 @@
         contaminatedTime: 0             // how long the waterbody has been contaminated, for house contamination logic
     }
 
+    /**
+     * School water body near the school
+     * @type {{x: number, y: number, isContaminated: boolean}}
+     * @property {number} x - X coordinate
+     * @property {number} y - Y coordinate
+     * @property {boolean} isContaminated - Contamination state
+     */
     const schoolWaterBody = {
         x: school.x,
         y: school.y+60,
         isContaminated: false           // track waterbody contamination state 
     }
 
+    /**
+     * Timestamp of the last animation frame (in milliseconds)
+     * Used for calculating delta time between frames
+     * @type {number}
+     */
     // declare beginning last timestamp for delta time calculation to calculate howlong the simulation has been running
     let lastTimestamp = 0;
 
+    /**
+     * Delay in milliseconds before a house becomes infected after waterbody contamination
+     * @type {number}
+     * @constant
+     */
     //track time since house waterbody got contaminated
     const houseInfectionDelay = 1500;                   // 1.5 second delay for house get infected after the waterbody got contaminated
 
+    /**
+     * Resolves a location label to actual canvas coordinates
+     * @param {string} labelInput - Location label ('school', 'schoolWater', 'house', 'houseWater')
+     * @returns {{x: number, y: number}} Coordinates of the requested location
+     */
     // resolve agent's itinerary lalbels to actual coordinates
     function resolveItinerary(labelInput) {
         switch(labelInput) {
@@ -62,6 +113,11 @@
         }
     }
 
+    /**
+     * Updates agent position by moving towards the next waypoint in the itinerary
+     * Handles movement logic, infection checks, and itinerary progression
+     * @returns {void}
+     */
     // declare agent movement update function
     function updateAgentMovement() {
         // get agent current waypoint target
@@ -98,6 +154,11 @@
         agent.y += stepY;
     }
 
+    /**
+     * Checks if the agent becomes infected when visiting a contaminated water source
+     * @param {string} targetLocationInput - The location label the agent just reached
+     * @returns {void}
+     */
     // decalre agent infection logic
     function checkAgentInfection(targetLocationInput) {
         if (targetLocationInput === 'schoolWater' && schoolWaterBody.isContaminated) {
@@ -105,6 +166,12 @@
         }
     }
 
+    /**
+     * Checks if an infected agent contaminates the house water body
+     * Starts tracking contamination time when contamination occurs
+     * @param {string} targetLocationInput - The location label the agent just reached
+     * @returns {void}
+     */
     // declare house waterbody contamination logic
     function checkHouseWaterContamination(targetLocationInput) {
         if (targetLocationInput === 'houseWater' && agent.isInfected) {
@@ -115,6 +182,12 @@
         }
     }
 
+    /**
+     * Updates house infection state based on water body contamination duration
+     * House becomes infected after contaminated water body exceeds threshold time
+     * @param {number} deltaTime - Time elapsed since last frame in milliseconds
+     * @returns {void}
+     */
     // update house infection state based on waterbody contamination duration
     function updateHouseInfectionState(deltaTime) {
         if (houseWaterBody.isContaminated && !house.isInfected) {
@@ -128,6 +201,11 @@
         }
     }
 
+    /**
+     * Draws all water bodies (house and school) on the canvas
+     * Color changes based on contamination state (lightblue = clean, darkblue = contaminated)
+     * @returns {void}
+     */
     function drawWaterbody() {
         
         ctx.strokeStyle = 'black';
@@ -153,6 +231,10 @@
 
     }
 
+    /**
+     * Draws the school building with a 3D-like appearance (front and back sections with roofs)
+     * @returns {void}
+     */
     function drawSchool() {
         // set the stroke style
         ctx.strokeStyle = 'black';
@@ -202,6 +284,11 @@
         ctx.stroke();
     }  
 
+    /**
+     * Draws the house building with a simple roof
+     * Outline color changes to red when house is infected
+     * @returns {void}
+     */
     function drawHouse() {
         const houseStrokeColor = house.isInfected ? 'red' : 'black';
 
@@ -233,6 +320,11 @@
         //
     }
 
+    /**
+     * Draws the agent as a stick figure
+     * Outline color changes to red when agent is infected
+     * @returns {void}
+     */
     function drawAgent() {
         ctx.strokeStyle = agent.isInfected ? 'red' : 'black';
         ctx.lineWidth = 1.5;
@@ -268,6 +360,8 @@
 
     /**
      * Draw the simulation Environment
+     * Clears canvas and redraws all elements in correct layering order
+     * @returns {void}
      */
     function drawScene() {
 
@@ -281,9 +375,20 @@
         drawAgent();
     }
 
+    /**
+     * Animation frame request ID
+     * Used to control and cancel the animation loop
+     * @type {number|null}
+     */
     // create object to store animation frame ID
     let animationId = null;
 
+    /**
+     * Main animation loop function
+     * Updates agent movement, infection states, and redraws the scene
+     * @param {DOMHighResTimeStamp} timestamp - Current time provided by requestAnimationFrame
+     * @returns {void}
+     */
     // Declare Animation function
     function animate(timestamp) {
         // calculater delta Time
@@ -303,12 +408,21 @@
         animationId = requestAnimationFrame(animate)
     }
 
+    /**
+     * Button element for contaminating the school water body
+     * @type {HTMLButtonElement}
+     */
     // connect with contamination button on html
     const contaminateButton = document.getElementById('contaminate-water-button');
 
     // add event listener to contaminate school waterbody
     contaminateButton.addEventListener('click', contaminateSchoolWaterbody);
 
+    /**
+     * Toggles contamination state of school water body
+     * Updates button appearance and text based on state
+     * @returns {void}
+     */
     // control helper to contaminate school waterbody
     function contaminateSchoolWaterbody() {
         //toggle contamination state
@@ -329,9 +443,17 @@
 
 
 
+    /**
+     * Tracks whether the simulation is currently running
+     * @type {boolean}
+     */
     // track agent simulation state
     let isRunning = false;              // track simulation running state
 
+    /**
+     * Control buttons for simulation
+     * @type {HTMLButtonElement}
+     */
     // connect with button on html
     const startButton = document.getElementById('start-button');
     const pauseButton = document.getElementById('pause-button');
@@ -342,6 +464,12 @@
     pauseButton.addEventListener('click', pauseSimulation);
     resetButton.addEventListener('click', resetSimulation);
 
+    /**
+     * Starts the simulation animation
+     * Disables start button, enables pause/reset buttons
+     * Begins the animation loop
+     * @returns {void}
+     */
     // Control helpers to start the animation
     function startSimulation() {
         if (isRunning) return;
@@ -361,6 +489,12 @@
         animationId = requestAnimationFrame(animate);
     }
 
+    /**
+     * Pauses the simulation animation
+     * Enables start button, disables pause button
+     * Stops the animation loop
+     * @returns {void}
+     */
     // Control helpers to pause the animation
     function pauseSimulation() {
         if (!isRunning) return;
@@ -377,6 +511,13 @@
         cancelAnimationFrame(animationId);              // stop the animation
     }
 
+    /**
+     * Resets the simulation to initial state
+     * Resets agent position, infection states, contamination states
+     * Enables start button, disables pause/reset buttons
+     * Stops animation and redraws initial scene
+     * @returns {void}
+     */
     // Control helpers to reset the animation
     function resetSimulation() {
         // change the state
