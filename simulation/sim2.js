@@ -121,6 +121,15 @@
     };  
 
     /**
+     * Bathroom slot configruration for agents at home and school
+     * @type {{school: number[], house: number[]}}
+     */
+    const bathroomSlots = {
+        school: [12, 13, 14, 15, 16, 17],  // bathroom slots available at school (hours)
+        house: [20,21, 22, 23]
+    }
+
+    /**
      * determines where agent should be based on current hour
      * @param {number}  currentHour - hour of the day (0-23)
      * @returns {string} - location identifier ('school' or 'house')
@@ -219,6 +228,11 @@
      * @property {number} houseId - Associated house identifier
      * @property {boolean} isActive - Whether agent is visible/active (controlled by slider)
      * @property {boolean} isAtSchool - Whether agent is currently at school (vs at home)
+     * @property {number} schoolBathroomHour - Assigned hour to visit school bathroom
+     * @property {number} houseBathroomHour - Assigned hour to visit home bathroom
+     * @property {boolean} hasVisitedSchoolBathroomToday - Whether visited school bathroom today
+     * @property {boolean} hasVisitedHouseBathroomToday - Whether visited home bathroom today
+     * @property {boolean} isTravelingToBathroom - Whether currently going to bathroom
      */
     // initialise agent (one agent per house)
     const agents = houses.map((house, index) => ({
@@ -229,8 +243,13 @@
         targetLocation: 'house',                // initial target location is staying at 'house'
         isInfected: index === 1 || index === 2 ? true : false,                      // track agent infection state
         houseId: index,                         // associate agent to the house
-        isActive: true,                          // track if agent is still active in the simulation based on slider input
-        isAtSchool: false                       // track if agent currently at school or not
+        isActive: true,                         // track if agent is still active in the simulation based on slider input
+        isAtSchool: false,                      // track if agent currently at school or not
+        schoolBathroomHour: 0,                  // assigned bathroom hour at school, will be assigned daily
+        houseBathroomHour: 0,                    // assigned bathroom hour at home, will be assigned daily
+        hasVisitedSchoolBathroomToday: false,        // track if agent has visited school bathroom today
+        hasVisitedHouseBathroomToday: false,          // track if agent has visited home bathroom today
+        isTravelingToBathroom: false            // track if agent is currently traveling to bathroom
     }));    
 
     /**
@@ -248,6 +267,12 @@
      */
     // declare beginning last timestamp for delta time calculation to calculate howlong the simulation has been running
     let lastTimestamp = 0;
+
+    /**
+     * Tracks current day to detect day changes for bathroom schedule reset
+     * @type {number}
+     */
+    let previousDay = 0;
 
     /**
      * Delay in milliseconds before a house becomes infected after waterbody contamination
@@ -281,15 +306,33 @@
      */
     // declare agent movement update function
     function updateAgentMovement() {
+        // get current hour
+        const currentHour = getCurrentHour(timeManager)
+
+        // update each agent position
         agents.forEach((agent, agentIndex) => {
             if (!agent.isActive) return;         // skip inactive agents
 
-            // determine where agent should be based on current time
-            const scheduledTarget = getAgentTargetLocation(agent);
+            // check if agent need to go to bathroom at the current hour
+            const isItBathroomTimeTarget = shouldVisitBathroom(agent, currentHour);       // shouldVisitBathroom will return 'schoolWaterBody' or 'houseWaterBody' or null, null if not bathroom time
 
-            // update target if it change based on schedule
-            if (agent.targetLocation !== scheduledTarget) {
-                agent.targetLocation = scheduledTarget;
+            // check if isItBathroomTimeTarget is not null and agent is not already traveling to bathroom
+            if (isItBathroomTimeTarget && !agent.isTravelingToBathroom) {
+                // change agent targt location to bathroom
+                agent.targetLocation = isItBathroomTimeTarget;
+
+                //set agent is traveling to bathroom
+                agent.isTravelingToBathroom = true;
+            }
+
+            // if agent is not going to the bathroom, follow normal schedule
+            if (!agent.isTravelingToBathroom) {
+                // determine where agent should be based on current time
+                const scheduledTarget = getAgentTargetLocation(agent);
+
+                if (agent.targetLocation !== scheduledTarget) {
+                    agent.targetLocation = scheduledTarget;
+                }
             }
 
             // get coordinates to the current target
@@ -304,16 +347,39 @@
             if (distance < agent.speed) {
                 agent.x = target.x;
                 agent.y = target.y;
+
+                // store agent current location as previous location
+                const previousLocation = agent.currentLocation;
+
+                // update agent current location to the target location
                 agent.currentLocation = agent.targetLocation;              // update current location to the target location
 
-                // Check if agent reached contaminated school waterbody
-                // checkAgentInfection(label, agentIndex);
+                // handle bathroom visit completion
+                if (agent.isTravelingToBathroom) {
+                    // mark bathroom visit as completed based on location
+                    markBathroomVisitComplete(agent, agent.currentLocation);
 
-                // check if agent contaminate house waterbody
-                // checkHouseWaterContamination(label, agentIndex);
-                
-                // check if infected agent visit school waterbody to contaminate it
-                // contaminateSchoolWaterbody(label, agentIndex);
+                    // trigger contamination or infection checks
+                    if (agent.currentLocation === 'schoolWater') {
+                        // contaminate school waterbody
+                        contaminateSchoolWaterbody(agent.currentLocation, agentIndex);
+
+                        // check if agent becomes infected when reach school waterbody
+                        checkAgentInfection(agent.currentLocation, agentIndex);
+
+                    } else if (agent.currentLocation === 'houseWater') {
+                        // check if agent contaminate house waterbody
+                        checkHouseWaterContamination(agent.currentLocation, agentIndex);
+                    }
+
+                    // return to previous location (school or house) after bathroom visit
+                    agent.isTravelingToBathroom = false;
+                    if (agent.isAtSchool) {
+                        agent.targetLocation = 'school';
+                    } else {
+                        agent.targetLocation = 'house';
+                    }
+                }
 
                 return; // Exit early if reached the target so agent not move further this frame (avoid overshooting and agent vibrating at the target)
             }
@@ -405,6 +471,74 @@
                 }
             }
         });
+    }
+
+    /**
+     * assign random bathroom slot for an agent at a location
+     * @param {string} location - 'school' or 'house'
+     * @returns {number} - random hour from available slots
+     */
+    function assignRandomBathroomSlot(location) {
+        const availableSlots = bathroomSlots[location];                             // get available bathroom slots for the location, returns an array of the slot numbers, '[]' square bracket for dynamic identifier access
+        const randomIndex = Math.floor(Math.random() * availableSlots.length);      // get random index from the available slots array, return number between 0 to length-1
+        return availableSlots[randomIndex];
+    }
+
+    /** 
+     * Assign bathroom schedule for all agents for the current day
+     * each agent get random bathroom slot at home and at school each day
+     * @returns {void}
+     */
+    function assignDailyBathroomSchedules() {
+        agents.forEach((agent) => {
+            if (!agent.isActive) return;         // skip inactive agents
+
+            // assign random bathroom time at school
+            agent.schoolBathroomHour = assignRandomBathroomSlot('school');
+
+            // assign random bathroom time at house
+            agent.houseBathroomHour = assignRandomBathroomSlot('house');
+
+            // Reset bathroom visit flag for new day
+            agent.hasVisitedSchoolBathroomToday = false;
+            agent.hasVisitedHouseBathroomToday = false;
+        })
+    }
+
+    /** 
+     * Check if agent should visit bathroom based on current hour and location
+     * @param {object} agent - the agent to check
+     * @param {number} currentHour - Current simulation hour (0-23)
+     * @returns {string|null} - 'schoolWaterBody' or 'houseWaterBody' if visiting bathroom, null otherwise
+     */
+    function shouldVisitBathroom(agent, currentHour) {
+        if (!agent.isActive) return null;         // skip inactive agents
+
+        // check if agent at school and it's their bathroom hour
+        if (agent.isAtSchool && currentHour === agent.schoolBathroomHour && !agent.hasVisitedSchoolBathroomToday) {
+            return 'schoolWater';
+        }
+
+        // check if agent at house and it's their bathroom hour
+        if (!agent.isAtSchool && currentHour === agent.houseBathroomHour && !agent.hasVisitedHouseBathroomToday) {
+            return 'houseWater';
+        }
+
+        return null;
+    }
+
+    /** 
+     * Mark that bathroom visit has been completed
+     * @param {object} agent - The agent that visited
+     * @param {string} bathroomLocation - 'schoolWaterBody' or 'houseWaterBody'
+     * @returns {void}
+     */
+    function markBathroomVisitComplete(agent, bathroomLocation) {
+        if (bathroomLocation === 'schoolWater') {
+            agent.hasVisitedSchoolBathroomToday = true;
+        } else if (bathroomLocation === 'houseWater') {
+            agent.hasVisitedHouseBathroomToday = true;
+        }
     }
 
     /**
@@ -619,6 +753,16 @@
         // update time manager
         updateTimeManager(timeManager, deltaTime);
 
+        // check for day change and need to assign new bathroom schedule
+        const currentDay = timeManager.currentDay;
+        if (currentDay !== previousDay) {
+            // store current day as previous day
+            previousDay = currentDay;
+
+            // assign new bathroom schedule for all agents
+            assignDailyBathroomSchedules();
+        }
+
         // Update agent position based on movement logic
         updateAgentMovement();
 
@@ -722,6 +866,9 @@
         // disable the neighborhood slider while simulation is running
         neighborhoodNumber.disabled = true;
 
+        // Assign bathroom schedules for day 0 if not already assigned
+        assignDailyBathroomSchedules();
+
         // record the initial timestamp when simulation starts
         lastTimestamp = performance.now();
 
@@ -790,6 +937,11 @@
             agent.targetLocation = 'house';
             agent.isInfected = index === 1 || index === 2 ? true : false;
             agent.isAtSchool = false;
+            agent.schoolBathroomHour = null;
+            agent.houseBathroomHour = null;
+            agent.hasVisitedSchoolBathroomToday = false;
+            agent.hasVisitedHouseBathroomToday = false;
+            agent.isTravelingToBathroom = false;
         });
 
         // reset  waterbody contamination state
@@ -807,6 +959,9 @@
 
         // reset timestamp
         lastTimestamp = 0;
+
+        // Assign initial bathroom schedules for day 0
+        assignDailyBathroomSchedules(); 
 
         // redraw the initial scene
         drawScene();
