@@ -43,7 +43,43 @@
                     <h3>Part 2</h3>
                     <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
                     <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
-                    <div id="sim1-wrapper" class="sim-wrapper">
+                    <div id="sim2-wrapper" class="sim-wrapper">
+                        <div class="time-bar-container">
+                            <div class="time-bar-header">
+                                <h4>Simulation time</h4>
+                                <span id="sim2-current-time" class="current-time-and-day">08:00</span> <!-- Initial time display-->
+                                <h4>Day:</h4>
+                                <span id="sim2-current-day" class="current-time-and-day">1</span>  <!-- Initial day display-->
+                            </div>
+
+                            <div class="time-bar-wrapper">
+                            <!-- Hours Label-->
+                            <div class="time-labels">
+                                <span class="time-label" style="left: 0%;">00:00</span>
+                                <span class="time-label" style="left: 33.33%;">08:00</span>
+                                <span class="time-label" style="left: 70.83%;">17:00</span>
+                                <span class="time-label" style="left: 100%;">23:59</span>
+                            </div>
+
+                            <!-- The progress bar track-->
+                            <div class="time-bar-track">
+                                <!--Home hours highlight zone 00:00-08:00-->
+                                <div class="time-zone house-hours-1"></div>
+                                <!-- School hours highlight zone 08:00-17:00-->
+                                <div class="time-zone school-hours"></div> <!-- class with spacve in the name meaning the div has 2 separate class-->
+                                <!--Home hours highlight zone 17:00-24:00-->
+                                <div class="time-zone house-hours-2"></div>
+
+                                <!--Moving protgress indicator-->
+                                <div id="sim2-time-indicator" class="time-indicator">
+                                    <div class="indicator-head"></div>
+                                    <!--<div class="indicator-line"></div>--->
+                                </div>
+                            </div>
+                        </div>
+
+                        <br>
+
                         <canvas id="choleraSim2" class="canvas-container"></canvas>
                         <div class="sim-control-button-collection">
                             <button id="start-button-sim2" class="sim-control-button" type="button">start</button>

@@ -77,7 +77,7 @@
      */ 
     function getCurrentDay(timeManager) {
         const totalHours = timeManager.currentSimulationTime * timeManager.timeScale;
-        return Math.floor((totalHours + timeManager.scheduleStartTime) / 24);
+        return Math.ceil((totalHours + timeManager.scheduleStartTime) / 24);
     }
 
     /**
@@ -731,6 +731,36 @@
     }
 
     /**
+     * update time indicators bar position based on current simulation time
+     * make the bar head running following the time scalling
+     * @returns {void}
+     */
+    function updateTimeIndicator() {
+        const currentHour = getCurrentHour(timeManager);      // get current hour by calling the function getCurrentHour and timeManager object
+
+        // calculate percentage position (0-100%) of the time indicator based on current hour (0-23)
+        const percentage = (currentHour / 24) * 100;
+
+        // update indicator position
+        const indicatorHour = document.getElementById('sim2-time-indicator');
+        if (indicatorHour) {
+            indicatorHour.style.left = `${percentage}%`;            // set left position based on percentage
+        }
+
+        // update time display
+        const timeDisplay = document.getElementById('sim2-current-time');
+        if (timeDisplay) {
+            timeDisplay.textContent = getTimeString(timeManager);
+        }
+
+        // update DAY display
+        const dayDisplay = document.getElementById('sim2-current-day');
+        if (dayDisplay) {
+            dayDisplay.textContent = getCurrentDay(timeManager);
+        }
+    }
+
+    /**
      * Animation frame request ID
      * Used to control and cancel the animation loop
      * @type {number|null}
@@ -752,6 +782,9 @@
 
         // update time manager
         updateTimeManager(timeManager, deltaTime);
+
+        // update time indicator bar
+        updateTimeIndicator();
 
         // check for day change and need to assign new bathroom schedule
         const currentDay = timeManager.currentDay;
@@ -928,6 +961,9 @@
 
         // reset time manager 
         resetTimeManager(timeManager);
+
+        // reset time indicator bar
+        updateTimeIndicator();
 
         // reset agent position and infection state
         agents.forEach((agent, index) => {

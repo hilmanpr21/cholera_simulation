@@ -2,6 +2,7 @@
     --main-body-color: #efefef;
     --article-color: #cdff18;
     --canvas-bg-color: #f7f7f7;
+    --accent-color: #007bff;
 }
 
 h1 {
@@ -22,6 +23,12 @@ h3 {
     text-align: left;
     font-size: 1rem;
     align-self: flex-start;  /* align h3 to the left within its container, so it can align left although the parent container is centered */
+}
+
+h4 {
+    font-size: 1rem;
+    font-weight: bold;
+    margin: 0 0;
 }
 
 body {
@@ -113,6 +120,136 @@ body {
     width: 100%;
     margin-top: 10px;
 }
+
+/* Time Bar Container */
+.time-bar-container {
+    margin: 0px 0;         /* margin above and below the time bar for 20px*/
+    padding: 0px;
+    background-color: var(--article-color);
+    width: 100%;
+}
+
+.time-bar-header {
+    display: flex;
+    justify-content: space-between; /*equally space the time and label */
+    align-items: center;
+    margin-bottom: 0.2rem;
+}
+
+.current-time-and-day {
+    font-size: inherit;
+    font-weight: bold;
+    padding: 0px 15px;         /* padding inside the time display, 5 above and below, 15 left and right */
+}
+
+.time-bar-wrapper {
+    position: relative;;
+}
+
+/* time labels */
+.time-labels {
+    position: relative;
+    height: 1rem;
+    margin-bottom: 0.2rem;
+    margin: 0px 15px; /* margin left/right */
+}
+
+.time-label {
+    position: absolute;
+    transform: translateX(-50%); /* center each element label, wihtout this, by defalut it will start at the left */
+    font-size: 11px;
+    font-weight: 500;
+}
+
+/* Time Bar Track */
+.time-bar-track {
+    position: relative;
+    width: 100%;
+    height: 2px;
+    border-radius: 15px;
+    overflow: visible;
+}
+
+/* Time zone (school and house indicator) */
+.time-zone{
+    position: absolute;
+    top: 0;
+    margin-top: 5px;
+    height: 100%;
+    border-radius: 0px;
+    opacity: 1;
+}
+
+.school-hours {
+    left: 33.33%;
+    width: 37.55%; /*school from 8am to 5pm */
+    background-color: var(--accent-color);
+    border: 2px solid var(--accent-color);
+}
+
+.house-hours-1 {
+    left: 0;
+    width: 33.33%; /*house from 12am to 8am */
+    background-color: var(--canvas-bg-color);
+    border: 2px solid var(--accent-color);
+}
+
+.house-hours-2 {
+    left: 70.83%;   /*start from 5pm */
+    width: 29.17%; /*house from 5pm to 12am */
+    background-color: var(--canvas-bg-color);
+    border: 2px solid var(--accent-color);
+}
+
+/* moving time indicator */
+.time-indicator {
+    position: absolute;
+    left: 33.33%; /* start at 8am */
+    top: -3px; /* adjust vertical position to align with the time bar */
+    width: 2px;
+    height: calc(100% + 15px); /* extend a bit above and below the time bar */
+    transition: left 0.5s linear; /* smooth movement during time updates */
+    z-index: 10; /* ensure it's above other elements */
+}
+
+.indicator-head {
+    width: 10px;
+    height: 10px;
+    background: var(--accent-color); /* Red color */
+    border: 2px solid #fff; /* White border */
+    border-radius: 50%;
+    position: absolute;
+    top: 3px;
+    left: 50%;  /* center horizontally, together with transform: translateX(-50%); */
+    transform: translateX(-50%); /* center horizontally, together with left:50%; */
+}
+
+.indicator-line {
+    width: 5px;
+    height: 100%;
+    background: #e74c3c;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* aniomation for time indicator smooth movement */
+/* not needed
+@keyframes pulse{
+    0%, 100% {
+        transform: translateX(-50%) scale(1);
+    }
+    50% {
+        transform: translateX(-50%) scale(1.1);
+    }
+}
+
+.indicator-head {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+*/
+
 
 /* Mobile responsiveness */ 
 @media (max-width: 768px) {
