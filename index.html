@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8" />
+        <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Cholera Simulation</title>
         <link rel="stylesheet" href="style.css">
@@ -88,23 +88,24 @@
                         </div>
                         <div id="sim2-control-button" class="sim-control-button">
                             <input type="range" id="sim2-neighbour-number" min="4" max="10" value="10" step="1" class="sim-slider">
-                            <label for="sim2-neighbour-number">Number of Neighbors: <span id="sim2-neighbour-label">5</span> </label>
+                            <label for="sim2-neighbour-number">Number of Neighbors: <span id="sim2-neighbour-label">10</span> </label>
                         </div>
                     </div>
 
                     <br>
                     <br>
-                    
-                    <h3>Part 2</h3>
+
+
+                    <h3>Part 3</h3>
                     <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
                     <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
-                    <div id="sim2-wrapper" class="sim-wrapper">
+                    <div id="sim3-wrapper" class="sim-wrapper">
                         <div class="time-bar-container">
                             <div class="time-bar-header">
                                 <h4>Simulation time</h4>
-                                <span id="sim2-current-time" class="current-time-and-day">08:00</span> <!-- Initial time display-->
+                                <span id="sim3-current-time" class="current-time-and-day">08:00</span> <!-- Initial time display-->
                                 <h4>Day:</h4>
-                                <span id="sim2-current-day" class="current-time-and-day">1</span>  <!-- Initial day display-->
+                                <span id="sim3-current-day" class="current-time-and-day">1</span>  <!-- Initial day display-->
                             </div>
 
                             <div class="time-bar-wrapper">
@@ -121,12 +122,12 @@
                                 <!--Home hours highlight zone 00:00-08:00-->
                                 <div class="time-zone house-hours-1"></div>
                                 <!-- School hours highlight zone 08:00-17:00-->
-                                <div class="time-zone school-hours"></div> <!-- class with spacve in the name meaning the div has 2 separate class-->
+                                <div class="time-zone school-hours"></div> <!-- class with space in the name meaning the div has 2 separate class-->
                                 <!--Home hours highlight zone 17:00-24:00-->
                                 <div class="time-zone house-hours-2"></div>
 
                                 <!--Moving protgress indicator-->
-                                <div id="sim2-time-indicator" class="time-indicator">
+                                <div id="sim3-time-indicator" class="time-indicator">
                                     <div class="indicator-head"></div>
                                     <!--<div class="indicator-line"></div>--->
                                 </div>
@@ -135,26 +136,31 @@
 
                         <br>
 
-                        <canvas id="choleraSim2" class="canvas-container"></canvas>
+                        <canvas id="choleraSim3" class="canvas-container"></canvas>
 
                         <div class="sim-control-button-collection">
-                            <button id="start-button-sim2" class="sim-control-button" type="button">start</button>
-                            <button id="reset-button-sim2" class="sim-control-button" type="button">reset</button>
-                            <button id="pause-button-sim2" class="sim-control-button" type="button">pause</button>
+                            <button id="start-button-sim3" class="sim-control-button" type="button">start</button>
+                            <button id="reset-button-sim3" class="sim-control-button" type="button">reset</button>
+                            <button id="pause-button-sim3" class="sim-control-button" type="button">pause</button>
                         </div>
-                        <div id="sim2-control-button" class="sim-control-button">
-                            <input type="range" id="sim2-neighbour-number" min="4" max="10" value="10" step="1" class="sim-slider">
-                            <label for="sim2-neighbour-number">Number of Neighbors: <span id="sim2-neighbour-label">5</span> </label>
+                        <div id="sim3-control-button" class="sim-control-button">
+                            <div id="sim3-neighbour-slider-wrapper">
+                                <input type="range" id="sim3-neighbour-number" min="4" max="10" value="10" step="1" class="sim-slider">
+                                <label for="sim3-neighbour-number">Number of Neighbors: <span id="sim3-neighbour-label">5</span> </label>
+                            </div>                            
+                            <div id="sim3-vaccination-slider-wrapper">
+                                <input type="range" id="sim3-vaccination-slider" min="0" max="100" value="50" step="10" class="sim-slider">
+                                <label for="sim3-vaccination-slider">Vaccination Rate: <span id="sim3-vaccination-label">50</span>%</label>
+                            </div>
                         </div>
                     </div>
-                    
-                    
                 </div>
             </div>
         </section>
 
         <script src="simulation/sim1.js"></script>
         <script src="simulation/sim2.js"></script>
+        <script src="simulation/sim3.js"></script>
     </body>
 </html>
 
