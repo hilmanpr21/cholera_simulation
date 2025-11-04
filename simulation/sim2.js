@@ -7,6 +7,7 @@
      * - Threshold-based water contamination
      * - Time-delayed house infection
      * - time based scheduling system for realistic daily cycles
+     * - Infection tracking graph over time
      */
 
     /**
@@ -41,7 +42,7 @@
         y: school.y+60,
         isContaminated: false,           // track waterbody contamination state
         infectedVisitCount: 0,           // track number of infected agent visit to the waterbody
-        contaminationThreshold:2        // threshold of infected visit to contaminate the waterbody
+        contaminationThreshold: 3        // threshold of infected visit to contaminate the waterbody
     }
 
     /**

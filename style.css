@@ -64,7 +64,8 @@ body {
 }
 
 .sim-wrapper {
-    width: 100%;
+    width: 604px;
+    max-width: 100%;               /* responsive width */
     display: flex;
     flex-direction: column;
     align-items: center;                /* Center children horizontally */
@@ -164,7 +165,8 @@ body {
 /* Time Bar Track */
 .time-bar-track {
     position: relative;
-    width: 100%;
+    width: 600px;
+    max-width: 100%;               /* responsive width */
     height: 2px;
     border-radius: 15px;
     overflow: visible;
