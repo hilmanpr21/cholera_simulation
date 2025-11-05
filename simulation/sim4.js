@@ -14,7 +14,7 @@
      * Initialise the canvas context
      * @type {HTMLCanvasElement}
      */
-    const canvas = document.getElementById('choleraSim2');
+    const canvas = document.getElementById('choleraSim4');
     const roughCanvas = rough.canvas(canvas);        // rough.js context
     const ctx = canvas.getContext('2d');            // 2D canvas context
 
@@ -89,7 +89,7 @@
      */
     function updateTimeManager(timeManager, deltaTime) {
         timeManager.currentSimulationTime += deltaTime / 1000;          // convert ms to seconds
-        timeManager.currentDay = getCurrentDay(timeManager);
+        timeManager.currentDay = getCurrentDay(timeManager);            // update the property for current day
     }
 
     /** 
@@ -151,6 +151,9 @@
     function getAgentTargetLocation(agentInput) {
         // check if agent is inactive
         if (!agentInput.isActive) return 'house';
+
+        // check if agent is isolated to amke agent stay at home
+        if (agentInput.isIsolated) return 'house';
 
         // get current hour
         const currentHour = getCurrentHour(timeManager);        // get current hour by calling the function getCurrentHour
@@ -234,6 +237,11 @@
      * @property {boolean} hasVisitedSchoolBathroomToday - Whether visited school bathroom today
      * @property {boolean} hasVisitedHouseBathroomToday - Whether visited home bathroom today
      * @property {boolean} isTravelingToBathroom - Whether currently going to bathroom
+     * @property {boolean} isVaccinated - Whether agent is vaccinated or not
+     * @property {boolean} isTested - Whther agent has been tested today (rapid test)
+     * @property {boolean} isIsolated - Whether agent is currently in isolation
+     * @property {number} isolationStartDay - day isolation started
+     * @property {number} isolationEndDay - day isolation ended
      */
     // initialise agent (one agent per house)
     const agents = houses.map((house, index) => ({
@@ -250,7 +258,12 @@
         houseBathroomHour: 0,                    // assigned bathroom hour at home, will be assigned daily
         hasVisitedSchoolBathroomToday: false,        // track if agent has visited school bathroom today
         hasVisitedHouseBathroomToday: false,          // track if agent has visited home bathroom today
-        isTravelingToBathroom: false            // track if agent is currently traveling to bathroom
+        isTravelingToBathroom: false,           // track if agent is currently traveling to bathroom
+        isVaccinated: false,                    // track if agent is vaccinated or not
+        isTested: false,                        // track if agent has been tested today
+        isIsolated: false,                      // track if agent is currently in isolation
+        isolationStartDay: 0,                   // track the day isolation started
+        isolationEndDay: 0                       // track the day isolation ended
     }));    
 
     /**
@@ -262,6 +275,38 @@
     let activeAgentCount = 5;                   // based on the initial value of the slider
 
     /**
+     * Number of current vaccination coverage (0-100%)
+     * controlled by the vaccination slider
+     * @type {number}
+     */
+    let vaccinationCoverage = 50;                // initial vaccination coverage set to 50%
+
+    /**
+     * Vaccination Effe3ctiveness in percentage
+     * @type {number}
+     */
+    const vaccinationEffectiveness = 69;        // vaccination effectiveness set to 69%
+
+    /**
+     * number of current rapid test coverage (0-100%)
+     * controlled by rapid-test slider
+     * @type{number}
+     */
+    let rapidTestCoverage = 50;                // initial rapid test coverage set to 50%
+
+    /**
+     * Rapid testr sensitivity in percentage
+     * @type{number}
+     */
+    const rapidTestSensitivity = 91;             // rapid test sensitivity set to 91%
+
+    /**
+     * isolation duration in days
+     * @type{number}
+     */
+    const isolationDuration = 3;                  // isolation duration set to 3 days
+    
+    /**
      * Timestamp of the last animation frame (in milliseconds)
      * Used for calculating delta time between frames
      * @type {number}
@@ -270,10 +315,16 @@
     let lastTimestamp = 0;
 
     /**
-     * Tracks current day to detect day changes for bathroom schedule reset
+     * Tracks current day to detect day changes
      * @type {number}
      */
     let previousDay = 0;
+
+    /**
+     * track if rapid test has been performed that day
+     * @type {boolean}
+     */
+    let hasPerformedRapidTestToday = false;
 
     /**
      * Delay in milliseconds before a house becomes infected after waterbody contamination
@@ -299,6 +350,133 @@
             default: return {x: school.x, y: school.y}
         }
     }
+
+    /** 
+     * Assign vaccination status to susceptible agents based on coverage percentage
+     * only vaccinate non-infected agent at the start of simulation
+     * create array of susceptibleAgents by filtering the agents array
+     * then randomly select agents to vaccinate (`shuffled` array) based on the calculated number to vaccinate
+     * @returns {void}
+     */
+    function assignVaccination() {
+        // Get all susceptible (non infected) active agents
+        // create array of susceptible agents by filtering the agents array
+        // `.filter` method creates a new array but the elemtn inside the new array are references to the same object of the original array.
+        // if the property in the filtered array (susceptibleAgents) is modified, the property in the original array (agents) will also be modified because both arrays reference the same object.
+        const susceptibleAgents = agents.filter(agent => agent.isActive && !agent.isInfected);
+
+        // Calculate number of agents to vaccinate based on coverage percentage
+        const numberToVaccinate = Math.round(susceptibleAgents.length * (vaccinationCoverage / 100));
+
+        // shuffle susceptible agents for random selection
+        // `.sort` methods modifies the order original array but not copying or creating new array
+        // `shuffled` is also pointing at the references to the same object of the original array (`agents`)    
+        // Each comparison runs Math.random() - 0.5, which gives a random positive or negative number (ranging from -0.5 till 0.5). This effectively randomizes the order of elements in the array. so the susceptible agents are randomly ordered
+        const shuffled = susceptibleAgents.sort(() => Math.random() - 0.5);
+
+        // Vaccinate the calculated number of agents based on the shuffled order. This will change the property orf the original array (`agents`) because `shuffled` is referencing the same object.
+        for (let i = 0; i < numberToVaccinate; i++) {
+            shuffled[i].isVaccinated = true;
+        }
+    }
+
+    /**
+     * Assign rapid test to agent based on the rapid test coveragep[ercentage from the slider
+     * only test infected agent (with the assumption of their symptomatic presentation)
+     * Chaneg the property of agent's array
+     * @returns {void}
+     */
+    function assignRapidTest() {
+        // get all infected agent but not isolated agents
+        // stored in a new array but the element inside the new array are references to the same object of the original array
+        const eligibleTestAgents = agents.filter(agent => 
+            agent.isActive && agent.isInfected && !agent.isIsolated
+        );
+
+        // calculate number of agent to be tested based on the rapid test coverage and number of infected agents
+        // return number
+        const numberToTest = Math.round(eligibleTestAgents.length * (rapidTestCoverage / 100));
+
+        console.log('Number of eligible agents:', eligibleTestAgents.length);
+        console.log('Rapid Test Coverage:', rapidTestCoverage);
+        console.log('Number of agents to be tested:', numberToTest);
+
+        // If no agents to test, return early
+        if (numberToTest === 0) {
+            console.log('No agents to test today');
+            return;
+        }
+
+        // shuffle eligible test agents for random selection
+        const shuffled = eligibleTestAgents.sort(() => Math.random() - 0.5);
+
+        for (let i = 0; i < numberToTest; i++) {
+            // Test the agent based on the shuffled order
+            // change the agent's property `isTested` to true
+            shuffled[i].isTested = true;
+
+            // Determine whther agent get tested positive based on rapid test sensitivity
+            const randomNumber = Math.random();
+
+            // check if agent tested positive, meaning the random number is less than the rapid test sensitivity
+            if (randomNumber < (rapidTestSensitivity / 100)) {
+                // agent tested positive, set agent to be isolated
+                shuffled[i].isIsolated = true;
+                // set isolation start day
+                shuffled[i].isolationStartDay = timeManager.currentDay;
+                // set isolation end day
+                shuffled[i].isolationEndDay = timeManager.currentDay + isolationDuration;
+            }
+        }
+    }
+
+    /**
+     * To check if agent  should be retested or potentially released from isolation
+     * based on the current day and isolation end day
+     * @returns {void}
+     */
+    /*
+    function checkIsolationStatus() {
+        agents.forEach(agent => {
+            if (!agent.isActive) return;         // skip inactive agents
+
+            // check if agent isolation period has ended
+            // check if agent is in isolation and current day is greater than or equal to isolation end day
+            if (agent.isIsolated && timeManager.currentDay >= agent.isolationEndDay) {
+                // retest the agent
+                agent.isTested = true;
+
+                // if agent is infected, check the rapid test result again with rapid test sensitivity
+                if (agent.isInfected) {
+                    // generate random number between 0-1
+                    const randomNumber = Math.random();
+
+                    // check if agent tested positive again
+                    if (randomNumber < (rapidTestSensitivity / 100)) {
+                        // agent tested positive again, extend isolation
+                        agent.isIsolated = true;
+                        // new start simulation day
+                        agent.isolationStartDay = timeManager.currentDay;
+                        // new end simulation day
+                        agent.isolationEndDay = timeManager.currentDay + isolationDuration;
+                    } else {
+                        // if agent tested negative (it is like a false negative), release from isolation
+                        agent.isIsolated = false;
+                        agent.isTested = false;
+                        agent.isolationStartDay = 0;
+                        agent.isolationEndDay = 0;
+                    }
+                } else {
+                    // if agent is not infected, release from isolation
+                    agent.isIsolated = false;
+                    agent.isTested = false;
+                    agent.isolationStartDay = 0;
+                    agent.isolationEndDay = 0;
+                }
+            }
+        });
+    }
+    
 
     /**
      * Updates position of all active agents by moving them towards their next waypoint
@@ -396,15 +574,34 @@
     }
 
     /**
+     * Declare infection logic when agent visits contaminated school waterbody
      * Checks if an agent becomes infected when visiting contaminated school water
+     * Vaccinated agent has reduced infection risk based on vaccine effectiveness 
      * @param {string} targetLocationInput - The location label the agent just reached
      * @param {number} agentIndex - Index of the agent being checked
      * @returns {void}
      */
-    // decalre agent infection logic
-    function checkAgentInfection(targetLocationInput, agentIndex) {
-        if (targetLocationInput === 'schoolWater' && schoolWaterBody.isContaminated) {
-            agents[agentIndex].isInfected = true;
+    function checkAgentInfection(AgentLocationInput, agentIndex) {
+        if (AgentLocationInput === 'schoolWater' && schoolWaterBody.isContaminated ) {
+            // store agent reference so later, we focus on one agent only
+            const agent = agents[agentIndex];
+
+            // if agent is vaccinated, calculate infection chance based on vaccine effectiveness
+            if (agent.isVaccinated) {
+                // generate random number between 0-1
+                const randomNumber = Math.random();
+
+                // calculate infection chance
+                const infectionChance = 1 - (vaccinationEffectiveness / 100);
+
+                // Decide agent infected or not
+                if (randomNumber < infectionChance) {
+                    agent.isInfected = true;
+                }
+            } else {
+                // if agent is not vaccinated, always got infected when visiting contaminated waterbody
+                agents[agentIndex].isInfected = true;
+            }
         }
     }
 
@@ -691,6 +888,14 @@
             ctx.arc(agent.x, agent.y-12, 6, 0, Math.PI * 2);
             ctx.stroke();
 
+            // draw test indicator if agent is tested
+            if (agent.isTested) {
+                ctx.beginPath();
+                ctx.arc(agent.x, agent.y-12, 2, 0, Math.PI * 2);
+                ctx.fillStyle = 'orange';
+                ctx.fill();
+            }
+
 
             //draw body
             ctx.beginPath();
@@ -711,7 +916,34 @@
             ctx.lineTo(agent.x, agent.y+6);
             ctx.lineTo(agent.x+6, agent.y+16);
             ctx.stroke();
+
+            // draw vaccination ring if agent is vaccinated
+            if (agent.isVaccinated) {
+                ctx.beginPath();
+                ctx.arc(agent.x, agent.y-12, 10, 0, Math.PI * 2);
+                ctx.strokeStyle = 'green';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
         });     
+    }
+
+    /** 
+     * Draw isolation boxes around isolated agents
+     * @returns {void}
+     */
+    function drawIsolationBoxes() {
+        agents.forEach((agent) => {
+            // check if agent is inacactive or not isolated
+            if (!agent.isActive || !agent.isIsolated) return;
+
+            // draw isolation box
+            ctx.strokeStyle = 'grey';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 3]); // dashed line
+            ctx.strokeRect(agent.x - 25, agent.y - 35, 50, 50);
+            ctx.setLineDash([]); // reset to solid line
+        });
     }
 
     /**
@@ -729,6 +961,7 @@
         drawHouse();
         drawWaterbody();
         drawAgent();
+        drawIsolationBoxes();
     }
 
     /**
@@ -743,19 +976,19 @@
         const percentage = (currentHour / 24) * 100;
 
         // update indicator position
-        const indicatorHour = document.getElementById('sim2-time-indicator');
+        const indicatorHour = document.getElementById('sim4-time-indicator');
         if (indicatorHour) {
             indicatorHour.style.left = `${percentage}%`;            // set left position based on percentage
         }
 
         // update time display
-        const timeDisplay = document.getElementById('sim2-current-time');
+        const timeDisplay = document.getElementById('sim4-current-time');
         if (timeDisplay) {
             timeDisplay.textContent = getTimeString(timeManager);
         }
 
         // update DAY display
-        const dayDisplay = document.getElementById('sim2-current-day');
+        const dayDisplay = document.getElementById('sim4-current-day');
         if (dayDisplay) {
             dayDisplay.textContent = getCurrentDay(timeManager);
         }
@@ -795,12 +1028,34 @@
 
             // assign new bathroom schedule for all agents
             assignDailyBathroomSchedules();
+
+            // reset agent's test flag daily
+            agents.forEach(agent => {
+                agent.isTested = false;
+                // check if agent isolation period has ended
+                if (currentDay >= agent.isolationEndDay) {
+                    agent.isIsolated = false;
+                }
+            });
+
+            // reset rapid test performed flag for the new day
+            hasPerformedRapidTestToday = false;
+        }
+
+        // check isolation status for all agents
+        // Perform rapid tests daily at 7 am (hour 7) and check isolation status
+        const currentHour = getCurrentHour(timeManager);
+        if (currentHour === 7 && !hasPerformedRapidTestToday) {
+            // assign rapid test to eligible agents
+            assignRapidTest();
+            // set flag to indicate rapid test has been performed today
+            hasPerformedRapidTestToday = true;
         }
 
         // Update agent position based on movement logic
         updateAgentMovement();
 
-        // uppdate house infection state
+        // update house infection state
         updateHouseInfectionState(deltaTime);
 
         // Redraw the scene
@@ -815,17 +1070,49 @@
      * @type {HTMLInputElement}
      */
     // track the slider label number of the current neighborhood number
-    let neighborhoodNumber = document.getElementById('sim2-neighbour-number');
+    let neighborhoodNumber = document.getElementById('sim4-neighbour-number');
     
     /**
      * Label element displaying current slider value
      * @type {HTMLSpanElement}
      */
-    let neighborhoodNumberLabel = document.getElementById('sim2-neighbour-label');
+    let neighborhoodNumberLabel = document.getElementById('sim4-neighbour-label');
     
     // set initial slider value
     neighborhoodNumberLabel.textContent = neighborhoodNumber.value;
     activeAgentCount = parseInt(neighborhoodNumber.value);
+
+    /**
+     * Slider input element for controlling vaccination coverage
+     * @type {HTMLInputElement}
+     */
+    let vaccinationSlider = document.getElementById('sim4-vaccination-slider');
+    
+    /**
+     * Label element displaying current vaccination coverage
+     * @type {HTMLSpanElement}
+     */
+    let vaccinationLabel = document.getElementById('sim4-vaccination-label');
+    
+    // set initial vaccination slider value
+    vaccinationLabel.textContent = vaccinationSlider.value;
+    vaccinationCoverage = parseInt(vaccinationSlider.value);
+
+    /**
+     * Slider input element for controlling rapid test coverage
+     * @type {HTMLInputElement}
+     */
+    let rapidTestSlider = document.getElementById('sim4-rapid-test-slider');
+
+    /**
+     * Label element displaying current rapid test coverage
+     * @type {HTMLSpanElement}
+     */
+    let rapidTestLabel = document.getElementById('sim4-rapid-test-label');
+
+    // set initial rapid test slider value
+    rapidTestLabel.textContent = rapidTestSlider.value;
+    rapidTestCoverage = parseInt(rapidTestSlider.value);
 
     /**
      * Updates which agents are active based on slider value
@@ -847,6 +1134,37 @@
         drawScene();
     }
 
+    // update vaccination coverage based on slider value
+    function updateVaccinationCoverage(coverage) {
+        vaccinationCoverage = coverage;
+
+        // reset all agent vaccination status
+        agents.forEach((agent, agentIndex) => {
+            agent.isVaccinated = false;
+        });
+
+        // assign vaccination randomly to the community
+        assignVaccination();
+
+        // redraw the scene to show agent vaccination ring as the number of slider change
+        drawScene();
+    }   
+    
+    // updatate rapid test coverage based on slider value
+    function updateRapidTestCoverage(coverage) {
+        rapidTestCoverage = coverage;
+
+        // reset all agent test status
+        agents.forEach((agent, agentIndex) => {
+            agent.isTested = false;
+            agent.isIsolated = false;
+            agent.isolationStartDay = 0;
+            agent.isolationEndDay = 0;
+        });
+    }
+
+
+
     // update slider initial value and add event listener
     neighborhoodNumber.addEventListener('input', function() {
         neighborhoodNumberLabel.textContent = this.value;
@@ -855,8 +1173,27 @@
         updateActiveAgents(parseInt(this.value));
     });
 
+    // update vaccination slider and add event listener
+    vaccinationSlider.addEventListener('input', function() {
+        // update vaccination label and coverage value
+        vaccinationLabel.textContent = this.value;
+
+        updateVaccinationCoverage(parseInt(this.value));
+    });
+
+    // update rapid test slider and add event listener
+    rapidTestSlider.addEventListener('input', function() {
+        // update rapid test label and coverage value
+        rapidTestLabel.textContent = this.value;
+        updateRapidTestCoverage(parseInt(this.value));
+        console.log('Rapid Test Coverage updated to:', rapidTestCoverage);
+    });
+
     // initialise active agents based on the initital slider value
     updateActiveAgents(activeAgentCount);
+
+    // initialise vaccination coverage based on the initial slider value
+    updateVaccinationCoverage(vaccinationCoverage);
 
     /**
      * Tracks whether the simulation is currently running
@@ -870,9 +1207,9 @@
      * @type {HTMLButtonElement}
      */
     // connect with button on html
-    const startButton = document.getElementById('start-button-sim2');
-    const pauseButton = document.getElementById('pause-button-sim2');
-    const resetButton = document.getElementById('reset-button-sim2');
+    const startButton = document.getElementById('start-button-sim4');
+    const pauseButton = document.getElementById('pause-button-sim4');
+    const resetButton = document.getElementById('reset-button-sim4');
 
     // add event listeners to buttons
     startButton.addEventListener('click', startSimulation);
@@ -897,8 +1234,17 @@
         pauseButton.disabled = false;
         resetButton.disabled = false;
 
+        // Assign vaccination before starting simulation
+        assignVaccination();
+
         // disable the neighborhood slider while simulation is running
         neighborhoodNumber.disabled = true;
+
+        // disable the vaccination slider while simulation is running
+        vaccinationSlider.disabled = true;
+
+        // disable the rapid test slider while simulation is running
+        rapidTestSlider.disabled = true;
 
         // Assign bathroom schedules for day 0 if not already assigned
         assignDailyBathroomSchedules();
@@ -929,7 +1275,13 @@
         resetButton.disabled = false;
 
         //disable the neighborhood slider
-        neighborhoodNumber.disabled = false;
+        neighborhoodNumber.disabled = true;
+
+        // enable the vaccination slider
+        vaccinationSlider.disabled = true;
+
+        // disable the rapid test slider while simulation is running
+        rapidTestSlider.disabled = true;
 
         // cancel the animation frame
         cancelAnimationFrame(animationId);              // stop the animation
@@ -956,6 +1308,11 @@
         // enable the neighborhood slider
         neighborhoodNumber.disabled = false;
 
+        // enable the vaccination slider
+        vaccinationSlider.disabled = false;
+
+        // enable the rapid test slider while simulation is running
+        rapidTestSlider.disabled = false;
 
         // Stop the animation frame
         cancelAnimationFrame(animationId);
@@ -965,6 +1322,9 @@
 
         // reset time indicator bar
         updateTimeIndicator();
+
+        // Reset the daily test flag
+        hasPerformedRapidTestToday = false;
 
         // reset agent position and infection state
         agents.forEach((agent, index) => {
@@ -979,6 +1339,11 @@
             agent.hasVisitedSchoolBathroomToday = false;
             agent.hasVisitedHouseBathroomToday = false;
             agent.isTravelingToBathroom = false;
+            agent.isVaccinated = false; 
+            agent.isTested = false;
+            agent.isIsolated = false;
+            agent.isolationStartDay = 0;
+            agent.isolationEndDay = 0;
         });
 
         // reset  waterbody contamination state
@@ -997,6 +1362,9 @@
         // reset timestamp
         lastTimestamp = 0;
 
+        // Assign vaccination before starting simulation
+        assignVaccination();
+
         // Assign initial bathroom schedules for day 0
         assignDailyBathroomSchedules(); 
 
@@ -1009,4 +1377,5 @@
     resetButton.disabled = true;             // cannot reset until the simulation is running
 
     drawScene();
+
 })();

@@ -238,7 +238,7 @@
     function drawSchool() {
         // set the stroke style
         ctx.strokeStyle = 'black';
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = 2.5;
         ctx.lineJoin = 'round';
         ctx.lineCap = 'round';
 
@@ -267,7 +267,7 @@
         ctx.fillStyle = 'yellow';
         ctx.fill();
         ctx.strokeStyle = 'black';
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = 2.5;
         ctx.stroke();
 
         // draw back roof 
@@ -280,7 +280,7 @@
         ctx.fillStyle = 'yellow';
         ctx.fill();
         ctx.strokeStyle = 'black';
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = 2.5;
         ctx.stroke();
     }  
 
@@ -293,7 +293,7 @@
         const houseStrokeColor = house.isInfected ? 'red' : 'black';
 
         ctx.strokeStyle = houseStrokeColor;
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = 2.5;
         ctx.lineJoin = 'round';
         ctx.lineCap = 'round';
 
@@ -314,7 +314,7 @@
         ctx.fillStyle = 'yellow';
         ctx.fill();
         ctx.strokeStyle = houseStrokeColor;
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = 2.5;
         ctx.stroke();
 
         //
@@ -327,7 +327,7 @@
      */
     function drawAgent() {
         ctx.strokeStyle = agent.isInfected ? 'red' : 'black';
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = 2.5;
         ctx.lineJoin = 'round';
         ctx.lineCap = 'round'; 
 

@@ -1,7 +1,7 @@
 :root {
     --main-body-color: #efefef;
-    --article-color: #cdff18;
-    --canvas-bg-color: #f7f7f7;
+    --article-color: #fff;
+    --canvas-bg-color: #efefef;
     --accent-color: #007bff;
 }
 
@@ -102,11 +102,11 @@ body {
 }
 
 .sim-control-button:hover {
-    background-color: #dc3545;;
+    /*background-color: #dc3545;;*/
 }
 
 .sim-control-button.active {
-    background-color: white;
+    background-color: var(--accent-color);
     color: white;
     font-weight: bold;
 }

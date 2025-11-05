@@ -647,7 +647,7 @@
     function drawSchool() {
         // set the stroke style
         ctx.strokeStyle = 'black';
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = 2.5;
         ctx.lineJoin = 'round';
         ctx.lineCap = 'round';
 
@@ -676,7 +676,7 @@
         ctx.fillStyle = 'yellow';
         ctx.fill();
         ctx.strokeStyle = 'black';
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = 2.5;
         ctx.stroke();
 
         // draw back roof 
@@ -689,7 +689,7 @@
         ctx.fillStyle = 'yellow';
         ctx.fill();
         ctx.strokeStyle = 'black';
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = 2.5;
         ctx.stroke();
     }  
 
@@ -707,7 +707,7 @@
             const houseStrokeColor = house.isInfected ? 'red' : 'black';
 
             ctx.strokeStyle = houseStrokeColor;
-            ctx.lineWidth = 1.5;
+            ctx.lineWidth = 2.5;
             ctx.lineJoin = 'round';
             ctx.lineCap = 'round';
 
@@ -728,7 +728,7 @@
             ctx.fillStyle = 'yellow';
             ctx.fill();
             ctx.strokeStyle = houseStrokeColor;
-            ctx.lineWidth = 1.5;
+            ctx.lineWidth = 2.5;
             ctx.stroke();
         });
     }
@@ -743,15 +743,6 @@
         agents.forEach((agent) => {
             // check if agent active or not
             if (!agent.isActive) return;         // skip inactive agents
-
-            // draw vaccination ring if agent is vaccinated
-            if (agent.isVaccinated) {
-                ctx.beginPath();
-                ctx.arc(agent.x, agent.y-12, 10, 0, Math.PI * 2);
-                ctx.strokeStyle = 'green';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-            }
 
             ctx.strokeStyle = agent.isInfected ? 'red' : 'black';
             ctx.lineWidth = 2.5;
@@ -783,6 +774,16 @@
             ctx.lineTo(agent.x, agent.y+6);
             ctx.lineTo(agent.x+6, agent.y+16);
             ctx.stroke();
+
+            // draw vaccination ring if agent is vaccinated
+            if (agent.isVaccinated) {
+                ctx.beginPath();
+                ctx.arc(agent.x, agent.y-12, 10, 0, Math.PI * 2);
+                ctx.strokeStyle = 'green';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
         });     
     }
 
