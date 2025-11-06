@@ -140,7 +140,6 @@
             return 'school';
         }
         return 'house';
-
     }
 
     /** 
@@ -234,6 +233,9 @@
      * @property {boolean} hasVisitedSchoolBathroomToday - Whether visited school bathroom today
      * @property {boolean} hasVisitedHouseBathroomToday - Whether visited home bathroom today
      * @property {boolean} isTravelingToBathroom - Whether currently going to bathroom
+     * @property {number} infectionStartDay - Day when infection started (for tracking duration)
+     * @property {boolean} isRecovered - Whether agent has become immune after infection
+     * @property {number} recoveryStartDay - Day when recovery started (for tracking immunity duration)
      */
     // initialise agent (one agent per house)
     const agents = houses.map((house, index) => ({
@@ -250,8 +252,23 @@
         houseBathroomHour: 0,                    // assigned bathroom hour at home, will be assigned daily
         hasVisitedSchoolBathroomToday: false,        // track if agent has visited school bathroom today
         hasVisitedHouseBathroomToday: false,          // track if agent has visited home bathroom today
-        isTravelingToBathroom: false            // track if agent is currently traveling to bathroom
-    }));    
+        isTravelingToBathroom: false,            // track if agent is currently traveling to bathroom
+        infectionStartDay: index === 1 || index === 2 ? 1 : null,   // track the day when agent got infected, initial infected agents (agent index 1 and 2) start at day 0
+        isRecovered: false,                         // track if agent has recovered and become immune
+        recoveryStartDay: 0                         // track the day when agent recovered from infection
+    }));
+
+    /**
+     * duration of infection in days before agent becomes immune
+     * @type {number}
+     */
+    const infectionDuration = 2; // 7 days of infection before immunity
+
+    /** 
+     * Duration of recovered agent in day
+     * @type {number}
+     */
+    const recoveryDuration = 2000; // 2000 days of recovered state
 
     /**
      * Current number of active agents in the simulation
@@ -397,15 +414,54 @@
 
     /**
      * Checks if an agent becomes infected when visiting contaminated school water
+     * immune agents and already infected agent cannot be re-infected
      * @param {string} targetLocationInput - The location label the agent just reached
      * @param {number} agentIndex - Index of the agent being checked
      * @returns {void}
      */
     // decalre agent infection logic
     function checkAgentInfection(targetLocationInput, agentIndex) {
-        if (targetLocationInput === 'schoolWater' && schoolWaterBody.isContaminated) {
+        // if only agent go to school waterbody and the waterbody is contaminated & agent is not infected and not immune
+        if (targetLocationInput === 'schoolWater' && schoolWaterBody.isContaminated && !agents[agentIndex].isInfected && !agents[agentIndex].isRecovered) {
             agents[agentIndex].isInfected = true;
+            agents[agentIndex].infectionStartDay = timeManager.currentDay;      // set the infection start day to current day
         }
+    }
+
+    /**
+     * update infection and immunity status for all agents
+     * agent will become immune after infection duration over
+     * Immune agent will become susceptibel again after immuntiy duration over
+     * @returns {void}
+     */
+    function updateAgentInfectionStatus() {
+        // get the current day
+        const currentDay = timeManager.currentDay;
+
+        agents.forEach((agent) => {
+            //check if agent is infected and track the infection durations
+            if (agent.isInfected && agent.infectionStartDay !== null) {
+                const daysSinceInfection = currentDay - agent.infectionStartDay;
+
+                // check if the infection duration exceed the duration threshold
+                if (daysSinceInfection >= infectionDuration) {
+                    agent.isInfected = false;               // set agent to not infected
+                    agent.isRecovered = true;              // set agent to recovered (immune)
+                    agent.recoveryStartDay = currentDay;    // set recovery start day to current day
+                }
+            }
+
+            // check if agent is recovered and track the recovery duration
+            if (agent.isRecovered && agent.recoveryStartDay !== null) {
+                const daysSinceRecovery = currentDay - agent.recoveryStartDay;
+
+                // check if recovery duration exceed the threshold
+                if (daysSinceRecovery >= recoveryDuration) {
+                    agent.isRecovered = false;          // set agent to not recovered (susceptible again)
+                    agent.recoveryStartDay = 0;         // reset recovery start day
+                }
+            }
+        })
     }
 
     /**
@@ -457,6 +513,8 @@
      */
     // update house infection state based on waterbody contamination duration
     function updateHouseInfectionState(deltaTime) {
+        const currentDay = timeManager.currentDay;
+
         houseWaterBodies.forEach((houseWaterBody, agentIndex) => {
             // check if agent active or not
             if (!agents[agentIndex].isActive) return;         // skip inactive agents' houses
@@ -470,6 +528,11 @@
                 if (houseWaterBody.contaminatedTime >= houseInfectionDelay) {
                     houses[agentIndex].isInfected = true;
                 }
+            }
+
+            // check if house waterbody is clean and agent is recovered, then set house to not infected
+            if (houseWaterBody.isContaminated && agents[agentIndex].isRecovered) {
+                houses[agentIndex].isInfected = false;
             }
         });
     }
@@ -797,6 +860,9 @@
             assignDailyBathroomSchedules();
         }
 
+        // update agent infection status (check for infection or recovery duration)
+        updateAgentInfectionStatus();
+
         // Update agent position based on movement logic
         updateAgentMovement();
 
@@ -979,6 +1045,9 @@
             agent.hasVisitedSchoolBathroomToday = false;
             agent.hasVisitedHouseBathroomToday = false;
             agent.isTravelingToBathroom = false;
+            agent.infectionStartDay = index === 1 || index === 2 ? 1 : null;  
+            agent.isRecovered = false;             
+            agent.recoveryStartDay = 0;
         });
 
         // reset  waterbody contamination state

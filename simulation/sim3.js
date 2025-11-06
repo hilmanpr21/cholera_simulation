@@ -235,6 +235,9 @@
      * @property {boolean} hasVisitedHouseBathroomToday - Whether visited home bathroom today
      * @property {boolean} isTravelingToBathroom - Whether currently going to bathroom
      * @property {boolean} isVaccinated - Whether agent is vaccinated or not
+     * @property {number} infectionStartDay - Day when infection started (for tracking duration)
+     * @property {boolean} isRecovered - Whether agent has become immune after infection
+     * @property {number} recoveryStartDay - Day when recovery started (for tracking immunity duration)
      */
     // initialise agent (one agent per house)
     const agents = houses.map((house, index) => ({
@@ -244,6 +247,9 @@
         currentLocation: 'house',               // initial location set to 'house'
         targetLocation: 'house',                // initial target location is staying at 'house'
         isInfected: index === 1 || index === 2 ? true : false,                      // track agent infection state
+        infectionStartDay: index === 1 || index === 2 ? 1 : null,   // track the day when agent got infected, initial infected agents (agent index 1 and 2) start at day 0
+        isRecovered: false,                         // track if agent has recovered and become immune
+        recoveryStartDay: 0,                         // track the day when agent recovered from infection
         houseId: index,                         // associate agent to the house
         isActive: true,                         // track if agent is still active in the simulation based on slider input
         isAtSchool: false,                      // track if agent currently at school or not
@@ -275,6 +281,18 @@
      * @type {number}
      */
     const vaccinationEffectiveness = 69;        // vaccination effectiveness set to 69%
+    
+    /**
+     * duration of infection in days before agent becomes immune
+     * @type {number}
+     */
+    const infectionDuration = 7; // 7 days of infection before immunity
+
+    /** 
+     * Duration of recovered agent in day
+     * @type {number}
+     */
+    const recoveryDuration = 2000; // 2000 days of recovered state
     
     /**
      * Timestamp of the last animation frame (in milliseconds)
@@ -448,7 +466,10 @@
      * @returns {void}
      */
     function checkAgentInfection(AgentLocationInput, agentIndex) {
-        if (AgentLocationInput === 'schoolWater' && schoolWaterBody.isContaminated ) {
+        // get the current day
+        const currentDay = timeManager.currentDay;
+
+        if (AgentLocationInput === 'schoolWater' && schoolWaterBody.isContaminated && !agents[agentIndex].isRecovered && !agents[agentIndex].isInfected) {
             // store agent reference so later, we focus on one agent only
             const agent = agents[agentIndex];
 
@@ -463,12 +484,50 @@
                 // Decide agent infected or not
                 if (randomNumber < infectionChance) {
                     agent.isInfected = true;
+                    agent.infectionStartDay = currentDay;  // track the day when infection started
                 }
             } else {
                 // if agent is not vaccinated, always got infected when visiting contaminated waterbody
                 agents[agentIndex].isInfected = true;
+                agents[agentIndex].infectionStartDay = currentDay;  // track the day when infection started
             }
         }
+    }
+
+    /**
+     * update infection and immunity status for all agents
+     * agent will become immune after infection duration over
+     * Immune agent will become susceptibel again after immuntiy duration over
+     * @returns {void}
+     */
+    function updateAgentInfectionStatus() {
+        // get the current day
+        const currentDay = timeManager.currentDay;
+
+        agents.forEach((agent) => {
+            //check if agent is infected and track the infection durations
+            if (agent.isInfected && agent.infectionStartDay !== null) {
+                const daysSinceInfection = currentDay - agent.infectionStartDay;
+
+                // check if the infection duration exceed the duration threshold
+                if (daysSinceInfection >= infectionDuration) {
+                    agent.isInfected = false;               // set agent to not infected
+                    agent.isRecovered = true;              // set agent to recovered (immune)
+                    agent.recoveryStartDay = currentDay;    // set recovery start day to current day
+                }
+            }
+
+            // check if agent is recovered and track the recovery duration
+            if (agent.isRecovered && agent.recoveryStartDay !== null) {
+                const daysSinceRecovery = currentDay - agent.recoveryStartDay;
+
+                // check if recovery duration exceed the threshold
+                if (daysSinceRecovery >= recoveryDuration) {
+                    agent.isRecovered = false;          // set agent to not recovered (susceptible again)
+                    agent.recoveryStartDay = 0;         // reset recovery start day
+                }
+            }
+        })
     }
 
     /**
@@ -533,6 +592,11 @@
                 if (houseWaterBody.contaminatedTime >= houseInfectionDelay) {
                     houses[agentIndex].isInfected = true;
                 }
+            }
+
+            // check if house waterbody is clean and agent is recovered, then set house to not infected
+            if (houseWaterBody.isContaminated && agents[agentIndex].isRecovered) {
+                houses[agentIndex].isInfected = false;
             }
         });
     }
@@ -870,6 +934,9 @@
             assignDailyBathroomSchedules();
         }
 
+        // Update infection and immunity status (check for recovery/immunity loss)
+        updateAgentInfectionStatus();
+
         // Update agent position based on movement logic
         updateAgentMovement();
 
@@ -1099,6 +1166,9 @@
             agent.currentLocation = 'house';
             agent.targetLocation = 'house';
             agent.isInfected = index === 1 || index === 2 ? true : false;
+            agent.infectionStartDay = index === 1 || index === 2 ? 0 : null;
+            agent.isImmune = false;
+            agent.immunityStartDay = null;
             agent.isAtSchool = false;
             agent.schoolBathroomHour = null;
             agent.houseBathroomHour = null;
