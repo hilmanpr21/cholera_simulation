@@ -23,9 +23,8 @@
 
                 <h2>What can we do to minimise cholera spread?</h2>
                 <div class="body_article">
-                    <h3>Part 1</h3>
-                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
-                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+                    <h3>Part 1 - Single-Agent Contamination Based on Daily Routine</h3>
+                    <p>In this simulation, the agent follows a daily routine of going to school (located at the centre of the canvas), which has a shared waterbody used for both drinking and defecation. The agent attends school from 8:00 a.m. to 5:00 p.m. and spends the rest of the time at home. The school’s waterbody, being shared, can become contaminated by other users. Click the “Contaminate Water” button to see what happens when the agent consumes water from the contaminated source. The agent will become infected (turn red), and an infected agent can contaminate their household waterbody. Within days, the entire household will become infected (house turns red) if they consume water from the contaminated source. The infection lasts for one week.</p>
                     <div id="sim1-wrapper" class="sim-wrapper">
                         <canvas id="choleraSim1" class="canvas-container"></canvas>
                         <div class="sim-control-button-collection">
@@ -39,9 +38,8 @@
                     </div>
                     <br>
                     <br>
-                    <h3>Part 2</h3>
-                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
-                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+                    <h3>Part 2 - Multiple Agents Sharing a Waterbody at School</h3>
+                    <p>In this scenario, the agent now lives in a community where everyone attends the same school. Two of the agent’s friends are infected with cholera. After six visits by an infected friend to the waterbody, it becomes contaminated. Observe how quickly the entire community becomes infected once the waterbody is contaminated. Users can adjust the number of neighbours the agent has.</p>
                     <div id="sim2-wrapper" class="sim-wrapper">
                         <div class="time-bar-container">
                             <div class="time-bar-header">
@@ -97,9 +95,8 @@
                     <br>
 
 
-                    <h3>Part 3</h3>
-                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
-                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+                    <h3>Part 3 - Preventing Cholera Spread with Vaccination</h3>
+                    <p>Vaccination can reduce the chance of getting infected with cholera by 31%, making it an effective measure to slow down outbreaks. However, vaccines are not always accessible. Users can set the vaccination coverage to define how many neighbours have improved immunity against cholera.</p>
                     <div id="sim3-wrapper" class="sim-wrapper">
                         <div class="time-bar-container">
                             <div class="time-bar-header">
@@ -160,9 +157,8 @@
                     <br>
                     <br>
 
-                    <h3>Part 4</h3>
-                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
-                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
+                    <h3>Part 4 - Rapid Testing and Limiting Mobility</h3>
+                    <p>Although vaccines are fairly effective (69% effectiveness), outbreaks can still spread rapidly. Another preventive measure is rapid testing. Agents who test positive will be isolated to prevent further spread. Current rapid tests have an accuracy of 91%, and only agents showing symptoms (indicated by red colour) are tested each morning. Agents who test positive are isolated at home for three days. This method is more effective because it slows down waterbody contamination. Users can set rapid test coverage to determine how many agents are tested daily.</p>
                     <div id="sim4-wrapper" class="sim-wrapper">
                         <div class="time-bar-container">
                             <div class="time-bar-header">
@@ -226,10 +222,8 @@
                     <br>
                     <br>
 
-                    <h3>Part 5</h3>
-                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
-                    <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</p>
-
+                    <h3>Part 5 - Simulating Multiple Communities (Work in Progress)</h3>
+                    <p>In reality, people in a community do not always attend the same school or work locally; many travel to other regions. This simulation demonstrates how cross-community mobility can accelerate outbreaks. It still incorporates vaccination and rapid testing coverage options. Each community has eight neighbours and shares one waterbody with seven other communities. Initially, only one community is mobile, showing how infection spreads across regions.</p>
                     <div id="sim5_wrapper" class="sim-wrapper">
                         <div class="time-bar-container">
                             <div class="time-bar-header">
