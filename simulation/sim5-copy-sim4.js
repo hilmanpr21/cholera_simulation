@@ -138,7 +138,6 @@
             return 'school';
         }
         return 'house';
-
     }
 
     /** 
@@ -1170,7 +1169,7 @@
     let isRunning = false;              // track simulation running state
 
     /**
-     * Control buttons for simulation
+     * Control buttons for 
      * @type {HTMLButtonElement}
      */
     // connect with button on html
