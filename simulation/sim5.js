@@ -11,6 +11,35 @@
     canvas.height = 400;  // Internal resolution
 
     /**
+     * duration of infection in days
+     * @type {number} - number of days an agent remains infected
+     */
+    const infectionDuration = 7;        // 7 days infection duration
+
+    /** 
+     * duration of recovery in days
+     * @type {number} - number of days an agent remains recovered
+     */
+    const recoveryDuration = 200;        // 200 days recovery duration
+
+    /**
+     * set waterbody contamination threshold
+     * number of infected agent visits required to contaminate waterbody
+     * @type {number}
+     */
+    const contaminationThreshold = 3;   // 3 infected agent visits to contaminate waterbody 
+
+    /**
+     * initial vaccination coverage percentage (0-100%) 
+     */
+    let vaccinationCoverage = 50;    // 30% initial vaccination coverage
+
+    /**
+     * vaccination effectiveness in percentage (0-100%)
+     */
+    const vaccinationEffectiveness = 69;  // 75% effective
+
+    /**
      * Timestamp of the last animation frame (in milliseconds)
      * Used for calculating delta time between frames
      * @type {number}
@@ -121,6 +150,24 @@
         timeManager.currentDay = 0;
     }
 
+    /**
+     * schedule configuration for agent movement between home and other community
+     * agent move to ther communitiwes beetween 8am - 5pm 
+     */
+    const scheduleConfig = {
+        mobileStarthour: 8,   // agents become mobile at 8am
+        mobileEndHour: 17    // agents go to their house at 5pm
+    }
+
+    /**
+     * An array to store bathroom slot conigurations for agent at home and other community
+     * objecct with two array properties: otherCommunity and house
+     * @type {{otherCommunity: number[], house: number[]}}
+     */
+    const bathroomSlot = {
+        otherCommunity: [12, 13, 14, 15, 16, 17] ,  // bathroom hours at other community (12pm - 5pm)
+        house: [20, 21, 22, 23, 0]                 // bathroom hours at house (8pm - 12am)]
+    }
 
     /**
      * Number of agents per community
@@ -151,7 +198,7 @@
         y: pos.y,
         communityId: index,
         isContaminated: index === 0 ? true : false, // only first waterbody is contaminated at start
-        contaminationThreshold: 3, // threshold to consider waterbody contaminated
+        infectedAgentVisits: 0,    // counter for infected agent visits
     }));
 
     /** 
@@ -201,13 +248,22 @@
                 houseY: pos.y,          // agent house y position (initially same as starting position)
                 communityId: index,   // community identifier based on the community index
                 agentId: agentIndex,                 // agent index within community
-                speed: 1.5,
+                speed: 2,
                 targetCommunityId: agentIndex % communitiesPositions.length,       // no target community at start
                 currentLocation: 'house',       // all agents start at house
                 targetLocation: 'house',        // all agents target house at start
-                isInfected: false,              // all agents start uninfected
+                isInfected: index === 0 && (agentIndex === 1 || agentIndex === 2) ? true : false,              // initally only agent 1 and 2 in community 0 are infected
+                infectionStartDay:  index === 0 && (agentIndex === 1 || agentIndex === 2) ? 1 : null,          // timestamp when agent got infected, 
+                isRecovered: false,              // all agents are not recovered at start
+                recoveryStartDay: null,         // timestamp when agent got recovered
                 isActive: true,                 // all agents are active/visible at start
                 isMobile: false,                // all agents are stationary at start
+                otherCommunityBathroomSlot: 0,  // initial bathroom slot when agent at other community (when agent visit other community)
+                houseBathroomSlot: 0,           // initial bathroom slot when agent at house
+                isTravelingToBathroom: false,   // track if agent is currently traveling to bathroom
+                hasVisitedOtherCommunityBathroomToday: false, // track if agent has visited other community bathroom today
+                hasVisitedHouseBathroomToday: false,          // track if agent has visited house bathroom today
+                isVaccinated: false,            // vaccination status initially not vaccinated
             });
         });
     });
@@ -238,6 +294,235 @@
     }
 
     /**
+     * assign agent random bathroom slot for an agent regarding their location
+     * @param {string} currentLocation - current location of the agent ('house' or 'otherCommunity')
+     * @returns {number} - random hour number from available slots
+     */
+    function assignBathroomSlot(currentLocation) {
+        // get available bathroom slots for the location, returns an array of the slot numbers, '[]' square bracket for dynamic identifier access
+        const slots = bathroomSlot[currentLocation];                        
+
+        // select a random slot from available slots
+        const randomIndex = Math.floor(Math.random() * slots.length);
+        return slots[randomIndex];  // return the selected slot hour
+    }
+
+    /** 
+     * Assign bathroom slots to all active agents based on their current location
+     * each agent get random bathroom slot at home and at school each day
+     * @return {void}
+     */
+    function assignDailyBathroomSchedules() {
+        agents.forEach((agent) => {
+            if(!agent.isActive) return;    // skip inactive agents
+
+            // assign bathroom slot based on current location
+            agent.otherCommunityBathroomSlot = assignBathroomSlot('otherCommunity');
+
+            // assign bathroom slot at house
+            agent.houseBathroomSlot = assignBathroomSlot('house');
+        });
+    }
+
+    /** 
+     * check if the agent should visit bathroom based on the current hour and location
+     * @param {object} agent - the agent to check
+     * @param {number} currentHour - current simulation hour (0-23)
+     * @return {string|null} - 'otherCommunityWaterbody' or 'hopuseWaterbody' if agent should visit bathroom, null otherwise
+     */
+    function shouldVisitBathroom(agent, currentHour) {
+        if (!agent.isActive) return null;    // skip inactive agents
+
+        // check if agent is at other community and current hour matches bathroom slot
+        if (agent.currentLocation === 'visitOtherCommunity' && currentHour === agent.otherCommunityBathroomSlot) {
+            return 'otherCommunityWaterbody';
+        }
+
+        //check if agent is at house and current hour matches bathroom slot
+        if (agent.currentLocation === 'house' && currentHour === agent.houseBathroomSlot) {
+            return 'houseWaterbody';
+        }
+        return null; // return null if no bathroom visit is needed
+    }
+
+    /**
+     * mark that bathroom visit has been completed
+     * @param {object} agent - the agent object
+     * @param {string} bathroomLocation - location label of the bathroom visited
+     * @returns {void}
+     */
+    function markBathroomVisitComplete(agent, bathroomLocation) {
+        if (bathroomLocation === 'otherCommunityWaterbody') {
+            agent.hasVisitedOtherCommunityBathroomToday = true;
+        }
+        else if (bathroomLocation === 'houseWaterbody') {
+            agent.hasVisitedHouseBathroomToday = true
+        }
+    }
+
+    /**
+     * determine wghere the agent should be based on the time of the day
+     * @param {number} currentHour - curent hour of the day (0-23)
+     * @return {string} - location identifier ('targetCommunityID', 'house')
+     */
+    function getCurrentScheduleMode(agentInput, currentHour) {
+        if (currentHour >= scheduleConfig.mobileStarthour && currentHour < scheduleConfig.mobileEndHour) {
+            return 'visitOtherCommunity';    // agent should visit other community during mobile hours
+        }
+        return 'house';                    // agent should be at house outside mobile hours
+    }
+
+    /**
+     * declaree infection logic when agent visits contaminated waterbody 
+     * check if agent got contaminated when visiting contaminated waterbody
+     * @param {object} agemtLocationInput - target location label the agent just reached
+     * @param {number} agentIndex - index of the agent being checked
+     * @returns {void}
+     */
+    function checkAgentInfection(agent, bathroomLocation) {
+        // skip if agent is not going to waterbody
+        if (bathroomLocation !== 'otherCommunityWaterbody' && bathroomLocation !== 'houseWaterbody') {
+            return;         // exit the function early
+        }
+
+        // skip if agent already infected or recovered
+        if (agent.isInfected || agent.isRecovered) {
+            return;         // exit the function early
+        }
+
+        // styore waterbody id based on bathroom location. if the waterbody is at other community, use targetCommunityId, otherwise use communityId
+        const waterbodyId = bathroomLocation === 'otherCommunityWaterbody' ? agent.targetCommunityId : agent.communityId;
+
+        // check if waterbodiy is contaminated
+        if (waterbodies[waterbodyId].isContaminated) {
+            // infect the agent
+            agent.isInfected = true;
+            // set infection start day to current day
+            agent.infectionStartDay = timeManager.currentDay;
+        }
+    }
+
+    /**
+     * update infection and immunity status for all agents 
+     * agent get into recovery stage after infection duration
+     * agent become immune after infection duration over
+     * @returns {void}
+     */
+    function updateAgentInfectionStatus() {
+        // store current day
+        const currentDay = timeManager.currentDay;
+
+        // loop through all agents to update infection status  
+        agents.forEach((agent) => {
+            // check if agent in infected and infection duration has passed
+            if (agent.isInfected && agent.infectionStartDay !== null) {
+                // store how many days since infection it has been
+                // so the infectionStartDay will not change, it will just be reduced
+                const daysSinceInfection = currentDay - agent.infectionStartDay;
+
+                if (daysSinceInfection >= infectionDuration) {
+                    // infection duration has passed, agent recovers
+                    agent.isInfected = false;               // set agent to not infected
+                    agent.infectionStartDay = null;        // reset infection start day
+                    agent.isRecovered = true;              // set agent to recovered
+                    agent.recoveryStartDay = currentDay;   // set recovery start day to current day
+                }
+            }
+
+            // check if agent is recovered and recovery duration has passed
+            if (agent.isRecovered && agent.recoveryStartDay !== null) {
+                // store how many days since recovery it has been
+                // so the recoveryStartDay will not change, it will just be reduced
+                const daysSinceRecovery = currentDay - agent.recoveryStartDay;
+
+                if (daysSinceRecovery >= recoveryDuration) {
+                    // recovery duration has passed, agent loses immunity
+                    agent.isRecovered = false;            // set agent to not recovered
+                    agent.recoveryStartDay = null;       // reset recovery start day
+                }
+            }
+        });
+    }
+
+    /**
+     * track infected agent visiting waterbodies and contaminate if threshold exceeded
+     * implemented thresho9ld based contamination (require multiple infectiond agent visits to contaminate waterbody
+     * @param {string} bathroomLocation - location label of the bathroom visited
+     * @param {number} agent - the agent object
+     * @returns {void}
+     */
+    function checkWaterbodyContamination(agent, bathroomLocation) {
+        // skip if agent is not going to waterbody
+        if (bathroomLocation !== 'otherCommunityWaterbody' && bathroomLocation !== 'houseWaterbody') {
+            return;
+        }
+
+        // skip if agent is not infected
+        if (!agent.isInfected) {
+            return;
+        }
+
+        // store waterbody id based on bathroom location. if the waterbody is at other community, use targetCommunityId, otherwise use communityId
+        const waterbodyId = bathroomLocation === 'otherCommunityWaterbody' ? agent.targetCommunityId : agent.communityId;
+
+        // increment infected agent visit counter for the waterbody
+        waterbodies[waterbodyId].infectedAgentVisits += 1;  
+
+        // check if infected agent visits exceed contamination threshold
+        if (waterbodies[waterbodyId].infectedAgentVisits >= contaminationThreshold) {
+            // contaminate the waterbody
+            waterbodies[waterbodyId].isContaminated = true;
+        }    
+    }
+
+    /**
+     * Assign vactionation status to non infected agent based on coverage percentage
+     * create an array of non-infected by filterring the agents array
+     * then randomly select agents to vaccinate ('shuffled' array) based on coverage percentage
+     */
+    function assignVaccination() {
+        // filter non-infected agents
+        // create an array of non-infected agents 'suscep[tibleAgents' by filtering the global agents array
+        // '.filter' method creates a new array with all elements in side the new array are referenced to the original array that pass the test implemented by the provided function
+        // output: array of non-infected agents
+        const susceptibleAgents = agents.filter(agent => agent.isActive && !agent.isInfected);
+
+        // calculate number of vsaccinations based on coverage percentage
+        const numberOfVaccinations = Math.floor((susceptibleAgents.length * vaccinationCoverage) / 100);
+
+        // shuffle the susceptibleAgents array to randomly pick vaccinated agents
+        // `.sort` method odifies the order of original array (susceptibleAgents) but not copying or creating a new array
+        // `shuffle` is also pointing at the referwences to the same object of the original array (`agents` array) so it can change the propewrty of the agent object in the original array
+        const shuffled = susceptibleAgents.sort(() => Math.random() - 0.5);
+
+        // select agents to vaccinate based on calculated number
+        for (let i = 0; i < numberOfVaccinations; i++) {
+            shuffled[i].isVaccinated = true;
+        }
+    }
+
+    /**
+     * reset vaccination status for all agents
+     * @param {number} coverage - new vaccination coverage percentage (0-100%)
+     * @returns {void}
+     */
+    function updateVaccinationCoverage(coverage) {
+        // reset vaccinationCoverage object property
+        vaccinationCoverage = coverage;
+
+        // reset vaccination status for all agents
+        agents.forEach((agent) => {
+            agent.isVaccinated = false;
+        });
+
+        // re-assign vaccination based on new coverage
+        assignVaccination();
+
+        // re-draw scnene to reflect vaccination changes
+        drawScene();
+    }
+
+    /**
      *  Resolve a location label (currentLocation) to actual x, y coordinates
      * @param {string} locationLabelInput - locationLabel home or visit community
      * @param {object} agent - agent object
@@ -248,7 +533,26 @@
             case 'house' : 
                 return { x: agent.houseX, y: agent.houseY };
             case 'visitOtherCommunity' :
-                return { x: communitiesPositions[agent.targetCommunityId].x, y: communitiesPositions[agent.targetCommunityId].y };
+                // If target community is same as home community, stay at house
+                if (agent.targetCommunityId === agent.communityId) {
+                    // if target community is same as home community, stay at house
+                    return { x: agent.houseX, y: agent.houseY };
+                } else {
+                    // move to target community position
+                    const radiusOffset = 50; // offset radius to avoid overlapping with waterbody
+                    dx = communitiesPositions[agent.targetCommunityId].x - agent.houseX;
+                    dy = communitiesPositions[agent.targetCommunityId].y - agent.houseY;
+                    const distance = Math.hypot(dx, dy);
+                    const offsetX = (dx / distance) * radiusOffset;
+                    const offsetY = (dy / distance) * radiusOffset;
+                    return { x: communitiesPositions[agent.targetCommunityId].x - offsetX, y: communitiesPositions[agent.targetCommunityId].y - offsetY };
+                };
+            case 'otherCommunityWaterbody' :
+                // return target community waterbody position
+                return { x: waterbodies[agent.targetCommunityId].x, y: waterbodies[agent.targetCommunityId].y };
+            case 'houseWaterbody' :
+                // return agent house waterbody position
+                return { x: waterbodies[agent.communityId].x, y: waterbodies[agent.communityId].y };
             default :
                 return { x: agent.houseX, y: agent.houseY }; // default to agent's home community 
         }
@@ -263,6 +567,34 @@
         agents.forEach ((agent) => {
             // skip inactive or immobile agents
             if (!agent.isActive || !agent.isMobile) return;
+
+            // determine agent cureent target based on the time of the day
+            const currentHour = getCurrentHour(timeManager);
+
+            // check if it is bathroom visit time
+            const isItBathroomTimeTarget = shouldVisitBathroom(agent, currentHour);         //return 'otherCommunityWaterbody' or 'hopuseWaterbody' if agent should visit bathroom, null otherwise
+
+            // if shouldVisityBathroom not return null, set target location to bathroom waterbody agent agent is not currently travelng to watrbody
+            if (isItBathroomTimeTarget && !agent.isTravelingToBathroom) {
+                // change agetn target location to bathroom waterbody
+                const bathroomTargetLocation = isItBathroomTimeTarget;
+                agent.targetLocation = bathroomTargetLocation;
+                
+                // set traveling to bathroom flag to true
+                agent.isTravelingToBathroom = true;
+            }
+
+            // if agent is not traveling to bathroom, update target location based on current schedule
+            // with =out this if condition, agent target location will be never updated back to house or other community after bathroom visit
+            if (!agent.isTravelingToBathroom) {
+                // update agent target location based on schedule
+                const scheduledTarget = getCurrentScheduleMode(agent, currentHour);     // store the agent scheduled target location
+                
+                // Change agent target location if different from scheduled target
+                if (agent.targetLocation !== scheduledTarget) {
+                    agent.targetLocation = scheduledTarget;
+                }
+            }
 
             // Get target coordinates based on a target location label
             // return x,y coordinates
@@ -279,16 +611,27 @@
                 agent.x = target.x;
                 agent.y = target.y;
 
+                // store agent previous location before changing
+                const previousLocation = agent.currentLocation;
+
                 // update current location to target location
                 // change the initially target location become current location
                 agent.currentLocation = agent.targetLocation;
 
-                // Switching the target location
-                if (agent.currentLocation === 'house') {
-                    agent.targetLocation = 'visitOtherCommunity'
-                } else {
-                    // when arrive at other community, set target back to house
-                    agent.targetLocation = 'house';
+                // Handle if bathroom visit completion
+                if (agent.isTravelingToBathroom) {
+                    // trigger infection check when agent visits contaminated waterbody
+                    checkAgentInfection(agent, agent.targetLocation)
+
+                    // check waterbody contamination from infected agent visit
+                    checkWaterbodyContamination(agent, agent.targetLocation);
+
+                    // mark bathroom visit as complete for specific bathroom location
+                    markBathroomVisitComplete(agent, agent.targetLocation);
+
+                    // return to previous location afterbathroom visit
+                    agent.targetLocation = previousLocation;
+                    agent.isTravelingToBathroom = false; // reset traveling to bathroom flag
                 }
 
                 return; // Exit early if reached the target so agent not move further this frame (avoid overshooting and agent vibrating at the target)
@@ -377,7 +720,7 @@
             // draw vaccination ring if agent is vaccinated
             if (agent.isVaccinated) {
                 ctx.beginPath();
-                ctx.arc(agent.x, agent.y-12, 10, 0, Math.PI * 2);
+                ctx.arc(agent.x, agent.y-10, 9, 0, Math.PI * 2);
                 ctx.strokeStyle = 'green';
                 ctx.lineWidth = 2;
                 ctx.stroke();
@@ -401,7 +744,7 @@
     /**
      * Animation frame request ID
      * Used to control and cancel the animation loop
-     * @type {number|null}
+     * @type {number | null}
      */
     // create object to store animation frame ID
     let animationId = null;
@@ -431,7 +774,13 @@
 
             // activate agents for the new day
             activateAgentsForDay();
+
+            // assign bathroom slots for all active agents
+            assignDailyBathroomSchedules();
         }
+
+        // update agent infection and immunity status
+        updateAgentInfectionStatus();
 
         // Update agent position based on movement logic
         updateAgentMovement();
@@ -442,6 +791,38 @@
         // request next animation frame to continue the animation loop
         animationId = requestAnimationFrame(animate);
     }
+
+    /**
+     * Slider input element for controlling vaccination coverage
+     * @type {HTMLInputElement}
+     */
+    let vaccinationSlider = document.getElementById('sim5-vaccination-slider');
+
+    /**
+     * Label element displaying current vaccination coverage
+     * @type {HTMLSpanElement}
+     */
+    let vaccinationLabel = document.getElementById('sim5-vaccination-label');
+
+    // set initial slider and label values
+    vaccinationCoverage = parseInt(vaccinationSlider.value);
+    vaccinationLabel.textContent = vaccinationSlider.value;
+
+    
+
+    // update vaccination slider event listener
+    vaccinationSlider.addEventListener('input', (event) => {
+        // update vaccination label and coverage value
+        vaccinationLabel.textContent = event.target.value;
+
+        // update vaccination coverage in simulation
+        updateVaccinationCoverage(parseInt(event.target.value));
+    });
+
+    /**
+     * initialilse vaccination coverage when the simulation starts
+     */
+    updateVaccinationCoverage(vaccinationCoverage);
 
      /**
      * Tracks whether the simulation is currently running
@@ -485,11 +866,19 @@
         // initialise agent assignment based on current day 
         activateAgentsForDay();
 
+        // assign bathroom slots for all active agents when simulation starts
+        assignDailyBathroomSchedules();
+
+        // assign vaccination status to agents at start
+        assignVaccination();
+
         // record the initial timestamp when simulation starts
         lastTimestamp = performance.now();
 
         // start the animation
         animationId = requestAnimationFrame(animate);
+
+        console.log(agents);
     }
 
     
@@ -529,6 +918,12 @@
         // change the state
         isRunning = false;
 
+        // Stop the animation frame
+        cancelAnimationFrame(animationId);
+
+        // reset time manager 
+        resetTimeManager(timeManager);
+
         // change helper button mode
         startButton.disabled = false;
         pauseButton.disabled = true;
@@ -540,22 +935,40 @@
             agent.y = agent.houseY;
             agent.currentLocation = 'house';
             agent.targetLocation = 'house';
-            agent.isInfected = false;
+            agent.isInfected = agent.communityId === 0 && (agent.agentId === 1 || agent.agentId === 2) ? true : false;;
+            agent.infectionStartDay = agent.communityId === 0 && (agent.agentId === 1 || agent.agentId === 2) ? 1 : null;
+            agent.isRecovered = false;
+            agent.recoveryStartDay = null;
             agent.isActive = true;
             agent.isMobile = false;
+            agent.otherCommunityBathroomSlot = 0;
+            agent.houseBathroomSlot = 0;
+            agent.isTravelingToBathroom = false;
+            agent.hasVisitedOtherCommunityBathroomToday = false;
+            agent.hasVisitedHouseBathroomToday = false;
+            agent.isVaccinated = false;
+        });
+
+
+        // reset waterbodies to initial state
+        waterbodies.forEach((waterbody) => {
+            waterbody.isContaminated = waterbody.communityId === 0 ? true : false; // only first waterbody is contaminated at start
+            waterbody.infectedAgentVisits = 0;    // reset infected agent visits counter
         });
 
         // reset timestamp
         lastTimestamp = 0;
         
-        // Stop the animation frame
-        cancelAnimationFrame(animationId);
 
-        // reset time manager 
-        resetTimeManager(timeManager);
 
         // reset time indicator bar
         updateTimeIndicator();
+
+        // reset assignment bathroom slots for all active agents
+        assignDailyBathroomSchedules();
+
+        // reset vaccination assignment
+        assignVaccination();
 
         // redraw the initial scene
         drawScene();

@@ -270,14 +270,6 @@
     }));    
 
     /**
-     * Current number of active agents in the simulation
-     * Controlled by the neighborhood slider
-     * @type {number}
-     */
-    // Current number of active agents in the simulation
-    let activeAgentCount = 5;                   // based on the initial value of the slider
-
-    /**
      * Number of current vaccination coverage (0-100%)
      * controlled by the vaccination slider
      * @type {number}
