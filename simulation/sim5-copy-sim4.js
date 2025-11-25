@@ -388,7 +388,7 @@
     }
 
     /**
-     * Assign rapid test to agent based on the rapid test coveragep[ercentage from the slider
+     * Assign rapid test to agent based on the rapid test coverage percentage from the slider
      * only test infected agent (with the assumption of their symptomatic presentation)
      * Chaneg the property of agent's array
      * @returns {void}
