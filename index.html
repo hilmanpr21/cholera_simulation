@@ -13,18 +13,20 @@
 
     <body>
 
-        <section id="header">
-            <div class="container">
-
+        <!-- Landing page section -->
+        <section id="landing-intro-section" class="full-bleed">
+            <div class="landing-content">
+                <h1 id="main-title">Cholera</h1>
+                <h2 id="landing-subtitle">Simulation of Cholera Spread and Prevention Measures</h2>
+                <h2 id="landing-subtitle-2">We are going to help understanding and exploring cholera spread and prevention measures.</h2>
+                <p id="scroll-prompt">Scroll down to start the story.</p>
             </div>
         </section>
 
+        <!--Simulation body section-->
         <section id="body_section">
             <div class="container">
-                <h1>Simulating Cholera</h1>
-
-                <h2>What can we do to minimise cholera spread?</h2>
-                <div class="body_article">
+                <article id="sim1-section" class="sim-section">
                     <h3>Part 1 - Single-Agent Contamination Based on Daily Routine</h3>
                     <p>In this simulation, the agent follows a daily routine of going to school (located at the centre of the canvas), which has a shared waterbody used for both drinking and defecation. The agent attends school from 8:00 a.m. to 5:00 p.m. and spends the rest of the time at home. The school’s waterbody, being shared, can become contaminated by other users. Click the “Contaminate Water” button to see what happens when the agent consumes water from the contaminated source. The agent will become infected (turn red), and an infected agent can contaminate their household waterbody. Within days, the entire household will become infected (house turns red) if they consume water from the contaminated source. The infection lasts for one week.</p>
                     <div id="sim1-wrapper" class="sim-wrapper">
@@ -38,8 +40,11 @@
                             <button id="contaminate-water-button" class="sim-control-button" type="button">Contaminate Water</button>
                         </div>
                     </div>
-                    <br>
-                    <br>
+                </article>
+
+                <br>
+
+                <div class="body_article">
                     <h3>Part 2 - Multiple Agents Sharing a Waterbody at School</h3>
                     <p>In this scenario, the agent now lives in a community where everyone attends the same school. Two of the agent’s friends are infected with cholera. After six visits by an infected friend to the waterbody, it becomes contaminated. Observe how quickly the entire community becomes infected once the waterbody is contaminated. Users can adjust the number of neighbours the agent has.</p>
                     <div id="sim2-wrapper" class="sim-wrapper">
@@ -287,6 +292,55 @@
                 </div>
             </div>
         </section>
+
+        <!-- Load SVG agent anchor overlay -->
+        <div id="svg-anchor-agent-overlay">
+            <svg id="anchor-agent" viewBox="0 0 32 40" width="32" height="50">
+                <defs>
+                    <!-- define reusable style-->
+                    <style>
+                        .agent-stroke {
+                            stroke: black;
+                            stroke-width: 2.5;
+                            stroke-linecap: round;
+                            stroke-linejoin: round;
+                            fill: none;
+                        }
+
+                        .agent-fill {
+                            stroke: black;
+                            stroke-width: 2.5;
+                            stroke-linecap: round;
+                            stroke-linejoin: round;
+                            fill: black;
+                        }
+                    </style>
+                </defs>
+
+                <g id="agent-body"> 
+                    <!-- Head -->
+                    <circle cx="16" cy="10" r="5" class="agent-fill"/>
+                    
+                    <!--body line-->
+                    <line class="agent-stroke" x1="16" y1="15" x2="16" y2="28"/>
+
+                    <!--arms-->
+                    <polyline points="8,22 16,16 24,22" class="agent-stroke"/>
+
+                    <!--legs-->
+                    <polyline points="8,38 16,28 24,38" class="agent-stroke"/>
+                    
+                    <!--vaccination indicator (hidden by default)-->
+                    <circle id="vaccination-ring" cx="16" cy="10" r="9" fill="none" stroke="green" stroke-width="3" opacity="0"/>
+
+                    <!--test indicator (hidden by default)-->
+                    <circle id="test-indicator" cx="16" cy="10" r="3"  fill="orange" opacity="0"/>
+
+                    <!--isolation box-->
+                    <rect id="isolation-box" x="3" y="0" width="25" height="44" rx="5" ry="5" fill="none" stroke="grey" stroke-width="2.5" stroke-dasharray="5,2" opacity="0"/>
+                </g>
+            </svg>
+        </div>
 
         <script src="script/scroll_controller.js"></script>
         <script src="simulation/sim1.js"></script>

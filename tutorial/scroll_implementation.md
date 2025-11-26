@@ -4,11 +4,19 @@
 
 -   [x] Add meta viewport
 
--   [ ] Create SVG object
+-   [x] Create SVG object
 
--   [ ] add CSS for overlay
+-   [x] add CSS for overlay
 
--   [ ] Crewate scroll controller
+-   [ ] Create scroll controller
+
+    -   [ ] up0date HTML structure
+
+    -   [ ] add scroll specific css
+
+    -   [ ] create scroll controller
+
+    -   [ ] test the scroll
 
 -   [ ] modify simulation script
 

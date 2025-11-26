@@ -1,8 +1,17 @@
 :root {
-    --main-body-color: #efefef;
-    --article-color: #fff;
-    --canvas-bg-color: #efefef;
+    --main-body-color: #ffe458;
+    --article-color: #F3EDDF;
+    --canvas-bg-color: #F3EDDF;
     --accent-color: #007bff;
+    --agent-color: #010101;
+    --infected-color: #D94350;
+    --house-color: #7BC950;
+    --school-color: #FFD700;
+    --clean-water-color: #00bfff;
+    --contamined-water-color: #380498;
+    --vaccinated-color: #D94350;
+    --rapid-test-color: #ffa500;
+    --text-color: #010101;
 }
 
 h1 {
@@ -31,6 +40,13 @@ h4 {
     margin: 0 0;
 }
 
+p {
+    font-size: 1rem;
+    line-height: 1.5;
+
+    margin: 0 0 1rem 0;
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -40,6 +56,78 @@ body {
     font-family: monospace;
     display: flex;
     flex-direction: column;
+}
+
+#landing-intro-section {
+    position: relative;
+    min-height: 150vh; /* make it at least 2 viewport heights tall to allow scrolling */
+    width: 100vw;
+    max-width: 800px;
+    background-color: var(--main-body-color);
+    display: flex;              /* Flexbox for centering content */ 
+    align-items: flex-start;    /* Align items to the top */
+    justify-content: center;    /* Center items horizontally */
+    padding-top: 0vh;          /* Padding from the top to push content down */
+    overflow: hidden;          /* hide any overflow content */
+}
+
+.landing-content {
+    position: sticky;
+    height: 100vh;          /* full viewport height */
+    top: 0;                 /* stick to the top of the viewport */
+    width: 100vw;           /* full viewport width */
+    max-width: 800px;       /* match the parent container */
+    display: flex;          /* Flexbox for centering content */
+    flex-direction: column; /* Stack children vertically */
+    align-items: center;    /* Center children horizontally */
+    justify-content: center;/* Center children vertically */
+    text-align: center;     /* Center text inside the container */
+    padding: 0 1rem;        /* padding left/right for smaller screens */
+}
+
+/* Main title styling */
+#main-title {
+    font-size: clamp(3rem, 8vw, 6rem); /* responsive font size between 3rem and 6rem */
+    font-weight: 900;                   /* bold */
+    color: var(--text-color);           /* main text color */
+    margin: 0;
+    position: relative;                 /* for positioning without automatic font space adjustments */
+    z-index: 0;                         /* ensure it's below other elements if needed */ 
+}
+
+#main-title.sticky {
+    position: fixed;
+    top: 2rem;
+    width: 100%;
+    text-align: center;
+}
+
+/* Subtitle styling */
+#landing-subtitle {
+    font-size: clamp(1.5rem, 4vw, 3rem); /* responsive font size between 1.5rem and 3rem */
+    font-weight: 600;                    /* semi-bold */
+    color: var(--text-color);            /* main text color */
+    margin: 1rem 0;                      /* margin 2rem above and below */
+    opacity: 1;
+    position: relative;                 /* for positioning without automatic font space adjustments */
+}
+
+#landing-subtitle-2 {
+    font-size: clamp(1.5rem, 4vw, 3rem); /* responsive font size between 1.5rem and 3rem */
+    font-weight: 600;                    /* semi-bold */
+    color: var(--text-color);            /* main text color */
+    margin: 2rem 0;                      /* margin 2rem above and below */
+    position: absolute;                  /* for positioning without automatic font space adjustments */
+    top: 40vh;                           /* position below the main title */
+    transform: translateY(0);
+    opacity: 0;                          /* initially hidden */
+}
+
+/* Scroll prompt styling */
+#scroll-prompt {
+    font-size: clamp(1rem, 2.5vw, 1.5rem); /* responsive font size between 1rem and 1.5rem */
+    font-weight: 400;                    /* normal weight */
+    color: var(--text-color);            /* main text color */
 }
 
 #body_section {
@@ -63,8 +151,19 @@ body {
     text-align: left;
 }
 
+.sim-section {
+    width: 60vw;
+    min-height: 100vh;
+    padding: 0 2rem;
+    position: relative;                      /* for positioning child elements absolutely within this container */
+}
+
+/* Simulation Wrapper - sticky container for simulation */
 .sim-wrapper {
-    width: 604px;
+    position: sticky;               /* sticky position to keep it in view while scrolling */
+    top: 50%;                       /* start sticking when 50% from the top of the viewport */
+    transform: translateY(0);       /* center the container vertically in the viewport */
+    width: 604px;                   /* fixed width to match the canvas size on bigger screens */
     max-width: 100%;               /* responsive width */
     display: flex;
     flex-direction: column;
@@ -74,13 +173,14 @@ body {
 
 .canvas-container {
     background-color: var(--canvas-bg-color);
-    display: block;
+    display: block;                /* remove inline element space below canvas */
     border-radius: 0.5rem;
     border: black 2px solid;
     max-width: 100%;                /* never bigger than the original canvas resolution, 100 percent of the parent container (@body-article) */
     height: auto;                   /* maintain aspect ratio */
 }
 
+/* Simulation Control Buttons (initial setup - initially hidden)*/
 .sim-control-button-collection {
     display: flex;
     gap: 1rem;                      /* space between buttons */
@@ -88,7 +188,8 @@ body {
     width: 100%
 }
 
-.sim-control-button-collection .sim-control-button{
+.sim-control-button-collection,
+.sim-control-button{
     flex: 1;                       /* make buttons grow equally to fill the container */
     padding: 0.5rem 1rem;         /* padding inside buttons */
     border-radius: 0.2rem ;       /* rounded corners */
@@ -99,6 +200,15 @@ body {
     text-transform: uppercase;
     font-weight: 900;
     font-family: monospace;
+    opacity: 1;                  /* initially hidden */
+    transform: translateY(20px);    /* initially moved down */
+    transition: opacity 0.5s ease, transform 0.5s ease; /* smooth transition for fade-in and move-up */
+}
+
+.sim-wrapper.controls-visible .sim-control-button,
+.sim-wrapper.controls-visible .sim-control-button-collection {
+    opacity: 1;                   /* visible */
+    transform: translateY(0);     /* move to original position */
 }
 
 .sim-control-button:hover {
@@ -235,22 +345,91 @@ body {
     transform: translateX(-50%);
 }
 
-/* aniomation for time indicator smooth movement */
-/* not needed
-@keyframes pulse{
-    0%, 100% {
-        transform: translateX(-50%) scale(1);
-    }
-    50% {
-        transform: translateX(-50%) scale(1.1);
-    }
+/* SVG agent anchor overlay */
+/* This overlay will hold the SVG agent that follows the mouse cursor */
+#svg-anchor-agent-overlay {
+    position: fixed;        /* fixed position to stay on screen */
+    top: 0;                 /* top of the viewport */
+    left: 0;                /* left of the viewport */
+    width: 100vw;            /* full width */
+    height: 100vh;          /* full height */
+    pointer-events: none;   /* allow clicks to pass through */
+    z-index: 1000;          /* on top of other elements */
+    background-color: transparent; /* transparent background */
+    opacity: 0;             /* initially hidden */
 }
 
-.indicator-head {
-    animation: pulse 2s ease-in-out infinite;
+/* SVG element positioning */
+#anchor-agent {
+    position: absolute;         /* absolute positioning within the overlay */
+    transform-origin: center center;    /* set the transform origin to the center of the SVG*/
+    will-change: transform;  /* optimise for transform changes */
+    transition: stroke 0.3 ease; /* smooth stroke color changes */
+    top: 50vh;               /* start at center of viewport */
+    left: 50vw;              /* start at center of viewport */
+    transform: translate(-50%, -50%) scale(3); /* center the SVG at the cursor position, without (-50%, -50%) it will start at top-left corner of the svg*/
+    opacity: 1;             /* initially hidden */
 }
 
-*/
+/*Set Agent body stroke style*/
+#anchor-agent .agent-stroke {
+    stroke: var(--agent-color);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+}
+
+/*Set Agent body fill style*/
+#anchor-agent .agent-fill {
+    stroke: var(--agent-color);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: var(--agent-color);
+}
+
+/* --- Dynamuic styling when the agent is in different states --- */
+/* infected State - agent turn red */ 
+#anchor-agent.infected .agent-stroke {
+    stroke: var(--infected-color);
+}
+
+#anchor-agent.infected .agent-fill {
+    stroke: var(--infected-color);
+    fill: var(--infected-color);
+}
+
+/* vaccinated State - agent has green ring */
+#anchor-agent.vaccinated #vaccination-ring {
+    opacity: 1;
+    fill: none;
+    stroke: var(--vaccinated-color);
+    stroke-width: 3;
+
+}
+
+/* tested State - agent has orange dot */
+#anchor-agent.tested #test-indicator {
+    opacity: 1;
+    fill: var(--tested-color);
+    stroke: none;
+}
+
+/* isolated State - agent has grey box */
+#anchor-agent.isolated #isolation-box {
+    opacity: 1;
+    stroke-dasharray: 5,2;
+    stroke: var(--isolated-color);
+    stroke-width: 2.5;
+    fill: none;
+}
+
+
+/*scale agent for sim5 - Smaller for community view*/
+#anchor-agent.sim5-agent {
+    transform: scale(0.7);
+}
 
 
 /* Mobile responsiveness */ 
@@ -261,6 +440,11 @@ body {
 
     .body_article {
         width: 90vw;
+    }
+    
+    .sim-section {
+        width: 90vw;
+        padding: 0 1rem;
     }
 }
 
