@@ -8,20 +8,72 @@
         <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/roughjs@latest/bundled/rough.js"></script>
+        <script src="https://unpkg.com/scrollama"></script>
 
     </head>
 
     <body>
 
-        <!-- Landing page section -->
-        <section id="landing-intro-section" class="full-bleed">
-            <div class="landing-content">
-                <h1 id="main-title">Cholera</h1>
-                <h2 id="landing-subtitle">Simulation of Cholera Spread and Prevention Measures</h2>
-                <h2 id="landing-subtitle-2">We are going to help understanding and exploring cholera spread and prevention measures.</h2>
-                <p id="scroll-prompt">Scroll down to start the story.</p>
+        <main id="scrolly">
+
+           <div class="sticky-frame">
+                <div class="slide is-active" data-slide="0">
+                    <h1>CHOLERA TITLE SIMULATION</h1>
+                    <p>Scroll down to start the story.</p>
+                </div>
+
+                <div class="slide" data-slide="1">
+                    <p>Meet Rafi.</p>
+                    <br>
+                    <p>He is a student who goes to school every day, just like many children in Bangladesh.</p>
+                    <br>
+                    <p>Today, we will help Rafi protect himself and his community from cholera.</p>
+                </div>
+
+                <div class="slide" data-slide="2">
+                    <p>Every day, Rafi walks from home to school. At home and at school, he uses water from shared water sources for washing and consumption. When the water is clean (light blue water), Rafi stays healthy.</p>
+                </div>
+
+                <div class="slide" data-slide="3">
+                    <p>The school water is shared by many students and teachers. When this water becomes contaminated (dark blue water), cholera can spread through drinking it. Rafi gets infected (turn red) after using the contaminated school water. Later, he brings the infection home and contaminates his family’s water.</p>
+                </div>
+
+                <div class="slide" data-slide="4">
+                    <p>Rafi lives in a community with many neighbours. They all go to the same school and use the same water at school. Initially, Two neighbours are already infected and slowly contaminate the school water. See how fast cholera spreads when more neighbours are involved. You can try to change how many neighbour in the community</p>
+                </div>
+
+                <div class="slide" data-slide="5">
+                    <p>Now, let’s help Rafi protect his neighbourhood with vaccines. Vaccines can reduce the chance of getting cholera by up to 69%. But not everyone can access vaccine. Help Rafi increasing vaccination coverage and see how it slows the outbreak.</p>
+                </div>
+
+                <div class="slide" data-slide="6">
+                    <p>Vaccination is not the only solution. Rapid testing helps find sick people early and keeps them isolated at home for three days. This reduces the chance of contaminating shared water at school or shared facilities. Adjust how many sick neighbours get tested everyday to help Rafi slow the spread.</p>
+                </div>
+
+                <div class="slide" data-slide="7">
+                    <p>Rafi’s community is not isolated. People travel for school, work, markets, and family visits in other communities daily. This daily movement can spread cholera across communities and cause outbreak in a city.</p>
+                    <br>
+                    <p>Your choices now protect many communities, not just Rafi’s.</p>
+                </div>
+
+                <div class="slide" data-slide="8">
+                    <p>Thank you for helping Rafi protect his community. Clean water, vaccination, and isolation can save lives. Your actions can protect families and entire communities from cholera.</p>
+                </div>
             </div>
-        </section>
+
+            <section class="step" data-step="0"></section>
+            <section class="step" data-step="1"></section>
+            <section class="step" data-step="2"></section>
+            <section class="step" data-step="3"></section>
+            <section class="step" data-step="4"></section>
+            <section class="step" data-step="5"></section>
+            <section class="step" data-step="6"></section>
+            <section class="step" data-step="7"></section>
+            <section class="step" data-step="8"></section>
+
+        </main>
+
+        
 
         <!--Simulation body section-->
         <section id="body_section">
@@ -342,7 +394,7 @@
             </svg>
         </div>
 
-        <script src="script/scroll_controller.js"></script>
+        <script src="script/scroll_controller_2.js"></script>
         <script src="simulation/sim1.js"></script>
         <script src="simulation/sim2.js"></script>
         <script src="simulation/sim3.js"></script>

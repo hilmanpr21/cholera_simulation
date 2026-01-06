@@ -58,17 +58,7 @@ body {
     flex-direction: column;
 }
 
-#landing-intro-section {
-    position: relative;
-    min-height: 150vh; /* make it at least 2 viewport heights tall to allow scrolling */
-    width: 100vw;
-    max-width: 800px;
-    background-color: var(--main-body-color);
-    display: flex;              /* Flexbox for centering content */ 
-    align-items: flex-start;    /* Align items to the top */
-    justify-content: center;    /* Center items horizontally */
-    padding-top: 0vh;          /* Padding from the top to push content down */
-    overflow: hidden;          /* hide any overflow content */
+
 }
 
 .landing-content {
@@ -85,49 +75,53 @@ body {
     padding: 0 1rem;        /* padding left/right for smaller screens */
 }
 
-/* Main title styling */
-#main-title {
-    font-size: clamp(3rem, 8vw, 6rem); /* responsive font size between 3rem and 6rem */
-    font-weight: 900;                   /* bold */
-    color: var(--text-color);           /* main text color */
-    margin: 0;
-    position: relative;                 /* for positioning without automatic font space adjustments */
-    z-index: 0;                         /* ensure it's below other elements if needed */ 
+
+#scrolly {
+    position: relative;
 }
 
-#main-title.sticky {
-    position: fixed;
-    top: 2rem;
-    width: 100%;
+.sticky-frame {
+    position: sticky;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--main-body-color);
+    overflow: auto;       /*prevent content overflow */
+}
+
+.slide {
+    color: var(--text-color);
+    position: absolute;
+    max-width: 480px;
+    padding: 2rem;
     text-align: center;
+    opacity: 0;
+    transform: translateY(20px); /* start slightly below*/
+    pointer-events: none;       /* prevent interaction when not visible */
+    transition: opacity 0.4s ease, transform 0.4s ease; /* smooth fade-in/out */
 }
 
-/* Subtitle styling */
-#landing-subtitle {
-    font-size: clamp(1.5rem, 4vw, 3rem); /* responsive font size between 1.5rem and 3rem */
-    font-weight: 600;                    /* semi-bold */
-    color: var(--text-color);            /* main text color */
-    margin: 1rem 0;                      /* margin 2rem above and below */
+.slide.is-active {
     opacity: 1;
-    position: relative;                 /* for positioning without automatic font space adjustments */
+    pointer-events: auto;       /* allow interaction when visible */
+    transform: translateY(0);   /* move to original position */
 }
 
-#landing-subtitle-2 {
-    font-size: clamp(1.5rem, 4vw, 3rem); /* responsive font size between 1.5rem and 3rem */
-    font-weight: 600;                    /* semi-bold */
-    color: var(--text-color);            /* main text color */
-    margin: 2rem 0;                      /* margin 2rem above and below */
-    position: absolute;                  /* for positioning without automatic font space adjustments */
-    top: 40vh;                           /* position below the main title */
-    transform: translateY(0);
-    opacity: 0;                          /* initially hidden */
+.step {
+    min-height: 100vh;
 }
 
-/* Scroll prompt styling */
-#scroll-prompt {
-    font-size: clamp(1rem, 2.5vw, 1.5rem); /* responsive font size between 1rem and 1.5rem */
-    font-weight: 400;                    /* normal weight */
-    color: var(--text-color);            /* main text color */
+.content {
+    max-width: 600px;        /* limit content width for readability */
+    text-align: center;      /* Center text inside the container */
+}
+
+/* Optional visual separation while developing */
+.step:nth-child(odd) {
+  background: #f6f6f6;
 }
 
 #body_section {
