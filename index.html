@@ -32,55 +32,6 @@
 
                 <div class="slide" data-slide="2">
                     <p>Every day, Rafi walks from home to school. At home and at school, he uses water from shared water sources for washing and consumption. When the water is clean (light blue water), Rafi stays healthy.</p>
-                </div>
-
-                <div class="slide" data-slide="3">
-                    <p>The school water is shared by many students and teachers. When this water becomes contaminated (dark blue water), cholera can spread through drinking it. Rafi gets infected (turn red) after using the contaminated school water. Later, he brings the infection home and contaminates his family’s water.</p>
-                </div>
-
-                <div class="slide" data-slide="4">
-                    <p>Rafi lives in a community with many neighbours. They all go to the same school and use the same water at school. Initially, Two neighbours are already infected and slowly contaminate the school water. See how fast cholera spreads when more neighbours are involved. You can try to change how many neighbour in the community</p>
-                </div>
-
-                <div class="slide" data-slide="5">
-                    <p>Now, let’s help Rafi protect his neighbourhood with vaccines. Vaccines can reduce the chance of getting cholera by up to 69%. But not everyone can access vaccine. Help Rafi increasing vaccination coverage and see how it slows the outbreak.</p>
-                </div>
-
-                <div class="slide" data-slide="6">
-                    <p>Vaccination is not the only solution. Rapid testing helps find sick people early and keeps them isolated at home for three days. This reduces the chance of contaminating shared water at school or shared facilities. Adjust how many sick neighbours get tested everyday to help Rafi slow the spread.</p>
-                </div>
-
-                <div class="slide" data-slide="7">
-                    <p>Rafi’s community is not isolated. People travel for school, work, markets, and family visits in other communities daily. This daily movement can spread cholera across communities and cause outbreak in a city.</p>
-                    <br>
-                    <p>Your choices now protect many communities, not just Rafi’s.</p>
-                </div>
-
-                <div class="slide" data-slide="8">
-                    <p>Thank you for helping Rafi protect his community. Clean water, vaccination, and isolation can save lives. Your actions can protect families and entire communities from cholera.</p>
-                </div>
-            </div>
-
-            <section class="step" data-step="0"></section>
-            <section class="step" data-step="1"></section>
-            <section class="step" data-step="2"></section>
-            <section class="step" data-step="3"></section>
-            <section class="step" data-step="4"></section>
-            <section class="step" data-step="5"></section>
-            <section class="step" data-step="6"></section>
-            <section class="step" data-step="7"></section>
-            <section class="step" data-step="8"></section>
-
-        </main>
-
-        
-
-        <!--Simulation body section-->
-        <section id="body_section">
-            <div class="container">
-                <article id="sim1-section" class="sim-section">
-                    <h3>Part 1 - Single-Agent Contamination Based on Daily Routine</h3>
-                    <p>In this simulation, the agent follows a daily routine of going to school (located at the centre of the canvas), which has a shared waterbody used for both drinking and defecation. The agent attends school from 8:00 a.m. to 5:00 p.m. and spends the rest of the time at home. The school’s waterbody, being shared, can become contaminated by other users. Click the “Contaminate Water” button to see what happens when the agent consumes water from the contaminated source. The agent will become infected (turn red), and an infected agent can contaminate their household waterbody. Within days, the entire household will become infected (house turns red) if they consume water from the contaminated source. The infection lasts for one week.</p>
                     <div id="sim1-wrapper" class="sim-wrapper">
                         <canvas id="choleraSim1" class="canvas-container"></canvas>
                         <div class="sim-control-button-collection">
@@ -92,13 +43,15 @@
                             <button id="contaminate-water-button" class="sim-control-button" type="button">Contaminate Water</button>
                         </div>
                     </div>
-                </article>
+                </div>
 
-                <br>
+                <div class="slide" data-slide="3">
+                    <p>The school water is shared by many students and teachers. When this water becomes contaminated (dark blue water), cholera can spread through drinking it. Rafi gets infected (turn red) after using the contaminated school water. Later, he brings the infection home and contaminates his family’s water.</p>
+                    
+                </div>
 
-                <div class="body_article">
-                    <h3>Part 2 - Multiple Agents Sharing a Waterbody at School</h3>
-                    <p>In this scenario, the agent now lives in a community where everyone attends the same school. Two of the agent’s friends are infected with cholera. After six visits by an infected friend to the waterbody, it becomes contaminated. Observe how quickly the entire community becomes infected once the waterbody is contaminated. Users can adjust the number of neighbours the agent has.</p>
+                <div class="slide" data-slide="4">
+                    <p>Rafi lives in a community with many neighbours. They all go to the same school and use the same water at school. Initially, Two neighbours are already infected and slowly contaminate the school water. See how fast cholera spreads when more neighbours are involved. You can try to change how many neighbour in the community</p>
                     <div id="sim2-wrapper" class="sim-wrapper">
                         <div class="time-bar-container">
                             <div class="time-bar-header">
@@ -149,13 +102,10 @@
                             <label for="sim2-neighbour-number">Number of Neighbors: <span id="sim2-neighbour-label">10</span> </label>
                         </div>
                     </div>
+                </div>
 
-                    <br>
-                    <br>
-
-
-                    <h3>Part 3 - Preventing Cholera Spread with Vaccination</h3>
-                    <p>Vaccination can reduce the chance of getting infected with cholera by 31%, making it an effective measure to slow down outbreaks. However, vaccines are not always accessible. Users can set the vaccination coverage to define how many neighbours have improved immunity against cholera.</p>
+                <div class="slide" data-slide="5">
+                    <p>Now, let’s help Rafi protect his neighbourhood with vaccines. Vaccines can reduce the chance of getting cholera by up to 69%. But not everyone can access vaccine. Help Rafi increasing vaccination coverage and see how it slows the outbreak.</p>
                     <div id="sim3-wrapper" class="sim-wrapper">
                         <div class="time-bar-container">
                             <div class="time-bar-header">
@@ -212,12 +162,10 @@
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <br>
-                    <br>
-
-                    <h3>Part 4 - Rapid Testing and Limiting Mobility</h3>
-                    <p>Although vaccines are fairly effective (69% effectiveness), outbreaks can still spread rapidly. Another preventive measure is rapid testing. Agents who test positive will be isolated to prevent further spread. Current rapid tests have an accuracy of 91%, and only agents showing symptoms (indicated by red colour) are tested each morning. Agents who test positive are isolated at home for three days. This method is more effective because it slows down waterbody contamination. Users can set rapid test coverage to determine how many agents are tested daily.</p>
+                <div class="slide" data-slide="6">
+                    <p>Vaccination is not the only solution. Rapid testing helps find sick people early and keeps them isolated at home for three days. This reduces the chance of contaminating shared water at school or shared facilities. Adjust how many sick neighbours get tested everyday to help Rafi slow the spread.</p>
                     <div id="sim4-wrapper" class="sim-wrapper">
                         <div class="time-bar-container">
                             <div class="time-bar-header">
@@ -277,12 +225,12 @@
                             </div>
                         </div>
                     </div>
+                </div>
 
+                <div class="slide" data-slide="7">
+                    <p>Rafi’s community is not isolated. People travel for school, work, markets, and family visits in other communities daily. This daily movement can spread cholera across communities and cause outbreak in a city.</p>
                     <br>
-                    <br>
-
-                    <h3>Part 5 - Simulating Multiple Communities (Work in Progress)</h3>
-                    <p>In reality, people in a community do not always attend the same school or work locally; many travel to other regions. This simulation demonstrates how cross-community mobility can accelerate outbreaks. It still incorporates vaccination and rapid testing coverage options. Each community has eight neighbours and shares one waterbody with seven other communities. Initially, only one community is mobile, showing how infection spreads across regions.</p>
+                    <p>Your choices now protect many communities, not just Rafi’s.</p>
                     <div id="sim5_wrapper" class="sim-wrapper">
                         <div class="time-bar-container">
                             <div class="time-bar-header">
@@ -342,59 +290,33 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="slide" data-slide="8">
+                    <p>Thank you for helping Rafi protect his community. Clean water, vaccination, and isolation can save lives. Your actions can protect families and entire communities from cholera.</p>
+                </div>
             </div>
-        </section>
 
+            <section class="step" data-step="0"></section>
+            <section class="step" data-step="1"></section>
+            <section class="step" data-step="2"></section>
+            <section class="step" data-step="3"></section>
+            <section class="step" data-step="4"></section>
+            <section class="step" data-step="5"></section>
+            <section class="step" data-step="6"></section>
+            <section class="step" data-step="7"></section>
+            <section class="step" data-step="8"></section>
+
+        </main>
+
+    
         <!-- Load SVG agent anchor overlay -->
-        <div id="svg-anchor-agent-overlay">
-            <svg id="anchor-agent" viewBox="0 0 32 40" width="32" height="50">
-                <defs>
-                    <!-- define reusable style-->
-                    <style>
-                        .agent-stroke {
-                            stroke: black;
-                            stroke-width: 2.5;
-                            stroke-linecap: round;
-                            stroke-linejoin: round;
-                            fill: none;
-                        }
-
-                        .agent-fill {
-                            stroke: black;
-                            stroke-width: 2.5;
-                            stroke-linecap: round;
-                            stroke-linejoin: round;
-                            fill: black;
-                        }
-                    </style>
-                </defs>
-
-                <g id="agent-body"> 
-                    <!-- Head -->
-                    <circle cx="16" cy="10" r="5" class="agent-fill"/>
-                    
-                    <!--body line-->
-                    <line class="agent-stroke" x1="16" y1="15" x2="16" y2="28"/>
-
-                    <!--arms-->
-                    <polyline points="8,22 16,16 24,22" class="agent-stroke"/>
-
-                    <!--legs-->
-                    <polyline points="8,38 16,28 24,38" class="agent-stroke"/>
-                    
-                    <!--vaccination indicator (hidden by default)-->
-                    <circle id="vaccination-ring" cx="16" cy="10" r="9" fill="none" stroke="green" stroke-width="3" opacity="0"/>
-
-                    <!--test indicator (hidden by default)-->
-                    <circle id="test-indicator" cx="16" cy="10" r="3"  fill="orange" opacity="0"/>
-
-                    <!--isolation box-->
-                    <rect id="isolation-box" x="3" y="0" width="25" height="44" rx="5" ry="5" fill="none" stroke="grey" stroke-width="2.5" stroke-dasharray="5,2" opacity="0"/>
-                </g>
-            </svg>
+        <div id="anchor-overlay">
+            <img id="anchor-image" src="assets/rafi_normal.PNG" alt="Rafi">
         </div>
 
+        
         <script src="script/scroll_controller_2.js"></script>
+        <script src="script/visual_anchor_controller.js"></script>
         <script src="simulation/sim1.js"></script>
         <script src="simulation/sim2.js"></script>
         <script src="simulation/sim3.js"></script>

@@ -92,12 +92,15 @@ body {
     overflow: auto;       /*prevent content overflow */
 }
 
+
+
 .slide {
     color: var(--text-color);
     position: absolute;
     max-width: 480px;
     padding: 2rem;
     text-align: center;
+    top: 30vw;
     opacity: 0;
     transform: translateY(20px); /* start slightly below*/
     pointer-events: none;       /* prevent interaction when not visible */
@@ -107,7 +110,7 @@ body {
 .slide.is-active {
     opacity: 1;
     pointer-events: auto;       /* allow interaction when visible */
-    transform: translateY(0);   /* move to original position */
+    transform: translateY(0);   /* move to original position  to make swipe up illusion*/
 }
 
 .step {
@@ -122,6 +125,30 @@ body {
 /* Optional visual separation while developing */
 .step:nth-child(odd) {
   background: #f6f6f6;
+}
+
+#anchor-overlay {
+    position: fixed;        /* fixed position to stay on screen while scrolling */
+    top: 0;                /* top of the viewport */
+    left: 0;               /* left of the viewport */
+    pointer-events: none;   /* allow clicks to pass through */
+    z-index: 1000;          /* on top of other elements */
+    align-items: center;    /* Centers children vertically */
+    justify-content: center;/* Centers children horizontally */
+}
+
+#anchor-image {
+    position: absolute;     /* position relative to the nearest positioned ancestor */
+    width: 180px;            /* control size of the image */
+    height: auto;
+    transform: translate(-50%, -50%);   /* center the image at the center of the div position */
+    left: 50vw;              /* center horizontally in the viewport */
+    top: 50vh;               /* center vertically in the viewport */
+    transition: transform 0.6s ease, left 0.6s ease, top 0.6s ease; /* smooth movement for every side*/
+}
+
+#anchor-image.hidden {
+    opacity: 0;             /* hide the image */
 }
 
 #body_section {
@@ -432,6 +459,10 @@ body {
         width: 95vw;
     }
 
+    .slide {
+        width: 90vw;
+    }
+
     .body_article {
         width: 90vw;
     }
@@ -451,6 +482,10 @@ body {
     .body_article {
         width: 75vw;
     }
+
+    .slide {
+        width: 70vw;
+    }
 }
 
 /* desktop */
@@ -463,6 +498,3 @@ body {
         width: 80%;
     }
 }
-
-
-

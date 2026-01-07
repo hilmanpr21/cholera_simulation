@@ -24,6 +24,23 @@
         if (currentSlide) {
             currentSlide.classList.add('is-active');
         }
+
+        if (stepIndex < 1) {
+            // hide visual anchor before slide 2
+            hideVisualAnchor();
+        }
+
+        if (stepIndex === 1) {
+            // show visual anchor at center of viewport
+            showVisualAnchor();
+
+            // call function to move visual anchor to specific position
+            moveAnchorToViewport(window.innerWidth / 2, window.innerHeight / 2 );
+        }
+
+        if (stepIndex === 2) {
+            moveAnchorToCanvas('choleraSim1', 0, 40);
+        }
     }
 
     function init() {
