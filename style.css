@@ -56,23 +56,7 @@ body {
     font-family: monospace;
     display: flex;
     flex-direction: column;
-}
-
-
-}
-
-.landing-content {
-    position: sticky;
-    height: 100vh;          /* full viewport height */
-    top: 0;                 /* stick to the top of the viewport */
-    width: 100vw;           /* full viewport width */
-    max-width: 800px;       /* match the parent container */
-    display: flex;          /* Flexbox for centering content */
-    flex-direction: column; /* Stack children vertically */
-    align-items: center;    /* Center children horizontally */
-    justify-content: center;/* Center children vertically */
-    text-align: center;     /* Center text inside the container */
-    padding: 0 1rem;        /* padding left/right for smaller screens */
+    overflow-x: hidden;
 }
 
 
@@ -89,10 +73,8 @@ body {
     align-items: center;
     justify-content: center;
     background-color: var(--main-body-color);
-    overflow: auto;       /*prevent content overflow */
+    overflow: hidden;       /*prevent content overflow */
 }
-
-
 
 .slide {
     color: var(--text-color);
@@ -100,7 +82,7 @@ body {
     max-width: 480px;
     padding: 2rem;
     text-align: center;
-    top: 30vw;
+    top: 10vh;
     opacity: 0;
     transform: translateY(20px); /* start slightly below*/
     pointer-events: none;       /* prevent interaction when not visible */
@@ -113,13 +95,13 @@ body {
     transform: translateY(0);   /* move to original position  to make swipe up illusion*/
 }
 
+ .slide.is-center {
+    top: 50vh;
+    transform: translateY(-50%); /* center vertically */
+ }
+
 .step {
     min-height: 100vh;
-}
-
-.content {
-    max-width: 600px;        /* limit content width for readability */
-    text-align: center;      /* Center text inside the container */
 }
 
 /* Optional visual separation while developing */
@@ -144,11 +126,19 @@ body {
     transform: translate(-50%, -50%);   /* center the image at the center of the div position */
     left: 50vw;              /* center horizontally in the viewport */
     top: 50vh;               /* center vertically in the viewport */
-    transition: transform 0.6s ease, left 0.6s ease, top 0.6s ease; /* smooth movement for every side*/
+    will-change: transform;
 }
 
 #anchor-image.hidden {
     opacity: 0;             /* hide the image */
+}
+
+#anchor-image.mode-slide {
+    transition: transform 0.6s ease, width 1s ease-in-out, left 0.6s ease, top 0.6s ease;
+}
+
+#anchor-image.mode-follow {
+    transition: none;
 }
 
 #body_section {

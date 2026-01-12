@@ -7,7 +7,7 @@
      * Initialise the canvas context
      * @type {HTMLCanvasElement}
      */
-    const canvas = document.getElementById('choleraSim1');
+    const canvas = document.getElementById('choleraSim1B');
     const roughCanvas = rough.canvas(canvas);        // rough.js context
     const ctx = canvas.getContext('2d');            // 2D canvas context
 
@@ -405,9 +405,11 @@
         drawScene();
 
         // sync visual anchor with simulation 1 if in follow mode
-        // `window.followSimulation1` is set in scroll_controller_2.js to control whether to follow the simulation
-        if (window.followSimulation1) {
-            window.syncVisualanchorWithSimulation1();
+        // `wibdow.followSimulation1B` is set in scroll_controller_2.js to control whether to follow the simulation
+        if (window.followSimulation1B) {
+            // call function to sync visual anchor with simulation 1
+            // `window.syncVisualAnchorWithSimulation1B` is defined in visual_anchor_controller.js to sync the visual anchor position
+            window.syncVisualAnchorWithSimulation1B();
         }
 
         // Request the next animation frame
@@ -461,9 +463,9 @@
      * @type {HTMLButtonElement}
      */
     // connect with button on html
-    const startButton = document.getElementById('start-button');
-    const pauseButton = document.getElementById('pause-button');
-    const resetButton = document.getElementById('reset-button');
+    const startButton = document.getElementById('start-button-sim1B');
+    const pauseButton = document.getElementById('pause-button-sim1B');
+    const resetButton = document.getElementById('reset-button-sim1B');
 
     // add event listeners to buttons
     startButton.addEventListener('click', startSimulation);
@@ -484,7 +486,7 @@
         isRunning = true;
 
         // make the visual anchor follow the simulation
-        window.followSimulation1 = true;
+        window.followSimulation1B = true;
         window.setAnchorModeFollow();
         
         // change helper button mode
@@ -511,7 +513,7 @@
 
         // change the state
         isRunning = false;
-        window.followSimulation1 = false;
+        window.followSimulation1B = false;
 
         window.setAnchorModeSlide();
 
@@ -550,8 +552,6 @@
         agent.y = house.y+10;
         agent.stepIndex = 0;
 
-        
-
         //reste agent infection state
         agent.isInfected = false;
 
@@ -574,13 +574,13 @@
         drawScene();
 
         // make the visual anchor follow the simulation
-        window.followSimulation1 = true;            // enable follow mode
+        window.followSimulation1B = true;            // enable follow mode
         
         // set visual anchor to follow mode, this make the visual anchor appear at the simulation position without animation
-        window.setAnchorModeSlide();
+        // window.setAnchorModeFollow();
 
         // reset visual anchor mode
-        window.syncVisualanchorWithSimulation1();  // sync visual anchor position with the agent position
+        window.syncVisualanchorWithSimulation1B();  // sync visual anchor position with the agent position
     }
 
     // initial UI state and render with disabled pause button
@@ -592,7 +592,7 @@
     /**
      * Expose minimal API for 
      */
-    window.sim1Agent = {
+    window.sim1BAgent = {
         getAgentPosition() {
             return {x: agent.x, y: agent.y};
         },

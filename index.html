@@ -18,7 +18,7 @@
 
            <div class="sticky-frame">
                 <div class="slide is-active" data-slide="0">
-                    <h1>CHOLERA TITLE SIMULATION</h1>
+                    <h1>FIGHT THE OUTBREAK</h1>
                     <p>Scroll down to start the story.</p>
                 </div>
 
@@ -39,15 +39,22 @@
                             <button id="reset-button" class="sim-control-button" type="button">reset</button>
                             <button id="pause-button" class="sim-control-button" type="button">pause</button>
                         </div>
-                        <div id="sim1-control-button" class="sim1-control-button">
-                            <button id="contaminate-water-button" class="sim-control-button" type="button">Contaminate Water</button>
-                        </div>
                     </div>
                 </div>
 
                 <div class="slide" data-slide="3">
                     <p>The school water is shared by many students and teachers. When this water becomes contaminated (dark blue water), cholera can spread through drinking it. Rafi gets infected (turn red) after using the contaminated school water. Later, he brings the infection home and contaminates his family’s water.</p>
-                    
+                    <div id="sim1B-wrapper" class="sim-wrapper">
+                        <canvas id="choleraSim1B" class="canvas-container"></canvas>
+                        <div class="sim-controlB-button-collection">
+                            <button id="start-button-sim1B" class="sim-control-button" type="button">start</button>
+                            <button id="reset-button-sim1B" class="sim-control-button" type="button">reset</button>
+                            <button id="pause-button-sim1B" class="sim-control-button" type="button">pause</button>
+                        </div>
+                        <div id="sim1B-control-button" class="sim1B-control-button">
+                            <button id="contaminate-water-button" class="sim-control-button" type="button">Contaminate Water</button>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="slide" data-slide="4">
@@ -311,13 +318,13 @@
     
         <!-- Load SVG agent anchor overlay -->
         <div id="anchor-overlay">
-            <img id="anchor-image" src="assets/rafi_normal.PNG" alt="Rafi">
+            <img id="anchor-image" class="hidden" src="assets/rafi_normal.PNG" alt="Rafi">
         </div>
-
         
-        <script src="script/scroll_controller_2.js"></script>
+        <script src="script/scroll_controller.js"></script>
         <script src="script/visual_anchor_controller.js"></script>
         <script src="simulation/sim1.js"></script>
+        <script src="simulation/sim1B.js"></script>
         <script src="simulation/sim2.js"></script>
         <script src="simulation/sim3.js"></script>
         <script src="simulation/sim4.js"></script>
