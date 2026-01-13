@@ -404,14 +404,6 @@
         // Redraw the scene
         drawScene();
 
-        // sync visual anchor with simulation 1 if in follow mode
-        // `wibdow.followSimulation1B` is set in scroll_controller_2.js to control whether to follow the simulation
-        if (window.followSimulation1B) {
-            // call function to sync visual anchor with simulation 1
-            // `window.syncVisualAnchorWithSimulation1B` is defined in visual_anchor_controller.js to sync the visual anchor position
-            window.syncVisualAnchorWithSimulation1B();
-        }
-
         // Request the next animation frame
         animationId = requestAnimationFrame(animate)
     }
@@ -485,8 +477,6 @@
         // change the state 
         isRunning = true;
 
-        // make the visual anchor follow the simulation
-        window.followSimulation1B = true;
         window.setAnchorModeFollow();
         
         // change helper button mode
@@ -513,7 +503,6 @@
 
         // change the state
         isRunning = false;
-        window.followSimulation1B = false;
 
         window.setAnchorModeSlide();
 
@@ -573,14 +562,10 @@
         // redraw the initial scene
         drawScene();
 
-        // make the visual anchor follow the simulation
-        window.followSimulation1B = true;            // enable follow mode
         
-        // set visual anchor to follow mode, this make the visual anchor appear at the simulation position without animation
-        // window.setAnchorModeFollow();
+        // set visual anchor to slide mode, this make the visual anchor appear at the simulation position with animation
+        window.setAnchorModeSlide();
 
-        // reset visual anchor mode
-        window.syncVisualanchorWithSimulation1B();  // sync visual anchor position with the agent position
     }
 
     // initial UI state and render with disabled pause button
@@ -598,6 +583,28 @@
         },
         isInfected() {
             return agent.isInfected;
+        },
+        isRunning() {
+            return isRunning;
+        }
+    }
+
+     /**
+     * Simulation 1 API for external access
+     * @property {string} canvasId - ID of the canvas element
+     * @property {function} getMainAgentPosition - Function to get main agent position
+     * @property {function} getMainAgentStatus - Function to get main agent status
+     * @property {function} isRunning - Function to check if simulation is running
+     */
+    window.simulations.sim1B = {
+        canvasId : 'choleraSim1B',
+        getMainAgentPosition() {
+            return {x: agent.x, y: agent.y};
+        },
+        getMainAgentStatus() {
+            return {
+                infected: agent.isInfected
+            }
         },
         isRunning() {
             return isRunning;

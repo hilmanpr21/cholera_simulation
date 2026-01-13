@@ -1445,6 +1445,28 @@
     pauseButton.disabled = true;            // cannot pause until the simulation is running
     resetButton.disabled = true;             // cannot reset until the simulation is running
 
+    // draw the initial scene
     drawScene();
 
+    /**
+     * make global access to main agent position and status to change the visual anchor
+     */
+    window.simulations.sim4 = {
+        canvasId: 'choleraSim4',
+        getMainAgentPosition() {
+            const agent = agents[0];      // get the first agent as the main agent
+            return {x: agent.x, y: agent.y};   // return the agent position (adjusted for visual anchor offset)
+        },
+        getMainAgentStatus() {
+            const agent = agents[0];
+            return {
+                infected: agent.isInfected,
+                recovered: agent.isRecovered,
+                vaccivated: agent.isVaccinated
+            };
+        },
+        isRunning() {
+            return isRunning;
+        }
+    };
 })();

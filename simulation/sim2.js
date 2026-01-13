@@ -1078,4 +1078,27 @@
     resetButton.disabled = true;             // cannot reset until the simulation is running
 
     drawScene();
+
+
+    /**
+     * make global access to main agent position and status to change the visual anchor
+     */
+    window.simulations.sim2 = {
+        canvasId: 'choleraSim2',
+        getMainAgentPosition() {
+            const agent = agents[0];      // get the first agent as the main agent
+            return {x: agent.x, y: agent.y};   // return the agent position (adjusted for visual anchor offset)
+        },
+        getMainAgentStatus() {
+            const agent = agents[0];
+            return {
+                infected: agent.isInfected,
+                recovered: agent.isRecovered
+            };
+        },
+        isRunning() {
+            return isRunning;
+        }
+    };
+
 })();

@@ -2,7 +2,7 @@ const visualAnchor = document.getElementById('anchor-image');
 
 /**
  * Change visual anchor position to viewport coordinates
- * retunrns nothing, but change the visual anchor style left and top properties 
+ * returns nothing, but change the visual anchor style left and top properties 
  * @param {rtu} x 
  * @param {*} y 
  */
@@ -19,6 +19,7 @@ function moveAnchorToViewport(x, y) {
  * @param {number} offsetX - x offset in canvas space
  * @param {number} offsetY - y offset in canvas space
  */
+/*
 function moveAnchorToCanvas(canvasId, offsetX=0, offsetY=0) {
     const canvas = document.getElementById(canvasId);
     
@@ -33,6 +34,7 @@ function moveAnchorToCanvas(canvasId, offsetX=0, offsetY=0) {
     // calling moveAnchorToViewport function
     moveAnchorToViewport(x, y);
 }
+*/
 
 /**
  * Hide the visual anchor before slide 2
@@ -80,19 +82,36 @@ function canvasToViewport(canvasID, x, y) {
     }
 }
 
-
+/**
+ * Create AnchorController, global object to manage visual anchor
+ * @property {boolean} active - whether the anchor controller is active
+ * @property {string} canvasId - ID of the canvas element to follow
+ * @property {function} getAgentPosition - function to get agent position
+ * @property {function} getAgentStatus - function to get agent status   
+ */
+window.AnchorController = {
+    active: false,              // whether the anchor controller is active
+    canvasId: null,             // ID of the canvas element to follow
+    getAgentPosition: null,     // function to get agent position
+    getAgentStatus: null,       // function to get agent status
+}
 
 /**
- * function to update visual anchor position to follow simulation 1
+ * Function to sync visual anchor position with main agent position
  */
-function syncVisualanchorWithSimulation1() {
-    if (!window.followSimulation1) return;     // exit if not following simulation 1
+function syncVisualAnchor() {
+    const AnchorController = window.AnchorController;   // get global AnchorController object and all the properties
 
-    const positions = window.sim1Agent.getAgentPosition(); // getting agent (visual anchor) position in the simulation
-    const viewportPos = canvasToViewport('choleraSim1', positions.x, positions.y-12);
+    if (!AnchorController.active) return;     // exit if not active
+
+    // if active, get agent position from the provided function
+    const positions = AnchorController.getAgentPosition();
+
+    // convert canvas position to viewport position, will return object with x and y properties
+    const viewportPosition = canvasToViewport(AnchorController.canvasId, positions.x, positions.y);
 
     // move visual anchor to the calculated viewport position
-    moveAnchorToViewport(viewportPos.x, viewportPos.y);
+    moveAnchorToViewport(viewportPosition.x, viewportPosition.y);
 
     // update visual anchor appearance based on agent status
     updateVisualAnchorVisual();
@@ -102,12 +121,30 @@ function syncVisualanchorWithSimulation1() {
  * Update visual anchor status
  */
 function updateVisualAnchorVisual() {
-    if (window.sim1Agent.isInfected()) {
+    const status = window.AnchorController.getAgentStatus?.();
+    if (!status) return;
+
+    if (status.infected && !status.vaccinated) {
         visualAnchor.src = 'assets/rafi_infected.PNG';
+    } else if (!status.infected && status.vaccinated) {
+        visualAnchor.src = 'assets/rafi_vaccinated.PNG';
+    } else if (status.infected && status.vaccinated) {
+        visualAnchor.src = 'assets/rafi_infected_vaccinated.PNG';
     } else {
         visualAnchor.src = 'assets/rafi_normal.PNG';
     }
+
+    console.log('Anchor status updated:', status);
 }
+
+/**
+ * Animation loop to continuously sync visual anchor position
+ */
+function anchorLoop() {
+    window.syncVisualAnchor();   // call sync visual anchor function
+    requestAnimationFrame(anchorLoop);   // request next animation frame
+}
+anchorLoop();   // start the anchor loop
 
 /**
  * 
@@ -122,12 +159,14 @@ function setAnchorModeFollow() {
     visualAnchor.classList.add('mode-follow');
 }
 
+// set initial visual anchor mode to slide
 setAnchorModeSlide();
 
-showVisualAnchor();
+// initially show visual anchor
+// showVisualAnchor();
+
 
 // define API to be used in other scripts
-window.syncVisualanchorWithSimulation1 = syncVisualanchorWithSimulation1;     // function to sync visual anchor position with simulation 1
-window.followSimulation1 = false; // global variable to control whether to follow simulation 1
+window.syncVisualAnchor = syncVisualAnchor;         // function to sync visual anchor position
 window.setAnchorModeSlide = setAnchorModeSlide;     // function to set visual anchor to slide mode
-window.setAnchorModeFollow = setAnchorModeFollow;  // function to set visual anchor to follow mode
+window.setAnchorModeFollow = setAnchorModeFollow;   // function to set visual anchor to follow mode

@@ -246,7 +246,7 @@
         speed: 1.5,
         currentLocation: 'house',               // initial location set to 'house'
         targetLocation: 'house',                // initial target location is staying at 'house'
-        isInfected: index === 1 || index === 2 ? true : false,                      // track agent infection state
+        isInfected: index === 1 || index === 2 ? true : false,                      // track agent infection state, agnet 1 and 2 start as infected for simulation purpose
         infectionStartDay: index === 1 || index === 2 ? 1 : null,   // track the day when agent got infected, initial infected agents (agent index 1 and 2) start at day 0
         isRecovered: false,                         // track if agent has recovered and become immune
         recoveryStartDay: 0,                         // track the day when agent recovered from infection
@@ -1209,5 +1209,28 @@
     resetButton.disabled = true;             // cannot reset until the simulation is running
 
     drawScene();
+
+    /**
+     * make global access to main agent position and status to change the visual anchor
+     */
+    window.simulations.sim3 = {
+        canvasId: 'choleraSim3',
+        getMainAgentPosition() {
+            const agent = agents[0];      // get the first agent as the main agent
+            return {x: agent.x, y: agent.y};   // return the agent position (adjusted for visual anchor offset)
+        },
+        getMainAgentStatus() {
+            const agent = agents[0];
+            return {
+                infected: agent.isInfected,
+                recovered: agent.isRecovered,
+                vaccinated: agent.isVaccinated
+            };
+        },
+        isRunning() {
+            return isRunning;
+        }
+    };
+
 
 })();

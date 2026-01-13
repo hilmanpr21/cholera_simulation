@@ -1154,6 +1154,4 @@
     // initial draw
     drawScene();
 
-
-
 }) ();

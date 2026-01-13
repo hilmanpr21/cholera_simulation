@@ -9,6 +9,22 @@
 
     const scroller = scrollama();
 
+    /**
+     * 
+     */
+    const slideTosimulationMap = {
+        2: 'sim1',
+        3: 'sim1B',
+        4: 'sim2',
+        5: 'sim3',
+        6: 'sim4',
+        7: 'sim5'
+    };
+
+    /**
+     * 
+     * 
+     */
     function handleStepEnter(response) {
         const stepIndex = response.index;
 
@@ -40,23 +56,7 @@
             showVisualAnchor();
 
             // call function to move visual anchor to specific position
-            moveAnchorToViewport(window.innerWidth / 2, window.innerHeight / 2 +50 );
-        }
-
-        if (stepIndex === 2) {
-            // show visual anchor at simulation 1 position
-            canvasToViewport('choleraSim1', 0, 0);
-
-            // enable follow mode for simulation 1
-            window.followSimulation1 = true;     
-            
-            // sync visual anchor position with simulation 1
-            window.syncVisualanchorWithSimulation1();
-
-            // After transition completes, switch to follow mode and start syncing
-            setTimeout(() => {
-                window.setAnchorModeFollow();
-            }, 1000); // Match this with CSS transition duration
+            moveAnchorToViewport(window.innerWidth / 2, window.innerHeight / 2 + 50 );
         }
 
         // stop following simulation 1 after slide 2
@@ -71,11 +71,53 @@
             visualAnchor.style.width = '180px';
         }
 
-        if (stepIndex > 2) {
-            hideVisualAnchor();
+        // setup visual anchor to follow simulation
+        visualanchorFollowSimulationSetup(stepIndex);
+    }
+
+    /**
+     * 
+     */
+    function visualanchorFollowSimulationSetup(stepIndex) {
+        
+        
+        // get simulation key from the mapping
+        // store in string variable
+        const simKey = slideTosimulationMap[stepIndex];
+
+        // check if the simulation does not exist
+        if (!simKey) {
+            // no simulation to show for this slide
+            window.AnchorController.active = false;     // deactivate anchor controller
+            window.setAnchorModeSlide();                // set anchor to slide mode
+        }
+
+        // if simulation exists, activate anchor controller
+        else {
+            
+            const sim = window.simulations?.[simKey];
+
+            if (!sim) {
+                console.warn('Simulation not found for step', stepIndex, simKey);
+            };   // exit if simulation not found
+
+            window.AnchorController.active = true;      // activate anchor controller
+            window.AnchorController.canvasId = sim.canvasId;   // get the simulation canvas ID
+            window.AnchorController.getAgentPosition = sim.getMainAgentPosition;   // get function to retrieve main agent position
+            window.AnchorController.getAgentStatus = sim.getMainAgentStatus;       // get function to retrieve main agent status
+
+            // After transition completes, switch to follow mode and start syncing
+            setTimeout(() => {
+                window.setAnchorModeFollow();
+            }, 1000); // Match this with CSS transition duration
         }
     }
 
+
+
+    /**
+     * Initialize the scroll controller
+     */
     function init() {
         scroller
             .setup({
