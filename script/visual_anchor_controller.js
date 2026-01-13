@@ -163,8 +163,7 @@ function setAnchorModeFollow() {
 setAnchorModeSlide();
 
 // initially show visual anchor
-// showVisualAnchor();
-
+showVisualAnchor();
 
 // define API to be used in other scripts
 window.syncVisualAnchor = syncVisualAnchor;         // function to sync visual anchor position
