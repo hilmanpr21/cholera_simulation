@@ -1470,15 +1470,7 @@
             };
         },
         getAgents() {
-            return agents.map((agent, index) => ({
-                id: index,
-                x: agent.x,
-                y: agent.y,
-                infected: agent.isInfected,
-                recovered: agent.isRecovered, 
-                vaccinated: agent.isVaccinated,
-                isActive: agent.isActive
-            }));
+            return agents;
         },
         isRunning() {
             return isRunning;

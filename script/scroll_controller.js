@@ -65,13 +65,16 @@
         }
         // resize the visual anchor after slide 1
         if (stepIndex > 1) {
-            visualAnchor.style.width = '40px';
+            visualAnchor.style.width = '48px';
         } else {
             visualAnchor.style.width = '180px';
         }
 
         // setup visual anchor to follow simulation
         visualanchorFollowSimulationSetup(stepIndex);
+
+        // setup character controller to follow simulation
+        characterFollowSimulationSetup(stepIndex);
     }
 
     /**
@@ -80,7 +83,18 @@
      */
     function visualanchorFollowSimulationSetup(stepIndex) {
         
-        
+        // Hide Rafi after slide 6
+        if (stepIndex > 6) {
+            hideVisualAnchor();
+            window.AnchorController.active = false;
+            return;
+        }
+
+        // Show Rafi if returning to slides 1-6
+        if (stepIndex >= 1) {
+            showVisualAnchor();
+        }
+
         // get simulation key from the mapping
         // store in string variable
         const simKey = slideTosimulationMap[stepIndex];
@@ -106,12 +120,39 @@
             window.AnchorController.getAgentPosition = sim.getMainAgentPosition;   // get function to retrieve main agent position
             window.AnchorController.getAgentStatus = sim.getMainAgentStatus;       // get function to retrieve main agent status
 
-            agentCharacterController.setSimulation(simKey);
-
             // After transition completes, switch to follow mode and start syncing
             setTimeout(() => {
                 window.setAnchorModeFollow();
             }, 1000); // Match this with CSS transition duration
+        }
+    }
+
+    function characterFollowSimulationSetup(stepIndex) {
+        // store simulation slides in an array
+        const agentSimSlides = [4, 5, 6]; // slides where characters are shown
+
+        if (stepIndex < 4 || stepIndex > 6) {
+            window.AgentCharacterController.active = false; // deactivate character controller
+            hideAllAgentCharacters();
+            window.setCharacterModeSlide(); // set to slide mode
+
+        } else {    // activate character controller
+            // get simulation key from the mapping
+            const simKey = slideTosimulationMap[stepIndex];
+            const sim = window.simulations?.[simKey];
+
+            // if simulation found, activate character controller
+            if (sim) {
+                window.AgentCharacterController.active = true; // activate character controller
+                window.AgentCharacterController.canvasId = sim.canvasId; // set canvas ID
+                window.AgentCharacterController.simKey = simKey; // set simulation key
+
+                // After transition completes, switch to follow mode and start syncing
+                setTimeout(() => {
+                    window.setCharacterModeFollow();
+                }, 1000); // Match this with CSS transition duration
+
+            }
         }
     }
 
