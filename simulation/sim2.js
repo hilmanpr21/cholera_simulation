@@ -791,7 +791,7 @@
         drawSchool();    
         drawHouse();
         drawWaterbody();
-        drawAgent();
+        // drawAgent();
     }
 
     /**
@@ -1079,6 +1079,9 @@
 
     drawScene();
 
+    if (!window.simulations) {
+        window.simulations = {};
+    }
 
     /**
      * make global access to main agent position and status to change the visual anchor
@@ -1095,6 +1098,17 @@
                 infected: agent.isInfected,
                 recovered: agent.isRecovered
             };
+        },
+        getAgents() {
+            return agents.map((agent, index) => ({
+                id: index,
+                x: agent.x,
+                y: agent.y,
+                infected: agent.isInfected,
+                recovered: agent.isRecovered, 
+                vaccinated: agent.isVaccinated,
+                isActive: agent.isActive
+            }));
         },
         isRunning() {
             return isRunning;

@@ -134,7 +134,6 @@ function updateVisualAnchorVisual() {
         visualAnchor.src = 'assets/rafi_normal.PNG';
     }
 
-    console.log('Anchor status updated:', status);
 }
 
 /**
@@ -169,3 +168,5 @@ showVisualAnchor();
 window.syncVisualAnchor = syncVisualAnchor;         // function to sync visual anchor position
 window.setAnchorModeSlide = setAnchorModeSlide;     // function to set visual anchor to slide mode
 window.setAnchorModeFollow = setAnchorModeFollow;   // function to set visual anchor to follow mode
+
+

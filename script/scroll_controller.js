@@ -17,8 +17,7 @@
         3: 'sim1B',
         4: 'sim2',
         5: 'sim3',
-        6: 'sim4',
-        7: 'sim5'
+        6: 'sim4'
     };
 
     /**
@@ -66,7 +65,7 @@
         }
         // resize the visual anchor after slide 1
         if (stepIndex > 1) {
-            visualAnchor.style.width = '48px';
+            visualAnchor.style.width = '40px';
         } else {
             visualAnchor.style.width = '180px';
         }
@@ -76,7 +75,8 @@
     }
 
     /**
-     * 
+     * function to setup visual anchor to follow simulation
+     * @param {number} stepIndex - current step index   
      */
     function visualanchorFollowSimulationSetup(stepIndex) {
         
@@ -105,6 +105,8 @@
             window.AnchorController.canvasId = sim.canvasId;   // get the simulation canvas ID
             window.AnchorController.getAgentPosition = sim.getMainAgentPosition;   // get function to retrieve main agent position
             window.AnchorController.getAgentStatus = sim.getMainAgentStatus;       // get function to retrieve main agent status
+
+            agentCharacterController.setSimulation(simKey);
 
             // After transition completes, switch to follow mode and start syncing
             setTimeout(() => {
