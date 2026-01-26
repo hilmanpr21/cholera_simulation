@@ -201,13 +201,45 @@
         }
     }
 
+    // Image loading management
+    let imagesLoaded = 0;
+    const totalImages = 5;
+
+    function onImageLoad() {
+        imagesLoaded++;
+        if (imagesLoaded === totalImages) {
+            // All images loaded, draw initial scene
+            drawScene();
+        }
+    }
+
+    const houseNormalImage = new Image();
+    houseNormalImage.onload = onImageLoad;
+    houseNormalImage.src = 'assets/house_normal.PNG';
+
+    const houseInfectedImage = new Image();
+    houseInfectedImage.onload = onImageLoad;
+    houseInfectedImage.src = 'assets/house_infected.PNG';
+    
+    const schoolImage = new Image();
+    schoolImage.onload = onImageLoad;
+    schoolImage.src = 'assets/school.PNG';
+
+    const contaminatedWaterImage = new Image();
+    contaminatedWaterImage.onload = onImageLoad;
+    contaminatedWaterImage.src = 'assets/contaminated_water.PNG';
+
+    const cleanWaterImage = new Image();
+    cleanWaterImage.onload = onImageLoad;
+    cleanWaterImage.src = 'assets/clean_water.PNG';
+
     /**
      * Draws all water bodies (house and school) on the canvas
      * Color changes based on contamination state (lightblue = clean, darkblue = contaminated)
      * @returns {void}
      */
     function drawWaterbody() {
-        
+        /*
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 1.5;
         ctx.lineJoin = 'round';
@@ -228,7 +260,27 @@
         ctx.fill();
         ctx.strokeStyle = 'black';
         ctx.stroke();
+        */
 
+        // draw houseWaterBody
+        const waterWidth = 50;
+        
+        ctx.drawImage(
+            houseWaterBody.isContaminated ? contaminatedWaterImage : cleanWaterImage,
+            houseWaterBody.x - waterWidth/2, 
+            houseWaterBody.y - waterWidth/2,
+            waterWidth,
+            waterWidth
+        );
+
+        // draw schoolWaterBody
+        ctx.drawImage(
+            schoolWaterBody.isContaminated ? contaminatedWaterImage : cleanWaterImage,
+            schoolWaterBody.x - waterWidth/2, 
+            schoolWaterBody.y - waterWidth/2,
+            waterWidth,
+            waterWidth
+        );
     }
 
     /**
@@ -236,6 +288,7 @@
      * @returns {void}
      */
     function drawSchool() {
+        /*
         // set the stroke style
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 2.5;
@@ -282,6 +335,18 @@
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 2.5;
         ctx.stroke();
+        */
+
+        const schoolWidth = 160;
+        const schoolHeight = 80;
+
+        ctx.drawImage(
+            schoolImage,
+            school.x - schoolWidth/2,
+            school.y - schoolHeight/2,
+            schoolWidth,
+            schoolHeight
+        );
     }  
 
     /**
@@ -290,6 +355,7 @@
      * @returns {void}
      */
     function drawHouse() {
+        /*
         const houseStrokeColor = house.isInfected ? 'red' : 'black';
 
         ctx.strokeStyle = houseStrokeColor;
@@ -316,8 +382,18 @@
         ctx.strokeStyle = houseStrokeColor;
         ctx.lineWidth = 2.5;
         ctx.stroke();
+        */
 
-        //
+        const houseWidth = 80;
+        const houseHeight = 60;
+
+        ctx.drawImage(
+            house.isInfected ? houseInfectedImage : houseNormalImage,
+            house.x - houseWidth/2,
+            house.y - houseHeight/2,
+            houseWidth,
+            houseHeight
+        );
     }
 
     /**
@@ -372,7 +448,7 @@
         drawSchool();    
         drawHouse();
         drawWaterbody();
-        drawAgent();
+        //drawAgent();
     }
 
     /**
@@ -574,7 +650,7 @@
     pauseButton.disabled = true;            // cannot pause until the simulation is running
     resetButton.disabled = true;             // cannot reset until the simulation is running
 
-    drawScene();
+    // Don't call drawScene() here - it will be called after images load
 
     /**
      * Expose minimal API for 

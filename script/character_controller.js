@@ -42,7 +42,7 @@ function createAgentCharacter (agentId) {
     img.style.width = '40px';
     img.style.pointers = 'none';
     img.style.transform = 'translate(-50%, -50%)'; // center the image on the position
-    img.style.transition = 'transform 0.6s ease, width 1s ease-in-out, left 0.6s ease, top 0.6s ease'; // smooth movement
+    //img.style.transition = 'transform 0.6s ease, width 1s ease-in-out, left 0.6s ease, top 0.6s ease'; // smooth movement
     img.style.display = 'none'; // hide initially
 
     // appened the crreated image element to the body

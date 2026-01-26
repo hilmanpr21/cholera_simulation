@@ -732,23 +732,43 @@
         });
     }
 
+     // Image loading management
+    let imagesLoaded = 0;
+    const totalImages = 2;
+
+    function onImageLoad() {
+        imagesLoaded++;
+        if (imagesLoaded === totalImages) {
+            // All images loaded, draw initial scene
+            drawScene();
+        }
+    }
+
+    const contaminatedWaterImage = new Image();
+    contaminatedWaterImage.onload = onImageLoad;
+    contaminatedWaterImage.src = 'assets/contaminated_water.PNG';
+
+    const cleanWaterImage = new Image();
+    cleanWaterImage.onload = onImageLoad;
+    cleanWaterImage.src = 'assets/clean_water.PNG';
+
+
     /**
      * DrawWater function
      */
     function drawWaterbody() {
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = 1.5;
-        ctx.lineJoin = 'round';
-        ctx.lineCap = 'round'; 
+        const waterWidth = 30;
 
         // draw waterbody for each community
         waterbodies.forEach((waterbody) => {
-            ctx.beginPath();
-            ctx.arc(waterbody.x, waterbody.y, 15, 0, Math.PI * 2);
-            ctx.fillStyle = waterbody.isContaminated ? 'darkblue' : 'lightblue';
-            ctx.fill();
-            ctx.strokeStyle = 'black';
-            ctx.stroke();
+            // draw houseWaterBody
+            ctx.drawImage(
+                waterbody.isContaminated ? contaminatedWaterImage : cleanWaterImage,
+                waterbody.x - waterWidth/2, 
+                waterbody.y - waterWidth/2,
+                waterWidth,
+                waterWidth
+            );
         })
     }
 
