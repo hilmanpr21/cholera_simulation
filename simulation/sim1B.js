@@ -7,8 +7,7 @@
      * Initialise the canvas context
      * @type {HTMLCanvasElement}
      */
-    const canvas = document.getElementById('choleraSim1');
-    const roughCanvas = rough.canvas(canvas);        // rough.js context
+    const canvas = document.getElementById('choleraSim1B');
     const ctx = canvas.getContext('2d');            // 2D canvas context
 
     // set canvas internal resolution
@@ -47,10 +46,10 @@
     let agent = {
         x: house.x+10,          // Agent initial x position
         y: house.y+10,          // Agent initial y position
-        speed: 1.5,                // Agent movement speed
+        speed: 2,                // Agent movement speed
         itinerary: ['school', 'schoolWater', 'school', 'house', 'houseWater', 'house'],         // Agent array of locations to visit
         stepIndex: 0,              // current index in the itinerary
-        isInfected: false,         // track agent infection state
+        isInfected: true,         // track agent infection state
     }
 
     /**
@@ -180,6 +179,10 @@
             // start tracking contamination duration
             houseWaterBody.contaminatedTime = 0;
         }
+
+        if (targetLocationInput === 'schoolWater' && agent.isInfected) {
+            schoolWaterBody.isContaminated = true;
+        }
     }
 
     /**
@@ -259,7 +262,7 @@
         ctx.fillStyle = schoolWaterBody.isContaminated ? 'darkblue' : 'lightblue';
         ctx.fill();
         ctx.strokeStyle = 'black';
-        ctx.stroke();
+        ctx.stroke()
         */
 
         // draw houseWaterBody
@@ -486,40 +489,6 @@
         animationId = requestAnimationFrame(animate)
     }
 
-    /**
-     * Button element for contaminating the school water body
-     * @type {HTMLButtonElement}
-     */
-    // connect with contamination button on html
-    const contaminateButton = document.getElementById('contaminate-water-button');
-
-    // add event listener to contaminate school waterbody
-    contaminateButton.addEventListener('click', contaminateSchoolWaterbody);
-
-    /**
-     * Toggles contamination state of school water body
-     * Updates button appearance and text based on state
-     * @returns {void}
-     */
-    // control helper to contaminate school waterbody
-    function contaminateSchoolWaterbody() {
-        //toggle contamination state
-        schoolWaterBody.isContaminated = !schoolWaterBody.isContaminated;
-
-        // update button appearance based on contamination state
-        if (schoolWaterBody.isContaminated) {
-            contaminateButton.classList.add('active');
-            contaminateButton.textContent = 'Decontaminate School Waterbody';
-        }else {
-            contaminateButton.classList.remove('active');
-            contaminateButton.textContent = 'Contaminate Water';
-        }
-        
-        // redraw the scene to reflect contamination state 
-        drawScene();                                    
-    }
-
-
 
     /**
      * Tracks whether the simulation is currently running
@@ -533,9 +502,9 @@
      * @type {HTMLButtonElement}
      */
     // connect with button on html
-    const startButton = document.getElementById('start-button');
-    const pauseButton = document.getElementById('pause-button');
-    const resetButton = document.getElementById('reset-button');
+    const startButton = document.getElementById('start-button-sim1B');
+    const pauseButton = document.getElementById('pause-button-sim1B');
+    const resetButton = document.getElementById('reset-button-sim1B');
 
     // add event listeners to buttons
     startButton.addEventListener('click', startSimulation);
@@ -555,7 +524,6 @@
         // change the state 
         isRunning = true;
 
-        // make the visual anchor follow the simulation
         window.setAnchorModeFollow();
         
         // change helper button mode
@@ -620,19 +588,13 @@
         agent.y = house.y+10;
         agent.stepIndex = 0;
 
-        
-
         //reste agent infection state
-        agent.isInfected = false;
+        agent.isInfected = true;
 
         // reset  waterbody contamination state
         schoolWaterBody.isContaminated = false;
         houseWaterBody.isContaminated = false;
-        houseWaterBody.contaminatedTime = 0;
-
-        // reset contaminate button appearance
-        contaminateButton.classList.remove('active');
-        contaminateButton.textContent = 'Contaminate Water';
+        houseWaterBody.contaminationTime = 0;
 
         // reset house infection state
         house.isInfected = false;
@@ -644,20 +606,21 @@
         drawScene();
 
         
-        // set visual anchor to follow mode, this make the visual anchor appear at the simulation position without animation
+        // set visual anchor to slide mode, this make the visual anchor appear at the simulation position with animation
         window.setAnchorModeSlide();
+
     }
 
     // initial UI state and render with disabled pause button
     pauseButton.disabled = true;            // cannot pause until the simulation is running
     resetButton.disabled = true;             // cannot reset until the simulation is running
 
-    // Don't call drawScene() here - it will be called after images load
+    drawScene();
 
     /**
      * Expose minimal API for 
      */
-    window.sim1Agent = {
+    window.sim1BAgent = {
         getAgentPosition() {
             return {x: agent.x, y: agent.y};
         },
@@ -669,20 +632,15 @@
         }
     }
 
-    /**
-     * Create global simulations object if not already present
-     */
-    window.simulations = window.simulations || {};
-
-    /**
+     /**
      * Simulation 1 API for external access
      * @property {string} canvasId - ID of the canvas element
      * @property {function} getMainAgentPosition - Function to get main agent position
      * @property {function} getMainAgentStatus - Function to get main agent status
      * @property {function} isRunning - Function to check if simulation is running
      */
-    window.simulations.sim1 = {
-        canvasId : 'choleraSim1',
+    window.simulations.sim1B = {
+        canvasId : 'choleraSim1B',
         getMainAgentPosition() {
             return {x: agent.x, y: agent.y};
         },
@@ -695,4 +653,5 @@
             return isRunning;
         }
     }
+
 })();

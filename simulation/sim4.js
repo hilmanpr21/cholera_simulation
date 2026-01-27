@@ -15,7 +15,6 @@
      * @type {HTMLCanvasElement}
      */
     const canvas = document.getElementById('choleraSim4');
-    const roughCanvas = rough.canvas(canvas);        // rough.js context
     const ctx = canvas.getContext('2d');            // 2D canvas context
 
     // set canvas internal resolution
@@ -240,7 +239,6 @@
      * @property {boolean} hasVisitedSchoolBathroomToday - Whether visited school bathroom today
      * @property {boolean} hasVisitedHouseBathroomToday - Whether visited home bathroom today
      * @property {boolean} isTravelingToBathroom - Whether currently going to bathroom
-     * @property {boolean} isVaccinated - Whether agent is vaccinated or not
      * @property {boolean} isTested - Whther agent has been tested today (rapid test)
      * @property {boolean} isIsolated - Whether agent is currently in isolation
      * @property {number} isolationStartDay - day isolation started
@@ -265,7 +263,6 @@
         hasVisitedSchoolBathroomToday: false,        // track if agent has visited school bathroom today
         hasVisitedHouseBathroomToday: false,          // track if agent has visited home bathroom today
         isTravelingToBathroom: false,           // track if agent is currently traveling to bathroom
-        isVaccinated: false,                    // track if agent is vaccinated or not
         isTested: false,                        // track if agent has been tested today
         isIsolated: false,                      // track if agent is currently in isolation
         isolationStartDay: 0,                   // track the day isolation started
@@ -280,18 +277,6 @@
     // Current number of active agents in the simulation
     let activeAgentCount = 5;                   // based on the initial value of the slider
 
-    /**
-     * Number of current vaccination coverage (0-100%)
-     * controlled by the vaccination slider
-     * @type {number}
-     */
-    let vaccinationCoverage = 50;                // initial vaccination coverage set to 50%
-
-    /**
-     * Vaccination Effe3ctiveness in percentage
-     * @type {number}
-     */
-    const vaccinationEffectiveness = 69;        // vaccination effectiveness set to 69%
 
     /**
      * number of current rapid test coverage (0-100%)
@@ -366,35 +351,6 @@
             case 'house': return {x: houses[agentIndex].x, y: houses[agentIndex].y};
             case 'houseWater': return {x: houseWaterBodies[agentIndex].x, y: houseWaterBodies[agentIndex].y};
             default: return {x: school.x, y: school.y}
-        }
-    }
-
-    /** 
-     * Assign vaccination status to susceptible agents based on coverage percentage
-     * only vaccinate non-infected agent at the start of simulation
-     * create array of susceptibleAgents by filtering the agents array
-     * then randomly select agents to vaccinate (`shuffled` array) based on the calculated number to vaccinate
-     * @returns {void}
-     */
-    function assignVaccination() {
-        // Get all susceptible (non infected) active agents
-        // create array of susceptible agents by filtering the agents array
-        // `.filter` method creates a new array but the elemtn inside the new array are references to the same object of the original array.
-        // if the property in the filtered array (susceptibleAgents) is modified, the property in the original array (agents) will also be modified because both arrays reference the same object.
-        const susceptibleAgents = agents.filter(agent => agent.isActive && !agent.isInfected);
-
-        // Calculate number of agents to vaccinate based on coverage percentage
-        const numberToVaccinate = Math.round(susceptibleAgents.length * (vaccinationCoverage / 100));
-
-        // shuffle susceptible agents for random selection
-        // `.sort` methods modifies the order original array but not copying or creating new array
-        // `shuffled` is also pointing at the references to the same object of the original array (`agents`)    
-        // Each comparison runs Math.random() - 0.5, which gives a random positive or negative number (ranging from -0.5 till 0.5). This effectively randomizes the order of elements in the array. so the susceptible agents are randomly ordered
-        const shuffled = susceptibleAgents.sort(() => Math.random() - 0.5);
-
-        // Vaccinate the calculated number of agents based on the shuffled order. This will change the property orf the original array (`agents`) because `shuffled` is referencing the same object.
-        for (let i = 0; i < numberToVaccinate; i++) {
-            shuffled[i].isVaccinated = true;
         }
     }
 
@@ -594,7 +550,6 @@
     /**
      * Declare infection logic when agent visits contaminated school waterbody
      * Checks if an agent becomes infected when visiting contaminated school water
-     * Vaccinated agent has reduced infection risk based on vaccine effectiveness 
      * @param {string} targetLocationInput - The location label the agent just reached
      * @param {number} agentIndex - Index of the agent being checked
      * @returns {void}
@@ -607,24 +562,8 @@
             // store agent reference so later, we focus on one agent only
             const agent = agents[agentIndex];
 
-            // if agent is vaccinated, calculate infection chance based on vaccine effectiveness
-            if (agent.isVaccinated) {
-                // generate random number between 0-1
-                const randomNumber = Math.random();
-
-                // calculate infection chance
-                const infectionChance = 1 - (vaccinationEffectiveness / 100);
-
-                // Decide agent infected or not
-                if (randomNumber < infectionChance) {
-                    agent.isInfected = true;
-                    agent.infectionStartDay = currentDay;   // track the day when agent got infected
-                }
-            } else {
-                // if agent is not vaccinated, always got infected when visiting contaminated waterbody
-                agents[agentIndex].isInfected = true;
-                agents[agentIndex].infectionStartDay = currentDay;   // track the day when agent got infected
-            }
+            agents[agentIndex].isInfected = true;
+            agents[agentIndex].infectionStartDay = currentDay;   // track the day when agent got infected
         }
     }
 
@@ -803,6 +742,39 @@
         }
     }
 
+    // Image loading management
+    let imagesLoaded = 0;
+    const totalImages = 5;
+
+    function onImageLoad() {
+        imagesLoaded++;
+        if (imagesLoaded === totalImages) {
+            // All images loaded, draw initial scene
+            drawScene();
+        }
+    }
+
+    const houseNormalImage = new Image();
+    houseNormalImage.onload = onImageLoad;
+    houseNormalImage.src = 'assets/house_normal.PNG';
+
+    const houseInfectedImage = new Image();
+    houseInfectedImage.onload = onImageLoad;
+    houseInfectedImage.src = 'assets/house_infected.PNG';
+    
+    const schoolImage = new Image();
+    schoolImage.onload = onImageLoad;
+    schoolImage.src = 'assets/school.PNG';
+
+    const contaminatedWaterImage = new Image();
+    contaminatedWaterImage.onload = onImageLoad;
+    contaminatedWaterImage.src = 'assets/contaminated_water.PNG';
+
+    const cleanWaterImage = new Image();
+    cleanWaterImage.onload = onImageLoad;
+    cleanWaterImage.src = 'assets/clean_water.PNG';
+
+
     /**
      * Draws all water bodies (house and school) on the canvas
      * Only draws water bodies for active agents
@@ -811,31 +783,32 @@
      */
     function drawWaterbody() {
         
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = 1.5;
-        ctx.lineJoin = 'round';
-        ctx.lineCap = 'round'; 
+        const houseWaterWidth = 50; 
+
+        const schoolWaterWidth = 80;
 
         // draw house waterbody (only for active agents)
         houseWaterBodies.forEach((houseWaterBody, agentIndex) => {
             if (!agents[agentIndex].isActive) return;         // skip inactive agents' houses
             
-            // if the agent active, draw the house waterbody
-            ctx.beginPath();
-            ctx.arc(houseWaterBody.x, houseWaterBody.y, 15, 0, Math.PI * 2);
-            ctx.fillStyle = houseWaterBody.isContaminated ? 'darkblue' : 'lightblue';
-            ctx.fill();
-            ctx.strokeStyle = 'black';
-            ctx.stroke();
+            // draw houseWaterBody
+            ctx.drawImage(
+                houseWaterBody.isContaminated ? contaminatedWaterImage : cleanWaterImage,
+                houseWaterBody.x - houseWaterWidth/2, 
+                houseWaterBody.y - houseWaterWidth/2,
+                houseWaterWidth,
+                houseWaterWidth
+            );
         });
        
         // draw school waterbody
-        ctx.beginPath();
-        ctx.arc(schoolWaterBody.x, schoolWaterBody.y, 15, 0, Math.PI * 2);
-        ctx.fillStyle = schoolWaterBody.isContaminated ? 'darkblue' : 'lightblue';
-        ctx.fill();
-        ctx.strokeStyle = 'black';
-        ctx.stroke();
+        ctx.drawImage(
+            schoolWaterBody.isContaminated ? contaminatedWaterImage : cleanWaterImage,
+            schoolWaterBody.x - schoolWaterWidth/2, 
+            schoolWaterBody.y - schoolWaterWidth/4,
+            schoolWaterWidth,
+            schoolWaterWidth
+        );
     }
 
     /**
@@ -843,52 +816,16 @@
      * @returns {void}
      */
     function drawSchool() {
-        // set the stroke style
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = 2.5;
-        ctx.lineJoin = 'round';
-        ctx.lineCap = 'round';
+        const schoolWidth = 160;
+        const schoolHeight = 80;
 
-        // draw rectangle
-        ctx.beginPath();
-        ctx.rect(school.x - 10, school.y - 10, 20, 20);
-        ctx.fillStyle = 'yellow';
-        ctx.fill();
-        ctx.strokeStyle = 'black';
-        ctx.stroke();
-
-        // draw back rectangle
-        ctx.beginPath();
-        ctx.rect(school.x + 10, school.y - 10, 22, 20);
-        ctx.fillStyle = 'yellow';
-        ctx.fill();
-        ctx.strokeStyle = 'black';
-        ctx.stroke();
-
-        // draw roof
-        ctx.beginPath();
-        ctx.moveTo(school.x-10, school.y-10);
-        ctx.lineTo(school.x+10, school.y-10);
-        ctx.lineTo(school.x, school.y-20);
-        ctx.closePath();
-        ctx.fillStyle = 'yellow';
-        ctx.fill();
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = 2.5;
-        ctx.stroke();
-
-        // draw back roof 
-        ctx.beginPath();
-        ctx.moveTo(school.x+10, school.y-10);
-        ctx.lineTo(school.x+32, school.y-10);
-        ctx.lineTo(school.x+22, school.y-20);
-        ctx.lineTo(school.x, school.y-20);
-        ctx.closePath();
-        ctx.fillStyle = 'yellow';
-        ctx.fill();
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = 2.5;
-        ctx.stroke();
+        ctx.drawImage(
+            schoolImage,
+            school.x - schoolWidth/2,
+            school.y - schoolHeight/2,
+            schoolWidth,
+            schoolHeight
+        );
     }  
 
     /**
@@ -902,32 +839,16 @@
             // check if agent active or not
             if (!agents[agentIndex].isActive) return;         // skip inactive agents' houses
 
-            const houseStrokeColor = house.isInfected ? 'red' : 'black';
+            const houseWidth = 80;
+            const houseHeight = 60;
 
-            ctx.strokeStyle = houseStrokeColor;
-            ctx.lineWidth = 2.5;
-            ctx.lineJoin = 'round';
-            ctx.lineCap = 'round';
-
-            // draw rectangle
-            ctx.beginPath();
-            ctx.rect(house.x - 10, house.y - 10, 20, 20);
-            ctx.fillStyle = 'yellow';
-            ctx.fill();
-            ctx.strokeStyle = houseStrokeColor;
-            ctx.stroke();
-
-            // draw roof
-            ctx.beginPath();
-            ctx.moveTo(house.x-10, house.y-10);
-            ctx.lineTo(house.x+10, house.y-10);
-            ctx.lineTo(house.x, house.y-20);
-            ctx.closePath();
-            ctx.fillStyle = 'yellow';
-            ctx.fill();
-            ctx.strokeStyle = houseStrokeColor;
-            ctx.lineWidth = 2.5;
-            ctx.stroke();
+            ctx.drawImage(
+                house.isInfected ? houseInfectedImage : houseNormalImage,
+                house.x - houseWidth/2,
+                house.y - houseHeight/2,
+                houseWidth,
+                houseHeight
+            );
         });
     }
 
@@ -981,14 +902,6 @@
             ctx.lineTo(agent.x+6, agent.y+16);
             ctx.stroke();
 
-            // draw vaccination ring if agent is vaccinated
-            if (agent.isVaccinated) {
-                ctx.beginPath();
-                ctx.arc(agent.x, agent.y-12, 10, 0, Math.PI * 2);
-                ctx.strokeStyle = 'green';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-            }
         });     
     }
 
@@ -1024,7 +937,7 @@
         drawSchool();    
         drawHouse();
         drawWaterbody();
-        drawAgent();
+        //drawAgent();
         drawIsolationBoxes();
     }
 
@@ -1150,22 +1063,6 @@
     activeAgentCount = parseInt(neighborhoodNumber.value);
 
     /**
-     * Slider input element for controlling vaccination coverage
-     * @type {HTMLInputElement}
-     */
-    let vaccinationSlider = document.getElementById('sim4-vaccination-slider');
-    
-    /**
-     * Label element displaying current vaccination coverage
-     * @type {HTMLSpanElement}
-     */
-    let vaccinationLabel = document.getElementById('sim4-vaccination-label');
-    
-    // set initial vaccination slider value
-    vaccinationLabel.textContent = vaccinationSlider.value;
-    vaccinationCoverage = parseInt(vaccinationSlider.value);
-
-    /**
      * Slider input element for controlling rapid test coverage
      * @type {HTMLInputElement}
      */
@@ -1200,22 +1097,6 @@
         // redraw the scene to reflect changes
         drawScene();
     }
-
-    // update vaccination coverage based on slider value
-    function updateVaccinationCoverage(coverage) {
-        vaccinationCoverage = coverage;
-
-        // reset all agent vaccination status
-        agents.forEach((agent, agentIndex) => {
-            agent.isVaccinated = false;
-        });
-
-        // assign vaccination randomly to the community
-        assignVaccination();
-
-        // redraw the scene to show agent vaccination ring as the number of slider change
-        drawScene();
-    }   
     
     // updatate rapid test coverage based on slider value
     function updateRapidTestCoverage(coverage) {
@@ -1240,14 +1121,6 @@
         updateActiveAgents(parseInt(this.value));
     });
 
-    // update vaccination slider and add event listener
-    vaccinationSlider.addEventListener('input', function() {
-        // update vaccination label and coverage value
-        vaccinationLabel.textContent = this.value;
-
-        updateVaccinationCoverage(parseInt(this.value));
-    });
-
     // update rapid test slider and add event listener
     rapidTestSlider.addEventListener('input', function() {
         // update rapid test label and coverage value
@@ -1259,8 +1132,6 @@
     // initialise active agents based on the initital slider value
     updateActiveAgents(activeAgentCount);
 
-    // initialise vaccination coverage based on the initial slider value
-    updateVaccinationCoverage(vaccinationCoverage);
 
     /**
      * Tracks whether the simulation is currently running
@@ -1301,14 +1172,9 @@
         pauseButton.disabled = false;
         resetButton.disabled = false;
 
-        // Assign vaccination before starting simulation
-        assignVaccination();
 
         // disable the neighborhood slider while simulation is running
         neighborhoodNumber.disabled = true;
-
-        // disable the vaccination slider while simulation is running
-        vaccinationSlider.disabled = true;
 
         // disable the rapid test slider while simulation is running
         rapidTestSlider.disabled = true;
@@ -1344,9 +1210,6 @@
         //disable the neighborhood slider
         neighborhoodNumber.disabled = true;
 
-        // enable the vaccination slider
-        vaccinationSlider.disabled = true;
-
         // disable the rapid test slider while simulation is running
         rapidTestSlider.disabled = true;
 
@@ -1374,9 +1237,6 @@
 
         // enable the neighborhood slider
         neighborhoodNumber.disabled = false;
-
-        // enable the vaccination slider
-        vaccinationSlider.disabled = false;
 
         // enable the rapid test slider while simulation is running
         rapidTestSlider.disabled = false;
@@ -1408,7 +1268,6 @@
             agent.hasVisitedSchoolBathroomToday = false;
             agent.hasVisitedHouseBathroomToday = false;
             agent.isTravelingToBathroom = false;
-            agent.isVaccinated = false; 
             agent.isTested = false;
             agent.isIsolated = false;
             agent.isolationStartDay = 0;
@@ -1431,9 +1290,6 @@
         // reset timestamp
         lastTimestamp = 0;
 
-        // Assign vaccination before starting simulation
-        assignVaccination();
-
         // Assign initial bathroom schedules for day 0
         assignDailyBathroomSchedules(); 
 
@@ -1445,6 +1301,35 @@
     pauseButton.disabled = true;            // cannot pause until the simulation is running
     resetButton.disabled = true;             // cannot reset until the simulation is running
 
+    // draw the initial scene
     drawScene();
 
+    if (!window.simulations) {
+        window.simulations = {};
+    }
+
+    /**
+     * make global access to main agent position and status to change the visual anchor
+     */
+    window.simulations.sim4 = {
+        canvasId: 'choleraSim4',
+        getMainAgentPosition() {
+            const agent = agents[0];      // get the first agent as the main agent
+            return {x: agent.x, y: agent.y};   // return the agent position (adjusted for visual anchor offset)
+        },
+        getMainAgentStatus() {
+            const agent = agents[0];
+            return {
+                infected: agent.isInfected,
+                recovered: agent.isRecovered,
+                isolated: agent.isIsolated
+            };
+        },
+        getAgents() {
+            return agents;
+        },
+        isRunning() {
+            return isRunning;
+        }
+    };
 })();

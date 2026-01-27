@@ -1,8 +1,17 @@
 :root {
-    --main-body-color: #efefef;
-    --article-color: #fff;
-    --canvas-bg-color: #efefef;
+    --main-body-color: #ffe458;
+    --article-color: #F3EDDF;
+    --canvas-bg-color:#ffefc1;
     --accent-color: #007bff;
+    --agent-color: #010101;
+    --infected-color: #D94350;
+    --house-color: #7BC950;
+    --school-color: #FFD700;
+    --clean-water-color: #00bfff;
+    --contamined-water-color: #380498;
+    --vaccinated-color: #D94350;
+    --rapid-test-color: #ffa500;
+    --text-color: #010101;
 }
 
 h1 {
@@ -31,6 +40,21 @@ h4 {
     margin: 0 0;
 }
 
+p {
+    font-size: 1rem;
+    line-height: 1.2;
+    margin: 0 0 0.8rem 0;
+}
+
+label {
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+span {
+    font-size: 0.9rem;
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -40,6 +64,92 @@ body {
     font-family: monospace;
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
+}
+
+
+#scrolly {
+    position: relative;
+}
+
+.sticky-frame {
+    position: sticky;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--main-body-color);
+    overflow: hidden;       /*prevent content overflow */
+}
+
+.slide {
+    color: var(--text-color);
+    position: absolute;
+    max-width: 480px;
+    padding: 2rem;
+    text-align: center;
+    top: 5vh;
+    opacity: 0;
+    transform: translateY(20px); /* start slightly below*/
+    pointer-events: none;       /* prevent interaction when not visible */
+    display: flex;              /* use flexbox for centering */
+    flex-direction: column;
+    justify-content: flex-end;    /* center content vertically */
+    align-items: center;        /* center content horizontally */
+}
+
+.slide.is-active {
+    opacity: 1;
+    pointer-events: auto;       /* allow interaction when visible */
+    transform: translateY(0);   /* move to original position  to make swipe up illusion*/
+}
+
+ .slide.is-center {
+    top: 50vh;
+    transform: translateY(-50%); /* center vertically */
+ }
+
+.step {
+    min-height: 100vh;
+}
+
+/* Optional visual separation while developing */
+.step:nth-child(odd) {
+  background: #f6f6f6;
+}
+
+#anchor-overlay {
+    position: fixed;        /* fixed position to stay on screen while scrolling */
+    top: 0;                /* top of the viewport */
+    left: 0;               /* left of the viewport */
+    pointer-events: none;   /* allow clicks to pass through */
+    z-index: 1000;          /* on top of other elements */
+    align-items: center;    /* Centers children vertically */
+    justify-content: center;/* Centers children horizontally */
+}
+
+#anchor-image {
+    position: absolute;     /* position relative to the nearest positioned ancestor */
+    width: 180px;            /* control size of the image */
+    height: auto;
+    transform: translate(-50%, -50%);   /* center the image at the center of the div position */
+    left: 50vw;              /* center horizontally in the viewport */
+    top: 50vh;               /* center vertically in the viewport */
+    will-change: transform;
+}
+
+#anchor-image.hidden {
+    opacity: 0;             /* hide the image */
+}
+
+#anchor-image.mode-slide {
+    transition: transform 0.6s ease, width 1s ease-in-out, left 0.6s ease, top 0.6s ease;
+}
+
+#anchor-image.mode-follow {
+    transition: none;
 }
 
 #body_section {
@@ -63,36 +173,70 @@ body {
     text-align: left;
 }
 
+.slide-text-content {
+    margin-bottom: 1rem;        /* space below the text content */
+    opacity: 0;                 /* initially hidden */
+    transform: translateY(10px); /* start slightly below */
+    justify-content: center;
+    transition: opacity 0.4s ease, transform 0.4s ease; /* smooth fade-in/out */
+} 
+
+.slide.is-active .slide-text-content {
+    opacity: 1;                 /* fully visible when active */
+    transform: translateY(0);   /* original position when active */
+}
+
+.sim-section {
+    width: 60vw;
+    min-height: 100vh;
+    padding: 0 2rem;
+    position: relative;                      /* for positioning child elements absolutely within this container */
+}
+
+/* Simulation Wrapper - fixed centered position for simulation */
 .sim-wrapper {
-    width: 604px;
-    max-width: 100%;               /* responsive width */
-    display: flex;
+    position: absolute;             /* absolute position within sticky-frame */
+    top: 30vh;                       /* center vertically */
+    left: 50%;                      /* center horizontally */
+    transform: translateX(-50%); /* perfect centering */
+    width: 604px;                   /* fixed width to match the canvas size on bigger screens */
+    max-width: 85%;                 /* responsive width */
+    display: none;                  /* hidden by default */
     flex-direction: column;
-    align-items: center;                /* Center children horizontally */
-    justify-content: center;            /* Center children vertically */
+    align-items: center;            /* Center children horizontally */
+    justify-content: flex-start;     /* Content grows from top down */
+    z-index: 5;                     /* below text slides but above background */
+}
+
+/* Show sim-wrapper when parent slide is active */
+.slide.is-active .sim-wrapper {
+    display: flex;                  /* show when slide is active */
 }
 
 .canvas-container {
     background-color: var(--canvas-bg-color);
-    display: block;
+    display: block;                /* remove inline element space below canvas */
     border-radius: 0.5rem;
-    border: black 2px solid;
+    margin-top: 1rem;
+    border: none;
     max-width: 100%;                /* never bigger than the original canvas resolution, 100 percent of the parent container (@body-article) */
     height: auto;                   /* maintain aspect ratio */
 }
 
+/* Simulation Control Buttons Collection - Container for start/pause/reset buttons */
 .sim-control-button-collection {
     display: flex;
     gap: 1rem;                      /* space between buttons */
-    margin-top: 1rem;               /* space above the button collection */
-    width: 100%
+    margin-top: 20px;               /* space above the button collection */
+    width: 100%;
 }
 
-.sim-control-button-collection .sim-control-button{
-    flex: 1;                       /* make buttons grow equally to fill the container */
-    padding: 0.5rem 1rem;         /* padding inside buttons */
-    border-radius: 0.2rem ;       /* rounded corners */
-    border: #007bff solid 2px;
+/* Individual button styling inside the collection */
+.sim-control-button-collection button {
+    flex: 1;                        /* make buttons grow equally to fill the container */
+    padding: 0.2rem 0.5rem;          /* padding inside buttons */
+    border-radius: 1.5rem;         /* rounded corners */
+    border: var(--accent-color) solid 2px;
     background-color: white;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -101,32 +245,66 @@ body {
     font-family: monospace;
 }
 
-.sim-control-button:hover {
-    /*background-color: #dc3545;;*/
+.sim-control-button-collection button:hover {
+    background-color: #f0f0f0;
 }
 
-.sim-control-button.active {
+.sim-control-button-collection button.active {
     background-color: var(--accent-color);
     color: white;
     font-weight: bold;
 }
 
-.sim-control-button:disabled {
-    background-color: grey;
+.sim-control-button-collection button:disabled {
+    background-color: var(--accent-color);
+    text-emphasis-color: ;
     cursor: not-allowed;
+    opacity: 0.5;
 }
 
-#sim1-control-button {
-    flex: 1;
+/* Container for slider controls - stacks vertically */
+.sim-control-button,
+#sim1-control-button,
+#sim2-control-button,
+#sim3-control-button,
+#sim4-control-button,
+#sim5-control-button {
+    display: flex;
+    flex-direction: column;         /* stack sliders vertically */
+    gap: 0.5rem;                    /* space between slider groups */
+    margin-top: 10px;               /* space above the slider container */
+    width: 100%;
+}
+
+/* Contaminate Water Button - hidden by default */
+#contaminate-water-button {
+    display: none;              /* hide the entire container initially */
+}
+
+/* Slider wrapper styling. To amke the slider wrapper stacked vertically between inputs and label */
+.sim-control-button > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+/* Slider input styling */
+.sim-slider {
+    width: 100%;
+    cursor: pointer;
+}
+
+/* Standalone button inside control containers (like "Contaminate Water") */
+.sim-control-button button {
     width: 100%;
     margin-top: 10px;
 }
 
 /* Time Bar Container */
 .time-bar-container {
-    margin: 0px 0;         /* margin above and below the time bar for 20px*/
+    margin-top: 20px;
     padding: 0px;
-    background-color: var(--article-color);
+    background-color: var(--main-body-color);
     width: 100%;
 }
 
@@ -138,13 +316,12 @@ body {
 }
 
 .current-time-and-day {
-    font-size: inherit;
     font-weight: bold;
     padding: 0px 15px;         /* padding inside the time display, 5 above and below, 15 left and right */
 }
 
 .time-bar-wrapper {
-    position: relative;;
+    position: relative;
 }
 
 /* time labels */
@@ -158,7 +335,6 @@ body {
 .time-label {
     position: absolute;
     transform: translateX(-50%); /* center each element label, wihtout this, by defalut it will start at the left */
-    font-size: 11px;
     font-weight: 500;
 }
 
@@ -180,6 +356,12 @@ body {
     height: 100%;
     border-radius: 0px;
     opacity: 1;
+}
+
+.current-time-and-day {
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 0px 15px;         /* padding inside the time display, 5 above and below, 15 left and right */
 }
 
 .school-hours {
@@ -235,23 +417,114 @@ body {
     transform: translateX(-50%);
 }
 
-/* aniomation for time indicator smooth movement */
-/* not needed
-@keyframes pulse{
-    0%, 100% {
-        transform: translateX(-50%) scale(1);
-    }
-    50% {
-        transform: translateX(-50%) scale(1.1);
-    }
+/* SVG agent anchor overlay */
+/* This overlay will hold the SVG agent that follows the mouse cursor */
+#svg-anchor-agent-overlay {
+    position: fixed;        /* fixed position to stay on screen */
+    top: 0;                 /* top of the viewport */
+    left: 0;                /* left of the viewport */
+    width: 100vw;            /* full width */
+    height: 100vh;          /* full height */
+    pointer-events: none;   /* allow clicks to pass through */
+    z-index: 1000;          /* on top of other elements */
+    background-color: transparent; /* transparent background */
+    opacity: 0;             /* initially hidden */
 }
 
-.indicator-head {
-    animation: pulse 2s ease-in-out infinite;
+/* SVG element positioning */
+#anchor-agent {
+    position: absolute;         /* absolute positioning within the overlay */
+    transform-origin: center center;    /* set the transform origin to the center of the SVG*/
+    will-change: transform;  /* optimise for transform changes */
+    transition: stroke 0.3 ease; /* smooth stroke color changes */
+    top: 50vh;               /* start at center of viewport */
+    left: 50vw;              /* start at center of viewport */
+    transform: translate(-50%, -50%) scale(3); /* center the SVG at the cursor position, without (-50%, -50%) it will start at top-left corner of the svg*/
+    opacity: 1;             /* initially hidden */
 }
 
-*/
+/*Set Agent body stroke style*/
+#anchor-agent .agent-stroke {
+    stroke: var(--agent-color);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+}
 
+/*Set Agent body fill style*/
+#anchor-agent .agent-fill {
+    stroke: var(--agent-color);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: var(--agent-color);
+}
+
+/* --- Dynamuic styling when the agent is in different states --- */
+/* infected State - agent turn red */ 
+#anchor-agent.infected .agent-stroke {
+    stroke: var(--infected-color);
+}
+
+#anchor-agent.infected .agent-fill {
+    stroke: var(--infected-color);
+    fill: var(--infected-color);
+}
+
+/* vaccinated State - agent has green ring */
+#anchor-agent.vaccinated #vaccination-ring {
+    opacity: 1;
+    fill: none;
+    stroke: var(--vaccinated-color);
+    stroke-width: 3;
+
+}
+
+/* tested State - agent has orange dot */
+#anchor-agent.tested #test-indicator {
+    opacity: 1;
+    fill: var(--tested-color);
+    stroke: none;
+}
+
+/* isolated State - agent has grey box */
+#anchor-agent.isolated #isolation-box {
+    opacity: 1;
+    stroke-dasharray: 5,2;
+    stroke: var(--isolated-color);
+    stroke-width: 2.5;
+    fill: none;
+}
+
+
+/*scale agent for sim5 - Smaller for community view*/
+#anchor-agent.sim5-agent {
+    transform: scale(0.7);
+}
+
+/* small mobile screens */
+@media (max-width: 390px) {
+    .slide {
+        width: 90vw;
+    }
+
+    p {
+        font-size: 0.8rem;
+    }
+
+    span {
+        font-size: 0.8rem;
+    }
+
+    label {
+        font-size: 0.8rem;
+    }
+
+    .sim-wrapper {
+        width: 85vw;
+    }
+}
 
 /* Mobile responsiveness */ 
 @media (max-width: 768px) {
@@ -259,8 +532,17 @@ body {
         width: 95vw;
     }
 
+    .slide {
+        width: 90vw;
+    }
+
     .body_article {
         width: 90vw;
+    }
+    
+    .sim-section {
+        width: 90vw;
+        padding: 0 1rem;
     }
 }
 
@@ -272,6 +554,10 @@ body {
 
     .body_article {
         width: 75vw;
+    }
+
+    .slide {
+        width: 70vw;
     }
 }
 
@@ -285,6 +571,3 @@ body {
         width: 80%;
     }
 }
-
-
-

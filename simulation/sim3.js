@@ -15,7 +15,6 @@
      * @type {HTMLCanvasElement}
      */
     const canvas = document.getElementById('choleraSim3');
-    const roughCanvas = rough.canvas(canvas);        // rough.js context
     const ctx = canvas.getContext('2d');            // 2D canvas context
 
     // set canvas internal resolution
@@ -246,7 +245,7 @@
         speed: 1.5,
         currentLocation: 'house',               // initial location set to 'house'
         targetLocation: 'house',                // initial target location is staying at 'house'
-        isInfected: index === 1 || index === 2 ? true : false,                      // track agent infection state
+        isInfected: index === 1 || index === 2 ? true : false,                      // track agent infection state, agnet 1 and 2 start as infected for simulation purpose
         infectionStartDay: index === 1 || index === 2 ? 1 : null,   // track the day when agent got infected, initial infected agents (agent index 1 and 2) start at day 0
         isRecovered: false,                         // track if agent has recovered and become immune
         recoveryStartDay: 0,                         // track the day when agent recovered from infection
@@ -669,6 +668,38 @@
         }
     }
 
+    // Image loading management
+    let imagesLoaded = 0;
+    const totalImages = 5;
+
+    function onImageLoad() {
+        imagesLoaded++;
+        if (imagesLoaded === totalImages) {
+            // All images loaded, draw initial scene
+            drawScene();
+        }
+    }
+
+    const houseNormalImage = new Image();
+    houseNormalImage.onload = onImageLoad;
+    houseNormalImage.src = 'assets/house_normal.PNG';
+
+    const houseInfectedImage = new Image();
+    houseInfectedImage.onload = onImageLoad;
+    houseInfectedImage.src = 'assets/house_infected.PNG';
+    
+    const schoolImage = new Image();
+    schoolImage.onload = onImageLoad;
+    schoolImage.src = 'assets/school.PNG';
+
+    const contaminatedWaterImage = new Image();
+    contaminatedWaterImage.onload = onImageLoad;
+    contaminatedWaterImage.src = 'assets/contaminated_water.PNG';
+
+    const cleanWaterImage = new Image();
+    cleanWaterImage.onload = onImageLoad;
+    cleanWaterImage.src = 'assets/clean_water.PNG';
+
     /**
      * Draws all water bodies (house and school) on the canvas
      * Only draws water bodies for active agents
@@ -677,31 +708,30 @@
      */
     function drawWaterbody() {
         
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = 1.5;
-        ctx.lineJoin = 'round';
-        ctx.lineCap = 'round'; 
+        const waterWidth = 30;
 
         // draw house waterbody (only for active agents)
         houseWaterBodies.forEach((houseWaterBody, agentIndex) => {
             if (!agents[agentIndex].isActive) return;         // skip inactive agents' houses
             
-            // if the agent active, draw the house waterbody
-            ctx.beginPath();
-            ctx.arc(houseWaterBody.x, houseWaterBody.y, 15, 0, Math.PI * 2);
-            ctx.fillStyle = houseWaterBody.isContaminated ? 'darkblue' : 'lightblue';
-            ctx.fill();
-            ctx.strokeStyle = 'black';
-            ctx.stroke();
+            // draw houseWaterBody
+            ctx.drawImage(
+                houseWaterBody.isContaminated ? contaminatedWaterImage : cleanWaterImage,
+                houseWaterBody.x - waterWidth/2, 
+                houseWaterBody.y - waterWidth/2,
+                waterWidth,
+                waterWidth
+            );
         });
        
         // draw school waterbody
-        ctx.beginPath();
-        ctx.arc(schoolWaterBody.x, schoolWaterBody.y, 15, 0, Math.PI * 2);
-        ctx.fillStyle = schoolWaterBody.isContaminated ? 'darkblue' : 'lightblue';
-        ctx.fill();
-        ctx.strokeStyle = 'black';
-        ctx.stroke();
+        ctx.drawImage(
+            schoolWaterBody.isContaminated ? contaminatedWaterImage : cleanWaterImage,
+            schoolWaterBody.x - waterWidth/2, 
+            schoolWaterBody.y - waterWidth/2,
+            waterWidth,
+            waterWidth
+        );
     }
 
     /**
@@ -709,6 +739,7 @@
      * @returns {void}
      */
     function drawSchool() {
+        /*
         // set the stroke style
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 2.5;
@@ -755,6 +786,17 @@
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 2.5;
         ctx.stroke();
+        */
+        const schoolWidth = 160;
+        const schoolHeight = 80;
+
+        ctx.drawImage(
+            schoolImage,
+            school.x - schoolWidth/2,
+            school.y - schoolHeight/2,
+            schoolWidth,
+            schoolHeight
+        );
     }  
 
     /**
@@ -765,6 +807,7 @@
      */
     function drawHouse() {
         houses.forEach((house, agentIndex) => {
+            /*
             // check if agent active or not
             if (!agents[agentIndex].isActive) return;         // skip inactive agents' houses
 
@@ -794,6 +837,17 @@
             ctx.strokeStyle = houseStrokeColor;
             ctx.lineWidth = 2.5;
             ctx.stroke();
+            */
+            const houseWidth = 80;
+            const houseHeight = 60;
+
+            ctx.drawImage(
+                house.isInfected ? houseInfectedImage : houseNormalImage,
+                house.x - houseWidth/2,
+                house.y - houseHeight/2,
+                houseWidth,
+                houseHeight
+            );
         });
     }
 
@@ -865,7 +919,7 @@
         drawSchool();    
         drawHouse();
         drawWaterbody();
-        drawAgent();
+        // drawAgent();
     }
 
     /**
@@ -1209,5 +1263,36 @@
     resetButton.disabled = true;             // cannot reset until the simulation is running
 
     drawScene();
+
+    if (!window.simulations) {
+        window.simulations = {};
+    }
+
+    /**
+     * make global access to main agent position and status to change the visual anchor
+     */
+    window.simulations.sim3 = {
+        canvasId: 'choleraSim3',
+        getMainAgentPosition() {
+            const agent = agents[0];      // get the first agent as the main agent
+            return {x: agent.x, y: agent.y};   // return the agent position (adjusted for visual anchor offset)
+        },
+        getMainAgentStatus() {
+            const agent = agents[0];
+            return {
+                infected: agent.isInfected,
+                recovered: agent.isRecovered,
+                vaccinated: agent.isVaccinated
+            };
+        },
+        getAgents() {
+            // return the agents array for external access
+            return agents;      
+        },
+        isRunning() {
+            return isRunning;
+        }
+    };
+
 
 })();

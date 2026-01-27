@@ -2,29 +2,41 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"  />
         <title>Cholera Simulation</title>
         <link rel="stylesheet" href="style.css">
+        <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/roughjs@latest/bundled/rough.js"></script>
+        <script src="https://unpkg.com/scrollama"></script>
 
     </head>
 
     <body>
 
-        <section id="header">
-            <div class="container">
+        <main id="scrolly">
+           <div class="sticky-frame">
+                <div class="slide is-active" data-slide="0">
+                    <div class="slide-text-content">
+                        <h1>RAFI vs CHOLERA</h1>
+                        <p>Scroll down to start the story.</p>
+                    </div>
+                </div>
 
-            </div>
-        </section>
+                <div class="slide" data-slide="1">
+                    <div class="slide-text-content">
+                        <p><strong>Meet Rafi.</strong></p>
+                        <br>
+                        <p>Like many children in Bangladesh, Rafi goes to school every day.</p>
+                        <br>
+                        <p>Today, we will follow Rafi and help protect his neighbourhood from cholera.</p>
+                    </div>
+                </div>
 
-        <section id="body_section">
-            <div class="container">
-                <h1>Simulating Cholera</h1>
-
-                <h2>What can we do to minimise cholera spread?</h2>
-                <div class="body_article">
-                    <h3>Part 1 - Single-Agent Contamination Based on Daily Routine</h3>
-                    <p>In this simulation, the agent follows a daily routine of going to school (located at the centre of the canvas), which has a shared waterbody used for both drinking and defecation. The agent attends school from 8:00 a.m. to 5:00 p.m. and spends the rest of the time at home. The school’s waterbody, being shared, can become contaminated by other users. Click the “Contaminate Water” button to see what happens when the agent consumes water from the contaminated source. The agent will become infected (turn red), and an infected agent can contaminate their household waterbody. Within days, the entire household will become infected (house turns red) if they consume water from the contaminated source. The infection lasts for one week.</p>
+                <div class="slide" data-slide="2">
+                    <div class="slide-text-content">
+                        <p>Every day, Rafi goes to school from 8 am to 3 pm. At home and at school, he uses water from <strong>shared water sources</strong> for washing and consumption. When the water is clean (light blue), Rafi and his family stay healthy.</p>
+                    </div>
                     <div id="sim1-wrapper" class="sim-wrapper">
                         <canvas id="choleraSim1" class="canvas-container"></canvas>
                         <div class="sim-control-button-collection">
@@ -32,15 +44,32 @@
                             <button id="reset-button" class="sim-control-button" type="button">reset</button>
                             <button id="pause-button" class="sim-control-button" type="button">pause</button>
                         </div>
-                        <div id="sim1-control-button" class="sim1-control-button">
-                            <button id="contaminate-water-button" class="sim-control-button" type="button">Contaminate Water</button>
+                    </div>
+                </div>
+
+                <div class="slide" data-slide="3">
+                    <div class="slide-text-content">
+                        <p>One day, Rafi becomes <strong>infected with cholera</strong> (Rafi turns red). As Rafi is infected, he <strong>contaminates the water</strong> at school and at home (it turns dark blue). When Rafi's family drinks contaminated water at home, his whole household becomes infected.</p>
+                    </div>
+                    <div id="sim1B-wrapper" class="sim-wrapper">
+                        <canvas id="choleraSim1B" class="canvas-container"></canvas>
+                        <div class="sim-control-button-collection">
+                            <button id="start-button-sim1B" class="sim-control-button" type="button">start</button>
+                            <button id="reset-button-sim1B" class="sim-control-button" type="button">reset</button>
+                            <button id="pause-button-sim1B" class="sim-control-button" type="button">pause</button>
+                        </div>
+                        <div id="sim1B-control-button" class="sim-control-button-collection">
+                            <button id="contaminate-water-button" type="button"></button>
                         </div>
                     </div>
-                    <br>
-                    <br>
-                    <h3>Part 2 - Multiple Agents Sharing a Waterbody at School</h3>
-                    <p>In this scenario, the agent now lives in a community where everyone attends the same school. Two of the agent’s friends are infected with cholera. After six visits by an infected friend to the waterbody, it becomes contaminated. Observe how quickly the entire community becomes infected once the waterbody is contaminated. Users can adjust the number of neighbours the agent has.</p>
+                </div>
+
+                <div class="slide" data-slide="4">
+                    <div class="slide-text-content">
+                        <p>Rafi lives in a community with many neighbours. The children go to the same school and drink water from the same water source. Rafi and another student are infected with cholera, and <strong>contaminate the school water</strong>. The infected students then bring cholera back to their families. See how fast cholera spreads when more neighbours are infected.</p>
+                    </div>
                     <div id="sim2-wrapper" class="sim-wrapper">
+                        <canvas id="choleraSim2" class="canvas-container"></canvas>
                         <div class="time-bar-container">
                             <div class="time-bar-header">
                                 <h4>Simulation time</h4>
@@ -76,10 +105,6 @@
                             </div>                            
                         </div>
 
-                        <br>
-
-                        <canvas id="choleraSim2" class="canvas-container"></canvas>
-
                         <div class="sim-control-button-collection">
                             <button id="start-button-sim2" class="sim-control-button" type="button">start</button>
                             <button id="reset-button-sim2" class="sim-control-button" type="button">reset</button>
@@ -90,76 +115,16 @@
                             <label for="sim2-neighbour-number">Number of Neighbors: <span id="sim2-neighbour-label">10</span> </label>
                         </div>
                     </div>
+                </div>
 
-                    <br>
-                    <br>
-
-
-                    <h3>Part 3 - Preventing Cholera Spread with Vaccination</h3>
-                    <p>Vaccination can reduce the chance of getting infected with cholera by 31%, making it an effective measure to slow down outbreaks. However, vaccines are not always accessible. Users can set the vaccination coverage to define how many neighbours have improved immunity against cholera.</p>
-                    <div id="sim3-wrapper" class="sim-wrapper">
-                        <div class="time-bar-container">
-                            <div class="time-bar-header">
-                                <h4>Simulation time</h4>
-                                <span id="sim3-current-time" class="current-time-and-day">08:00</span> <!-- Initial time display-->
-                                <h4>Day:</h4>
-                                <span id="sim3-current-day" class="current-time-and-day">1</span>  <!-- Initial day display-->
-                            </div>
-
-                            <div class="time-bar-wrapper">
-                                 <!-- Hours Label-->
-                                <div class="time-labels">
-                                    <span class="time-label" style="left: 0%;">00:00</span>
-                                    <span class="time-label" style="left: 33.33%;">08:00</span>
-                                    <span class="time-label" style="left: 70.83%;">17:00</span>
-                                    <span class="time-label" style="left: 100%;">23:59</span>
-                                </div>
-
-                                <!-- The progress bar track-->
-                                <div class="time-bar-track">
-                                    <!--Home hours highlight zone 00:00-08:00-->
-                                    <div class="time-zone house-hours-1"></div>
-                                    <!-- School hours highlight zone 08:00-17:00-->
-                                    <div class="time-zone school-hours"></div> <!-- class with space in the name meaning the div has 2 separate class-->
-                                    <!--Home hours highlight zone 17:00-24:00-->
-                                    <div class="time-zone house-hours-2"></div>
-
-                                    <!--Moving protgress indicator-->
-                                    <div id="sim3-time-indicator" class="time-indicator">
-                                        <div class="indicator-head"></div>
-                                        <!--<div class="indicator-line"></div>--->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <br>
-
-                        <canvas id="choleraSim3" class="canvas-container"></canvas>
-
-                        <div class="sim-control-button-collection">
-                            <button id="start-button-sim3" class="sim-control-button" type="button">start</button>
-                            <button id="reset-button-sim3" class="sim-control-button" type="button">reset</button>
-                            <button id="pause-button-sim3" class="sim-control-button" type="button">pause</button>
-                        </div>
-                        <div id="sim3-control-button" class="sim-control-button">
-                            <div id="sim3-neighbour-slider-wrapper">
-                                <input type="range" id="sim3-neighbour-number" min="4" max="10" value="10" step="1" class="sim-slider">
-                                <label for="sim3-neighbour-number">Number of Neighbors: <span id="sim3-neighbour-label">5</span> </label>
-                            </div>                            
-                            <div id="sim3-vaccination-slider-wrapper">
-                                <input type="range" id="sim3-vaccination-slider" min="0" max="100" value="50" step="10" class="sim-slider">
-                                <label for="sim3-vaccination-slider">Vaccination Rate: <span id="sim3-vaccination-label">50</span>%</label>
-                            </div>
-                        </div>
+                <div class="slide" data-slide="5">
+                    <div class="slide-text-content">
+                        <p>Now, let’s try to slow down the spread of cholera in Rafi’s neighbourhood. </p>
+                        <p>We introduce <strong>rapid testing for cholera</strong> to quickly find neighbours who are infected, and ask them to stay at home for 3 days. Isolating neighbours are shown with green borders.</p>
+                        <p>Rapid tests are conducted every morning. You can increase availability of rapid tests for neighbours with symptoms.</p>    
                     </div>
-
-                    <br>
-                    <br>
-
-                    <h3>Part 4 - Rapid Testing and Limiting Mobility</h3>
-                    <p>Although vaccines are fairly effective (69% effectiveness), outbreaks can still spread rapidly. Another preventive measure is rapid testing. Agents who test positive will be isolated to prevent further spread. Current rapid tests have an accuracy of 91%, and only agents showing symptoms (indicated by red colour) are tested each morning. Agents who test positive are isolated at home for three days. This method is more effective because it slows down waterbody contamination. Users can set rapid test coverage to determine how many agents are tested daily.</p>
                     <div id="sim4-wrapper" class="sim-wrapper">
+                        <canvas id="choleraSim4" class="canvas-container"></canvas>
                         <div class="time-bar-container">
                             <div class="time-bar-header">
                                 <h4>Simulation time</h4>
@@ -194,10 +159,7 @@
                                 </div>
                             </div>
                         </div>
-
-                        <br>
-
-                        <canvas id="choleraSim4" class="canvas-container"></canvas>
+                        
                         <div class="sim-control-button-collection">
                             <button id="start-button-sim4" class="sim-control-button" type="button">start</button>
                             <button id="reset-button-sim4" class="sim-control-button" type="button">reset</button>
@@ -208,23 +170,20 @@
                                 <input type="range" id="sim4-neighbour-number" min="4" max="10" value="10" step="1" class="sim-slider">
                                 <label for="sim4-neighbour-number">Number of Neighbors: <span id="sim4-neighbour-label">5</span> </label>
                             </div>                            
-                            <div id="sim4-vaccination-slider-wrapper">
-                                <input type="range" id="sim4-vaccination-slider" min="0" max="100" value="50" step="10" class="sim-slider">
-                                <label for="sim4-vaccination-slider">Vaccination Rate: <span id="sim4-vaccination-label">50</span>%</label>
-                            </div>
                             <div id="sim4-rapid-test-slider-wrapper">
                                 <input type="range" id="sim4-rapid-test-slider" min="0" max="100" value="50" step="10" class="sim-slider">
                                 <label for="sim4-rapid-test-slider">Rapid Test Coverage: <span id="sim4-rapid-test-label">50</span>%</label>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <br>
-                    <br>
-
-                    <h3>Part 5 - Simulating Multiple Communities (Work in Progress)</h3>
-                    <p>In reality, people in a community do not always attend the same school or work locally; many travel to other regions. This simulation demonstrates how cross-community mobility can accelerate outbreaks. It still incorporates vaccination and rapid testing coverage options. Each community has eight neighbours and shares one waterbody with seven other communities. Initially, only one community is mobile, showing how infection spreads across regions.</p>
+                <div class="slide" data-slide="6">
+                    <div class="slide-text-content">
+                        <p>Even when infections slow down in Rafi’s neighbourhood, people continue to <strong>move around</strong> - going to school, to work, and doing activities in other neighbourhoods. Cholera can spread to other neighbourhoods via infected people. Testing people quickly and encouraging isolation helps <strong>protect many communities</strong>, not just Rafi’s.</p>
+                    </div>
                     <div id="sim5_wrapper" class="sim-wrapper">
+                        <canvas id="choleraSim5" class="canvas-container"></canvas>
                         <div class="time-bar-container">
                             <div class="time-bar-header">
                                 <h4>Simulation time</h4>
@@ -259,22 +218,16 @@
                                 </div>
                             </div>
                         </div>
-                        <br>
-                        <canvas id="choleraSim5" class="canvas-container"></canvas>
+
                         <div class="sim-control-button-collection">
                             <button id="start-button-sim5" class="sim-control-button" type="button">start</button>
                             <button id="reset-button-sim5" class="sim-control-button" type="button">reset</button>
                             <button id="pause-button-sim5" class="sim-control-button" type="button">pause</button>
                         </div>
-
                         <div id="sim5-control-button" class="sim-control-button">
                             <div id="sim5-neighbour-slider-wrapper">
                                 <input type="range" id="sim5-neighbour-number" min="4" max="10" value="10" step="1" class="sim-slider">
                                 <label for="sim5-neighbour-number">Number of Neighbors: <span id="sim5-neighbour-label">5</span> </label>
-                            </div>                            
-                            <div id="sim5-vaccination-slider-wrapper">
-                                <input type="range" id="sim5-vaccination-slider" min="0" max="100" value="50" step="10" class="sim-slider">
-                                <label for="sim5-vaccination-slider">Vaccination Rate: <span id="sim5-vaccination-label">50</span>%</label>
                             </div>
                             <div id="sim5-rapid-test-slider-wrapper">
                                 <input type="range" id="sim5-rapid-test-slider" min="0" max="100" value="50" step="10" class="sim-slider">
@@ -283,12 +236,36 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
 
+                <div class="slide" data-slide="7">
+                    <p>Thank you for helping protect Rafi’s community.</p>
+                    <br>
+                    <p>Rapid testing and isolation can prevent cholera outbreaks and save lives.</p>
+                </div>
+            </div>
+
+            <section class="step" data-step="0"></section>
+            <section class="step" data-step="1"></section>
+            <section class="step" data-step="2"></section>
+            <section class="step" data-step="3"></section>
+            <section class="step" data-step="4"></section>
+            <section class="step" data-step="5"></section>
+            <section class="step" data-step="6"></section>
+            <section class="step" data-step="7"></section>
+        </main>
+
+    
+        <!-- Load SVG agent anchor overlay -->
+        <div id="anchor-overlay">
+            <img id="anchor-image" class="hidden" src="assets/rafi_normal.PNG" alt="Rafi">
+        </div>
+        
+        <script src="script/visual_anchor_controller.js"></script>
+        <script src="script/character_controller.js"></script>
+        <script src="script/scroll_controller.js"></script>
         <script src="simulation/sim1.js"></script>
+        <script src="simulation/sim1B.js"></script>
         <script src="simulation/sim2.js"></script>
-        <script src="simulation/sim3.js"></script>
         <script src="simulation/sim4.js"></script>
         <script src="simulation/sim5.js"></script>
     </body>
