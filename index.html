@@ -67,7 +67,6 @@
                 <div class="slide" data-slide="4">
                     <div class="slide-text-content">
                         <p>Rafi lives in a community with many neighbours. The children go to the same school and drink water from the same water source. Rafi and another student are infected with cholera, and <strong>contaminate the school water</strong>. The infected students then bring cholera back to their families. See how fast cholera spreads when more neighbours are infected.</p>
-                        <br>
                     </div>
                     <div id="sim2-wrapper" class="sim-wrapper">
                         <canvas id="choleraSim2" class="canvas-container"></canvas>
@@ -111,8 +110,6 @@
                             <button id="reset-button-sim2" class="sim-control-button" type="button">reset</button>
                             <button id="pause-button-sim2" class="sim-control-button" type="button">pause</button>
                         </div>
-
-                        <br>
                         <div id="sim2-control-button" class="sim-control-button">
                             <input type="range" id="sim2-neighbour-number" min="4" max="10" value="10" step="1" class="sim-slider">
                             <label for="sim2-neighbour-number">Number of Neighbors: <span id="sim2-neighbour-label">10</span> </label>
@@ -121,12 +118,13 @@
                 </div>
 
                 <div class="slide" data-slide="5">
-                    <p>Now, let’s try to slow down the spread of cholera in Rafi’s neighbourhood. </p>
-                    <br>
-                    <p>We introduce <strong>rapid testing for cholera</strong> to quickly find neighbours who are infected, and ask them to stay at home for 3 days. Isolating neighbours are shown with green borders.</p>
-                    <br>
-                    <p>Rapid tests are conducted every morning. You can increase availability of rapid tests for neighbours with symptoms.</p>
-                    <br>
+                    <div class="slide-text-content">
+                        <p>Now, let’s try to slow down the spread of cholera in Rafi’s neighbourhood. </p>
+                        <br>
+                        <p>We introduce <strong>rapid testing for cholera</strong> to quickly find neighbours who are infected, and ask them to stay at home for 3 days. Isolating neighbours are shown with green borders.</p>
+                        <br>
+                        <p>Rapid tests are conducted every morning. You can increase availability of rapid tests for neighbours with symptoms.</p>    
+                    </div>
                     <div id="sim4-wrapper" class="sim-wrapper">
                         <canvas id="choleraSim4" class="canvas-container"></canvas>
                         <div class="time-bar-container">
@@ -163,7 +161,7 @@
                                 </div>
                             </div>
                         </div>
-                        <br>
+                        
                         <div class="sim-control-button-collection">
                             <button id="start-button-sim4" class="sim-control-button" type="button">start</button>
                             <button id="reset-button-sim4" class="sim-control-button" type="button">reset</button>
@@ -183,8 +181,9 @@
                 </div>
 
                 <div class="slide" data-slide="6">
-                    <p>Even when infections slow down in Rafi’s neighbourhood, people continue to <strong>move around</strong> - going to school, to work, and doing activities in other neighbourhoods. Cholera can spread to other neighbourhoods via infected people. Testing people quickly and encouraging isolation helps <strong>protect many communities</strong>, not just Rafi’s.</p>
-                    <br>
+                    <div class="slide-text-content">
+                        <p>Even when infections slow down in Rafi’s neighbourhood, people continue to <strong>move around</strong> - going to school, to work, and doing activities in other neighbourhoods. Cholera can spread to other neighbourhoods via infected people. Testing people quickly and encouraging isolation helps <strong>protect many communities</strong>, not just Rafi’s.</p>
+                    </div>
                     <div id="sim5_wrapper" class="sim-wrapper">
                         <canvas id="choleraSim5" class="canvas-container"></canvas>
                         <div class="time-bar-container">
@@ -221,13 +220,12 @@
                                 </div>
                             </div>
                         </div>
-                        <br>
+
                         <div class="sim-control-button-collection">
                             <button id="start-button-sim5" class="sim-control-button" type="button">start</button>
                             <button id="reset-button-sim5" class="sim-control-button" type="button">reset</button>
                             <button id="pause-button-sim5" class="sim-control-button" type="button">pause</button>
                         </div>
-
                         <div id="sim5-control-button" class="sim-control-button">
                             <div id="sim5-neighbour-slider-wrapper">
                                 <input type="range" id="sim5-neighbour-number" min="4" max="10" value="10" step="1" class="sim-slider">

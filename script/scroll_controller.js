@@ -39,7 +39,7 @@
         const currentSlide = document.querySelector(`.slide[data-slide="${stepIndex}"]`);
         if (currentSlide) {
             currentSlide.classList.add('is-active');
-            if (stepIndex === 0 || stepIndex === 8) {
+            if (stepIndex === 0 || stepIndex === 7) {
                 currentSlide.classList.add('is-center');
             }
         }
