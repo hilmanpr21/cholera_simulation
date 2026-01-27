@@ -10,14 +10,13 @@
     const scroller = scrollama();
 
     /**
-     * 
+     * Define mapping from slide index to simulation key
      */
     const slideTosimulationMap = {
-        2: 'sim1',
-        3: 'sim1B',
-        4: 'sim2',
-        5: 'sim3',
-        6: 'sim4'
+        2: 'sim1',          // simulation 1 - initial main agent movement
+        3: 'sim1B',         // simulation 1B - initial water contamintation
+        4: 'sim2',          // simulation 2 - Multiple neighbour simulation#
+        5: 'sim4'           // simulation 4 - rapid testing simulation
     };
 
     /**
@@ -84,7 +83,7 @@
     function visualanchorFollowSimulationSetup(stepIndex) {
         
         // Hide Rafi after slide 6
-        if (stepIndex > 6) {
+        if (stepIndex > 5) {
             hideVisualAnchor();
             window.AnchorController.active = false;
             return;
@@ -128,30 +127,39 @@
     }
 
     function characterFollowSimulationSetup(stepIndex) {
+        // Clear any pending setTimeout from previous slides
+        if (window.characterShowTimeout) {
+            clearTimeout(window.characterShowTimeout);
+        }
+        
         // store simulation slides in an array
-        const agentSimSlides = [4, 5, 6]; // slides where characters are shown
+        const agentSimSlides = [4, 5]; // slides where characters are shown
 
-        if (stepIndex < 4 || stepIndex > 6) {
+        if (!agentSimSlides.includes(stepIndex)) { // deactivate character controller outside simulation slides
             window.AgentCharacterController.active = false; // deactivate character controller
-            hideAllAgentCharacters();
+            window.hideAllAgentCharacters();
             window.setCharacterModeSlide(); // set to slide mode
-
         } else {    // activate character controller
             // get simulation key from the mapping
-            const simKey = slideTosimulationMap[stepIndex];
-            const sim = window.simulations?.[simKey];
+            const simKey = slideTosimulationMap[stepIndex]; // look up the simulation key from the slidetoSimulationMap
+            const sim = window.simulations?.[simKey];       // get simulation object from the global simulations
 
             // if simulation found, activate character controller
-            if (sim) {
+            if (sim && (simKey === 'sim2' || simKey === 'sim4')) {
                 window.AgentCharacterController.active = true; // activate character controller
                 window.AgentCharacterController.canvasId = sim.canvasId; // set canvas ID
-                window.AgentCharacterController.simKey = simKey; // set simulation key
+                window.AgentCharacterController.simKey = simKey; // set simulation key from the global object that being used in character_controller.js
 
                 // After transition completes, switch to follow mode and start syncing
-                setTimeout(() => {
+                window.characterShowTimeout = setTimeout(() => {
                     window.setCharacterModeFollow();
-                }, 1000); // Match this with CSS transition duration
+                    window.showAllAgentCharacters(); // Add this to ensure characters are visible
+                }, 1000); // Match this with CSS transition durations
 
+            }
+            else {
+                window.AgentCharacterController.active = false; // deactivate character controller
+                window.hideAllAgentCharacters();
             }
         }
     }

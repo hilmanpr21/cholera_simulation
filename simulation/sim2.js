@@ -15,7 +15,6 @@
      * @type {HTMLCanvasElement}
      */
     const canvas = document.getElementById('choleraSim2');
-    const roughCanvas = rough.canvas(canvas);        // rough.js context
     const ctx = canvas.getContext('2d');            // 2D canvas context
 
     // set canvas internal resolution
@@ -244,7 +243,7 @@
         speed: 1.5,
         currentLocation: 'house',               // initial location set to 'house'
         targetLocation: 'house',                // initial target location is staying at 'house'
-        isInfected: index === 1 || index === 2 ? true : false,                      // track agent infection state
+        isInfected: index === 0 || index === 1 ? true : false,                      // track agent infection state
         houseId: index,                         // associate agent to the house
         isActive: true,                         // track if agent is still active in the simulation based on slider input
         isAtSchool: false,                      // track if agent currently at school or not
@@ -253,7 +252,7 @@
         hasVisitedSchoolBathroomToday: false,        // track if agent has visited school bathroom today
         hasVisitedHouseBathroomToday: false,          // track if agent has visited home bathroom today
         isTravelingToBathroom: false,            // track if agent is currently traveling to bathroom
-        infectionStartDay: index === 1 || index === 2 ? 1 : null,   // track the day when agent got infected, initial infected agents (agent index 1 and 2) start at day 0
+        infectionStartDay: index === 0 || index === 1 ? 1 : null,   // track the day when agent got infected, initial infected agents (agent index 0 and 1) start at day 0
         isRecovered: false,                         // track if agent has recovered and become immune
         recoveryStartDay: 0                         // track the day when agent recovered from infection
     }));
@@ -1157,15 +1156,7 @@
             };
         },
         getAgents() {
-            return agents.map((agent, index) => ({
-                id: index,
-                x: agent.x,
-                y: agent.y,
-                infected: agent.isInfected,
-                recovered: agent.isRecovered, 
-                vaccinated: agent.isVaccinated,
-                isActive: agent.isActive
-            }));
+            return agents;
         },
         isRunning() {
             return isRunning;

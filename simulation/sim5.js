@@ -30,16 +30,6 @@
     const contaminationThreshold = 3;   // 3 infected agent visits to contaminate waterbody 
 
     /**
-     * initial vaccination coverage percentage (0-100%) 
-     */
-    let vaccinationCoverage = 50;    // 30% initial vaccination coverage
-
-    /**
-     * vaccination effectiveness in percentage (0-100%)
-     */
-    const vaccinationEffectiveness = 69;  // 75% effective
-
-    /**
      * number of current rapid test coverage
      * Rapid test coverage menaing how many percentage of the symptomic (infected) population is tested with rapid test everyday
      * @type {number}
@@ -287,7 +277,6 @@
                 isTravelingToBathroom: false,   // track if agent is currently traveling to bathroom
                 hasVisitedOtherCommunityBathroomToday: false, // track if agent has visited other community bathroom today
                 hasVisitedHouseBathroomToday: false,          // track if agent has visited house bathroom today
-                isVaccinated: false,            // vaccination status initially not vaccinated
                 isTested: false,               // rapid test status initially not tested
                 isIsolated: false,              // isolation status initially not isolated
                 isolationStartDay: null,        // timestamp when agent started isolation
@@ -511,53 +500,6 @@
             // contaminate the waterbody
             waterbodies[waterbodyId].isContaminated = true;
         }    
-    }
-
-    /**
-     * Assign vactionation status to non infected agent based on coverage percentage
-     * create an array of non-infected by filterring the agents array
-     * then randomly select agents to vaccinate ('shuffled' array) based on coverage percentage
-     */
-    function assignVaccination() {
-        // filter non-infected agents
-        // create an array of non-infected agents 'suscep[tibleAgents' by filtering the global agents array
-        // '.filter' method creates a new array with all elements in side the new array are referenced to the original array that pass the test implemented by the provided function
-        // output: array of non-infected agents
-        const susceptibleAgents = agents.filter(agent => agent.isActive && !agent.isInfected);
-
-        // calculate number of vsaccinations based on coverage percentage
-        const numberOfVaccinations = Math.floor((susceptibleAgents.length * vaccinationCoverage) / 100);
-
-        // shuffle the susceptibleAgents array to randomly pick vaccinated agents
-        // `.sort` method odifies the order of original array (susceptibleAgents) but not copying or creating a new array
-        // `shuffle` is also pointing at the referwences to the same object of the original array (`agents` array) so it can change the propewrty of the agent object in the original array
-        const shuffled = susceptibleAgents.sort(() => Math.random() - 0.5);
-
-        // select agents to vaccinate based on calculated number
-        for (let i = 0; i < numberOfVaccinations; i++) {
-            shuffled[i].isVaccinated = true;
-        }
-    }
-
-    /**
-     * reset vaccination status for all agents
-     * @param {number} coverage - new vaccination coverage percentage (0-100%)
-     * @returns {void}
-     */
-    function updateVaccinationCoverage(coverage) {
-        // reset vaccinationCoverage object property
-        vaccinationCoverage = coverage;
-
-        // reset vaccination status for all agents
-        agents.forEach((agent) => {
-            agent.isVaccinated = false;
-        });
-
-        // re-assign vaccination based on new coverage
-        assignVaccination();
-
-        // re-draw scnene to reflect vaccination changes
-        drawScene();
     }
 
     /**
@@ -821,15 +763,7 @@
             ctx.lineTo(agent.x, agent.y+4);
             ctx.lineTo(agent.x+6, agent.y+12);
             ctx.stroke();
-
-            // draw vaccination ring if agent is vaccinated
-            if (agent.isVaccinated) {
-                ctx.beginPath();
-                ctx.arc(agent.x, agent.y-10, 9, 0, Math.PI * 2);
-                ctx.strokeStyle = 'green';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-            }
+        
         });     
     }
 
@@ -940,39 +874,7 @@
         // request next animation frame to continue the animation loop
         animationId = requestAnimationFrame(animate);
     }
-
-    /**
-     * Slider input element for controlling vaccination coverage
-     * @type {HTMLInputElement}
-     */
-    let vaccinationSlider = document.getElementById('sim5-vaccination-slider');
-
-    /**
-     * Label element displaying current vaccination coverage
-     * @type {HTMLSpanElement}
-     */
-    let vaccinationLabel = document.getElementById('sim5-vaccination-label');
-
-    // set initial slider and label values
-    vaccinationCoverage = parseInt(vaccinationSlider.value);
-    vaccinationLabel.textContent = vaccinationSlider.value;
-
     
-
-    // update vaccination slider event listener
-    vaccinationSlider.addEventListener('input', (event) => {
-        // update vaccination label and coverage value
-        vaccinationLabel.textContent = event.target.value;
-
-        // update vaccination coverage in simulation
-        updateVaccinationCoverage(parseInt(event.target.value));
-    });
-
-    /**
-     * initialilse vaccination coverage when the simulation starts
-     */
-    updateVaccinationCoverage(vaccinationCoverage);
-
     /**
      * Slider input Element for controlling rapid test coverage
      * @type {HTMLInputElement}
@@ -1038,9 +940,6 @@
         pauseButton.disabled = false;
         resetButton.disabled = false;
 
-        // disable the vaccination slider while simulation is running
-        vaccinationSlider.disabled = true;
-
         // disable the rapid test slider while simulation is running
         rapidTestSlider.disabled = true;
 
@@ -1049,9 +948,6 @@
 
         // assign bathroom slots for all active agents when simulation starts
         assignDailyBathroomSchedules();
-
-        // assign vaccination status to agents at start
-        assignVaccination();
 
         // record the initial timestamp when simulation starts
         lastTimestamp = performance.now();
@@ -1109,9 +1005,7 @@
         startButton.disabled = false;
         pauseButton.disabled = true;
         resetButton.disabled = true;
-        
-        // disable the vaccination slider while simulation is running
-        vaccinationSlider.disabled = false;
+    
 
         // disable the rapid test slider while simulation is running
         rapidTestSlider.disabled = false;
@@ -1133,7 +1027,6 @@
             agent.isTravelingToBathroom = false;
             agent.hasVisitedOtherCommunityBathroomToday = false;
             agent.hasVisitedHouseBathroomToday = false;
-            agent.isVaccinated = false;
             agent.isTested = false;
             agent.isIsolated = false;
             agent.isolationStartDay = null;
@@ -1158,9 +1051,6 @@
 
         // reset assignment bathroom slots for all active agents
         assignDailyBathroomSchedules();
-
-        // reset vaccination assignment
-        assignVaccination();
 
         // redraw the initial scene
         drawScene();

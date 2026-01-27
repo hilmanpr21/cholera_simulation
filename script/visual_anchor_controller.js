@@ -13,30 +13,6 @@ function moveAnchorToViewport(x, y) {
 }
 
 /**
- * Function to move visual anchor to canvas coordinates
- * convert canvas position to viewport position
- * @param {string} canvasId - ID of the canvas element
- * @param {number} offsetX - x offset in canvas space
- * @param {number} offsetY - y offset in canvas space
- */
-/*
-function moveAnchorToCanvas(canvasId, offsetX=0, offsetY=0) {
-    const canvas = document.getElementById(canvasId);
-    
-    // get canvas position and size
-    const rect = canvas.getBoundingClientRect();
-
-    // calculate center of the canvas
-    const x = rect.left + offsetX;
-    const y = rect.top + rect.height / 2 + offsetY;
-
-    // move visual anchor to the calculated viewport position
-    // calling moveAnchorToViewport function
-    moveAnchorToViewport(x, y);
-}
-*/
-
-/**
  * Hide the visual anchor before slide 2
  */
 function hideVisualAnchor() {
@@ -124,12 +100,12 @@ function updateVisualAnchorVisual() {
     const status = window.AnchorController.getAgentStatus?.();
     if (!status) return;
 
-    if (status.infected && !status.vaccinated) {
+    if (status.infected && !status.isolated) {
         visualAnchor.src = 'assets/rafi_infected.PNG';
-    } else if (!status.infected && status.vaccinated) {
-        visualAnchor.src = 'assets/rafi_vaccinated.PNG';
-    } else if (status.infected && status.vaccinated) {
-        visualAnchor.src = 'assets/rafi_infected_vaccinated.PNG';
+    } else if (!status.infected && status.isolated) {
+        visualAnchor.src = 'assets/rafi_isolated.PNG';
+    } else if (status.infected && status.isolated) {
+        visualAnchor.src = 'assets/rafi_infected_isolated.PNG';
     } else {
         visualAnchor.src = 'assets/rafi_normal.PNG';
     }
@@ -162,7 +138,7 @@ function setAnchorModeFollow() {
 setAnchorModeSlide();
 
 // initially show visual anchor
-showVisualAnchor();
+// showVisualAnchor();
 
 // define API to be used in other scripts
 window.syncVisualAnchor = syncVisualAnchor;         // function to sync visual anchor position

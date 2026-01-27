@@ -1,7 +1,7 @@
 :root {
     --main-body-color: #ffe458;
     --article-color: #F3EDDF;
-    --canvas-bg-color: #F3EDDF;
+    --canvas-bg-color:#ffe458;
     --accent-color: #007bff;
     --agent-color: #010101;
     --infected-color: #D94350;
@@ -42,8 +42,7 @@ h4 {
 
 p {
     font-size: 1rem;
-    line-height: 1.5;
-
+    line-height: 1.2;
     margin: 0 0 1rem 0;
 }
 
@@ -82,7 +81,7 @@ body {
     max-width: 480px;
     padding: 2rem;
     text-align: center;
-    top: 10vh;
+    top: 5vh;
     opacity: 0;
     transform: translateY(20px); /* start slightly below*/
     pointer-events: none;       /* prevent interaction when not visible */
@@ -169,17 +168,24 @@ body {
     position: relative;                      /* for positioning child elements absolutely within this container */
 }
 
-/* Simulation Wrapper - sticky container for simulation */
+/* Simulation Wrapper - fixed centered position for simulation */
 .sim-wrapper {
-    position: sticky;               /* sticky position to keep it in view while scrolling */
-    top: 50%;                       /* start sticking when 50% from the top of the viewport */
-    transform: translateY(0);       /* center the container vertically in the viewport */
+    position: absolute;             /* absolute position within sticky-frame */
+    top: 50vh;                       /* center vertically */
+    left: 50%;                      /* center horizontally */
+    transform: translate(-50%, -50%); /* perfect centering */
     width: 604px;                   /* fixed width to match the canvas size on bigger screens */
-    max-width: 100%;               /* responsive width */
-    display: flex;
+    max-width: 90%;                 /* responsive width */
+    display: none;                  /* hidden by default */
     flex-direction: column;
-    align-items: center;                /* Center children horizontally */
-    justify-content: center;            /* Center children vertically */
+    align-items: center;            /* Center children horizontally */
+    justify-content: center;        /* Center children vertically */
+    z-index: 5;                     /* below text slides but above background */
+}
+
+/* Show sim-wrapper when parent slide is active */
+.slide.is-active .sim-wrapper {
+    display: flex;                  /* show when slide is active */
 }
 
 .canvas-container {
@@ -232,7 +238,6 @@ body {
 
 /* Container for slider controls - stacks vertically */
 .sim-control-button,
-.sim1B-control-button,
 #sim1-control-button,
 #sim2-control-button,
 #sim3-control-button,
@@ -243,6 +248,11 @@ body {
     gap: 0.5rem;                    /* space between slider groups */
     margin-top: 10px;               /* space above the slider container */
     width: 100%;
+}
+
+/* Contaminate Water Button - hidden by default */
+#contaminate-water-button {
+    display: none;              /* hide the entire container initially */
 }
 
 /* Slider wrapper styling. To amke the slider wrapper stacked vertically between inputs and label */
@@ -259,8 +269,7 @@ body {
 }
 
 /* Standalone button inside control containers (like "Contaminate Water") */
-.sim-control-button button,
-.sim1B-control-button button {
+.sim-control-button button {
     width: 100%;
     margin-top: 10px;
 }

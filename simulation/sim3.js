@@ -15,7 +15,6 @@
      * @type {HTMLCanvasElement}
      */
     const canvas = document.getElementById('choleraSim3');
-    const roughCanvas = rough.canvas(canvas);        // rough.js context
     const ctx = canvas.getContext('2d');            // 2D canvas context
 
     // set canvas internal resolution
