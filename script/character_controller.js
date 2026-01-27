@@ -41,7 +41,7 @@ function createAgentCharacter (agentId) {
     // set image attributes and styles
     img.className = 'agent-character';
     img.style.position = 'fixed'; // fixed to stay fix in the viewport
-    img.style.width = '40px';
+    img.style.width = '45px';
     img.style.pointers = 'none';
     img.style.transform = 'translate(-50%, -50%)'; // center the image on the position
     //img.style.transition = 'transform 0.6s ease, width 1s ease-in-out, left 0.6s ease, top 0.6s ease'; // smooth movement

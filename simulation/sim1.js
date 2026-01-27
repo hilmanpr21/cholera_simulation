@@ -263,23 +263,25 @@
         */
 
         // draw houseWaterBody
-        const waterWidth = 50;
+        const houseWaterWidth = 50;
+
+        const schoolWaterWidth = 80;
         
         ctx.drawImage(
             houseWaterBody.isContaminated ? contaminatedWaterImage : cleanWaterImage,
-            houseWaterBody.x - waterWidth/2, 
-            houseWaterBody.y - waterWidth/2,
-            waterWidth,
-            waterWidth
+            houseWaterBody.x - houseWaterWidth/2, 
+            houseWaterBody.y - houseWaterWidth/2,
+            houseWaterWidth,
+            houseWaterWidth
         );
 
         // draw schoolWaterBody
         ctx.drawImage(
             schoolWaterBody.isContaminated ? contaminatedWaterImage : cleanWaterImage,
-            schoolWaterBody.x - waterWidth/2, 
-            schoolWaterBody.y - waterWidth/2,
-            waterWidth,
-            waterWidth
+            schoolWaterBody.x - schoolWaterWidth/2, 
+            schoolWaterBody.y - schoolWaterWidth/4,
+            schoolWaterWidth,
+            schoolWaterWidth
         );
     }
 

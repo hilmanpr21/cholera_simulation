@@ -1,7 +1,7 @@
 :root {
     --main-body-color: #ffe458;
     --article-color: #F3EDDF;
-    --canvas-bg-color:#ffe458;
+    --canvas-bg-color:#ffefc1;
     --accent-color: #007bff;
     --agent-color: #010101;
     --infected-color: #D94350;
@@ -43,7 +43,7 @@ h4 {
 p {
     font-size: 1rem;
     line-height: 1.2;
-    margin: 0 0 1rem 0;
+    margin: 0 0 0.8rem 0;
 }
 
 label {
@@ -94,6 +94,10 @@ body {
     opacity: 0;
     transform: translateY(20px); /* start slightly below*/
     pointer-events: none;       /* prevent interaction when not visible */
+    display: flex;              /* use flexbox for centering */
+    flex-direction: column;
+    justify-content: flex-end;    /* center content vertically */
+    align-items: center;        /* center content horizontally */
 }
 
 .slide.is-active {
@@ -223,15 +227,15 @@ body {
 .sim-control-button-collection {
     display: flex;
     gap: 1rem;                      /* space between buttons */
-    margin-top: 10px;               /* space above the button collection */
+    margin-top: 20px;               /* space above the button collection */
     width: 100%;
 }
 
 /* Individual button styling inside the collection */
 .sim-control-button-collection button {
     flex: 1;                        /* make buttons grow equally to fill the container */
-    padding: 0.5rem 1rem;          /* padding inside buttons */
-    border-radius: 0.2rem;         /* rounded corners */
+    padding: 0.2rem 0.5rem;          /* padding inside buttons */
+    border-radius: 1.5rem;         /* rounded corners */
     border: var(--accent-color) solid 2px;
     background-color: white;
     cursor: pointer;
@@ -253,6 +257,7 @@ body {
 
 .sim-control-button-collection button:disabled {
     background-color: var(--accent-color);
+    text-emphasis-color: ;
     cursor: not-allowed;
     opacity: 0.5;
 }
@@ -297,7 +302,7 @@ body {
 
 /* Time Bar Container */
 .time-bar-container {
-    margin-top: 15px;
+    margin-top: 20px;
     padding: 0px;
     background-color: var(--main-body-color);
     width: 100%;
@@ -498,6 +503,28 @@ body {
     transform: scale(0.7);
 }
 
+/* small mobile screens */
+@media (max-width: 390px) {
+    .slide {
+        width: 90vw;
+    }
+
+    p {
+        font-size: 0.8rem;
+    }
+
+    span {
+        font-size: 0.8rem;
+    }
+
+    label {
+        font-size: 0.8rem;
+    }
+
+    .sim-wrapper {
+        width: 85vw;
+    }
+}
 
 /* Mobile responsiveness */ 
 @media (max-width: 768px) {
