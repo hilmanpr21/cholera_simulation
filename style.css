@@ -12,19 +12,21 @@
     --vaccinated-color: #D94350;
     --rapid-test-color: #ffa500;
     --text-color: #010101;
+    --text-accent-color: #161a50;
 }
 
 h1 {
     text-align: center;
-    color: black;
+    color: var(--text-accent-color);
     font-size: 1.5rem;
     font-weight: 900;
-
+    margin-top: 0;
+    margin-bottom: 0.5rem;
 }
 
 h2 {
     text-align: center;
-    color: black;
+    color: var(--text-accent-color);
     font-size: 1.2rem;
 }
 
@@ -87,7 +89,7 @@ body {
 .slide {
     color: var(--text-color);
     position: absolute;
-    max-width: 480px;
+    max-width: 640px;
     padding: 2rem;
     text-align: center;
     top: 5vh;
@@ -120,6 +122,64 @@ body {
   background: #f6f6f6;
 }
 
+/* Swipe up indicator - bottom of screen on slide 0 */
+.swipe-up-indicator {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 2rem 0 1.5rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+    z-index: 10;
+}
+
+/* Show indicator only when slide 0 is active */
+.slide[data-slide="0"].is-active ~ .swipe-up-indicator {
+    opacity: 1;
+}
+
+.chevron-container {
+    display: flex;
+    flex-direction: column;
+    gap: -10px;
+    margin-bottom: 0.5rem;
+    animation: bounce 2s ease-in-out infinite;
+}
+
+.chevron {
+    opacity: 0.9;
+}
+
+.chevron:first-child {
+    margin-bottom: -8px;
+}
+
+.swipe-text {
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+/* Bouncing animation for chevrons */
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
 #anchor-overlay {
     position: fixed;        /* fixed position to stay on screen while scrolling */
     top: 0;                /* top of the viewport */
@@ -130,9 +190,17 @@ body {
     justify-content: center;/* Centers children horizontally */
 }
 
+#title-image {
+    width: 90vw;
+    max-width: 480px;
+    height: auto;
+    margin-bottom: 1rem;
+}
+
 #anchor-image {
     position: absolute;     /* position relative to the nearest positioned ancestor */
     width: 180px;            /* control size of the image */
+    max-width: 480px;   
     height: auto;
     transform: translate(-50%, -50%);   /* center the image at the center of the div position */
     left: 50vw;              /* center horizontally in the viewport */
@@ -196,7 +264,7 @@ body {
 /* Simulation Wrapper - fixed centered position for simulation */
 .sim-wrapper {
     position: absolute;             /* absolute position within sticky-frame */
-    top: 30vh;                       /* center vertically */
+    top: 25vh;                       /* center vertically */
     left: 50%;                      /* center horizontally */
     transform: translateX(-50%); /* perfect centering */
     width: 604px;                   /* fixed width to match the canvas size on bigger screens */

@@ -16,11 +16,25 @@
 
         <main id="scrolly">
            <div class="sticky-frame">
-                <div class="slide is-active" data-slide="0">
+                <div class="slide is-active is-center" data-slide="0">
                     <div class="slide-text-content">
-                        <h1>RAFI vs CHOLERA</h1>
-                        <p>Scroll down to start the story.</p>
+                        <img src="assets/cholera_title.PNG" alt="Chola Chola er Chlera" class="title-image" id="title-image">
+                        <h1>Chola Chola er Cholera</h1>
+                        <h1>চলা চলার কলেরা</h1>
                     </div>
+                </div>
+
+                <!-- Swipe up indicator - only visible on slide 0 -->
+                <div id="swipe-up-indicator" class="swipe-up-indicator">
+                    <div class="chevron-container">
+                        <svg class="chevron" width="40" height="20" viewBox="0 0 40 20" fill="none">
+                            <path d="M5 15L20 5L35 15" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <svg class="chevron" width="40" height="20" viewBox="0 0 40 20" fill="none">
+                            <path d="M5 15L20 5L35 15" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <p class="swipe-text">Swipe up to continue</p>
                 </div>
 
                 <div class="slide" data-slide="1">
@@ -238,9 +252,9 @@
                 </div>
 
                 <div class="slide" data-slide="7">
-                    <p>Thank you for helping protect Rafi’s community.</p>
+                    <h3>Thank you for helping protect Rafi’s community.</h3>
                     <br>
-                    <p>Rapid testing and isolation can prevent cholera outbreaks and save lives.</p>
+                    <h3>Rapid testing and isolation can prevent cholera outbreaks and save lives.</h3>
                 </div>
             </div>
 
