@@ -536,6 +536,14 @@ body {
         width: 90vw;
     }
 
+     p {
+        font-size: 0.75rem;
+    }
+
+    span {
+        font-size: 0.75rem;
+    }
+
     .body_article {
         width: 90vw;
     }
