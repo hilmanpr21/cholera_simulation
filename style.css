@@ -89,7 +89,7 @@ body {
 .slide {
     color: var(--text-color);
     position: absolute;
-    max-width: 480px;
+    max-width: 640px;
     padding: 2rem;
     text-align: center;
     top: 5vh;
@@ -192,6 +192,7 @@ body {
 
 #title-image {
     width: 90vw;
+    max-width: 480px;
     height: auto;
     margin-bottom: 1rem;
 }
@@ -199,6 +200,7 @@ body {
 #anchor-image {
     position: absolute;     /* position relative to the nearest positioned ancestor */
     width: 180px;            /* control size of the image */
+    max-width: 480px;   
     height: auto;
     transform: translate(-50%, -50%);   /* center the image at the center of the div position */
     left: 50vw;              /* center horizontally in the viewport */
