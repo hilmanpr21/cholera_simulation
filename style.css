@@ -37,13 +37,13 @@ h3 {
 }
 
 h4 {
-    font-size: 1rem;
+    font-size: 1.2rem;
     font-weight: bold;
     margin: 0 0;
 }
 
 p {
-    font-size: 1rem;
+    font-size: 1.2rem;
     line-height: 1.2;
     margin: 0 0 0.8rem 0;
 }
@@ -78,7 +78,7 @@ body {
     position: sticky;
     top: 0;
     width: 100vw;
-    height: 100vh;
+    height: 100dvh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -124,20 +124,20 @@ body {
 
 /* Swipe up indicator - bottom of screen on slide 0 */
 .swipe-up-indicator {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 2rem 0 1.5rem 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    position: absolute;         /* position relative to the sticky-frame */
+    bottom: 0;                  /* stick to the bottom */
+    left: 0;                    /* start from the left edge */
+    width: 100%;                /* full width of the parent container */
+    padding: 2rem 0 2rem 0;   /* padding top/right/bottom/left */
+    display: flex;              /* use flexbox for centering */
+    flex-direction: column;     /* stack chevrons and text vertically */
+    align-items: center;        /* center items horizontally */
     justify-content: center;
     background: linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
-    opacity: 0;
+    opacity: 0;                  /* initially hidden */      
     pointer-events: none;
     transition: opacity 0.5s ease;
-    z-index: 10;
+    z-index: 10;                 /* on top of other elements */
 }
 
 /* Show indicator only when slide 0 is active */
@@ -148,10 +148,21 @@ body {
 .chevron-container {
     display: flex;
     flex-direction: column;
-    gap: -10px;
+    gap: -10px;                 /* overlap chevrons slightly */
     margin-bottom: 0.5rem;
-    animation: bounce 2s ease-in-out infinite;
+    animation: bounce 2s ease-in-out infinite;          /* bounce=name 2s=duration ease-in-out=timing-function infinite=iteration-count */
 }
+
+/* Bouncing animation for chevrons */
+@keyframes bounce {
+    0%, 100% {                  /* start and end positions */
+        transform: translateY(0);
+    }
+    50% {                       /* mid position of the animation */    
+        transform: translateY(-15px);
+    }
+}
+
 
 .chevron {
     opacity: 0.9;
@@ -170,15 +181,6 @@ body {
     margin: 0;
 }
 
-/* Bouncing animation for chevrons */
-@keyframes bounce {
-    0%, 100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-15px);
-    }
-}
 
 #anchor-overlay {
     position: fixed;        /* fixed position to stay on screen while scrolling */
@@ -191,7 +193,7 @@ body {
 }
 
 #title-image {
-    width: 90vw;
+    width: 90%;
     max-width: 480px;
     height: auto;
     margin-bottom: 1rem;
@@ -264,7 +266,7 @@ body {
 /* Simulation Wrapper - fixed centered position for simulation */
 .sim-wrapper {
     position: absolute;             /* absolute position within sticky-frame */
-    top: 25vh;                       /* center vertically */
+    top: 25dvh;                       /* center vertically */
     left: 50%;                      /* center horizontally */
     transform: translateX(-50%); /* perfect centering */
     width: 604px;                   /* fixed width to match the canvas size on bigger screens */
@@ -604,7 +606,11 @@ body {
         width: 90vw;
     }
 
-     p {
+    p {
+        font-size: 0.75rem;
+    }
+
+    h4 {
         font-size: 0.75rem;
     }
 
