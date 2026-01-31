@@ -41,7 +41,7 @@
         y: school.y+60,
         isContaminated: false,           // track waterbody contamination state
         infectedVisitCount: 0,           // track number of infected agent visit to the waterbody
-        contaminationThreshold: 3        // threshold of infected visit to contaminate the waterbody
+        contaminationThreshold: 4        // threshold of infected visit to contaminate the waterbody
     }
 
     /**
@@ -248,18 +248,18 @@
     const agents = houses.map((house, index) => ({
         x: house.x + 10,
         y: house.y + 10, 
-        speed: 1.5,
+        speed: 2,
         currentLocation: 'house',               // initial location set to 'house'
         targetLocation: 'house',                // initial target location is staying at 'house'
-        isInfected: index === 1 || index === 2 ? true : false,                      // track agent infection state
-        infectionStartDay: index === 1 || index === 2 ? 1 : null,   // track the day when agent got infected, initial infected agents (agent index 1 and 2) start at day 0
+        isInfected: index === 0 || index === 1 ? true : false,                      // track agent infection state
+        infectionStartDay: index === 0 || index === 1 ? 1 : null,   // track the day when agent got infected, initial infected agents (agent index 0 and 2) start at day 0
         isRecovered: false,                         // track if agent has recovered and become immune
         recoveryStartDay: 0,                         // track the day when agent recovered from infection
         houseId: index,                         // associate agent to the house
         isActive: true,                         // track if agent is still active in the simulation based on slider input
         isAtSchool: false,                      // track if agent currently at school or not
         schoolBathroomHour: 0,                  // assigned bathroom hour at school, will be assigned daily
-        houseBathroomHour: 0,                    // assigned bathroom hour at home, will be assigned daily
+        houseBathroomHour: 0,                   // assigned bathroom hour at home, will be assigned daily
         hasVisitedSchoolBathroomToday: false,        // track if agent has visited school bathroom today
         hasVisitedHouseBathroomToday: false,          // track if agent has visited home bathroom today
         isTravelingToBathroom: false,           // track if agent is currently traveling to bathroom
@@ -276,7 +276,6 @@
      */
     // Current number of active agents in the simulation
     let activeAgentCount = 5;                   // based on the initial value of the slider
-
 
     /**
      * number of current rapid test coverage (0-100%)
@@ -295,7 +294,7 @@
      * isolation duration in days
      * @type{number}
      */
-    const isolationDuration = 3;                  // isolation duration set to 3 days
+    const isolationDuration = 4;                  // isolation duration set to 4 days
     
     /**
      * duration of infection in days before agent becomes immune
@@ -402,53 +401,6 @@
                 shuffled[i].isolationEndDay = timeManager.currentDay + isolationDuration;
             }
         }
-    }
-
-    /**
-     * To check if agent  should be retested or potentially released from isolation
-     * based on the current day and isolation end day
-     * @returns {void}
-     */
-    /*
-    function checkIsolationStatus() {
-        agents.forEach(agent => {
-            if (!agent.isActive) return;         // skip inactive agents
-
-            // check if agent isolation period has ended
-            // check if agent is in isolation and current day is greater than or equal to isolation end day
-            if (agent.isIsolated && timeManager.currentDay >= agent.isolationEndDay) {
-                // retest the agent
-                agent.isTested = true;
-
-                // if agent is infected, check the rapid test result again with rapid test sensitivity
-                if (agent.isInfected) {
-                    // generate random number between 0-1
-                    const randomNumber = Math.random();
-
-                    // check if agent tested positive again
-                    if (randomNumber < (rapidTestSensitivity / 100)) {
-                        // agent tested positive again, extend isolation
-                        agent.isIsolated = true;
-                        // new start simulation day
-                        agent.isolationStartDay = timeManager.currentDay;
-                        // new end simulation day
-                        agent.isolationEndDay = timeManager.currentDay + isolationDuration;
-                    } else {
-                        // if agent tested negative (it is like a false negative), release from isolation
-                        agent.isIsolated = false;
-                        agent.isTested = false;
-                        agent.isolationStartDay = 0;
-                        agent.isolationEndDay = 0;
-                    }
-                } else {
-                    // if agent is not infected, release from isolation
-                    agent.isIsolated = false;
-                    agent.isTested = false;
-                    agent.isolationStartDay = 0;
-                    agent.isolationEndDay = 0;
-                }
-            }
-        });
     }
     
 
@@ -915,10 +867,10 @@
             if (!agent.isActive || !agent.isIsolated) return;
 
             // draw isolation box
-            ctx.strokeStyle = 'grey';
-            ctx.lineWidth = 2;
+            ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--isolation-color');
+            ctx.lineWidth = 3;
             ctx.setLineDash([5, 3]); // dashed line
-            ctx.strokeRect(agent.x - 25, agent.y - 35, 50, 50);
+            ctx.strokeRect(agent.x - 40, agent.y - 30, 80, 60);
             ctx.setLineDash([]); // reset to solid line
         });
     }
@@ -1022,7 +974,7 @@
         // check isolation status for all agents
         // Perform rapid tests daily at 7 am (hour 7) and check isolation status
         const currentHour = getCurrentHour(timeManager);
-        if (currentHour === 7 && !hasPerformedRapidTestToday) {
+        if (currentHour === 8 && !hasPerformedRapidTestToday) {
             // assign rapid test to eligible agents
             assignRapidTest();
             // set flag to indicate rapid test has been performed today
@@ -1259,8 +1211,8 @@
             agent.y = houses[index].y + 10;
             agent.currentLocation = 'house';
             agent.targetLocation = 'house';
-            agent.isInfected = index === 1 || index === 2 ? true : false;
-            agent.infectionStartDay = index === 1 || index === 2 ? 0 : null;
+            agent.isInfected = index === 0 || index === 1 ? true : false;
+            agent.infectionStartDay = index === 0 || index === 1 ? 0 : null;
             agent.isImmune = false;
             agent.isAtSchool = false;
             agent.schoolBathroomHour = null;

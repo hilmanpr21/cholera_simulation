@@ -1,4 +1,4 @@
-(function (){
+    (function (){
     /**
      * Simulating basic cholera with daily scheduling
      */

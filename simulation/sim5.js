@@ -777,9 +777,9 @@
             if (!agent.isActive || !agent.isIsolated) return;
 
             // draw isolation box
-            ctx.strokeStyle = 'grey';
+            ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--isolation-color');
             ctx.lineWidth = 2;
-            ctx.setLineDash([5, 3]); // dashed line
+            ctx.setLineDash([5, 4]); // dashed line
             ctx.strokeRect(agent.x-10, agent.y-17, 20, 30);
             ctx.setLineDash([]); // reset to solid line
         });

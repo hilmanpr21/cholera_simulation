@@ -13,6 +13,8 @@
     --rapid-test-color: #ffa500;
     --text-color: #010101;
     --text-accent-color: #161a50;
+    --white-color: #FFFFFF;
+    --isolation-color: #609e3e;
 }
 
 h1 {
@@ -90,9 +92,9 @@ body {
     color: var(--text-color);
     position: absolute;
     max-width: 640px;
-    padding: 2rem;
+    padding: 1rem 2rem 2rem 2rem;
     text-align: center;
-    top: 5vh;
+    top: 5dvh;
     opacity: 0;
     transform: translateY(20px); /* start slightly below*/
     pointer-events: none;       /* prevent interaction when not visible */
@@ -266,7 +268,7 @@ body {
 /* Simulation Wrapper - fixed centered position for simulation */
 .sim-wrapper {
     position: absolute;             /* absolute position within sticky-frame */
-    top: 25dvh;                       /* center vertically */
+    top: 22dvh;                       /* center vertically */
     left: 50%;                      /* center horizontally */
     transform: translateX(-50%); /* perfect centering */
     width: 604px;                   /* fixed width to match the canvas size on bigger screens */
@@ -286,7 +288,7 @@ body {
 .canvas-container {
     background-color: var(--canvas-bg-color);
     display: block;                /* remove inline element space below canvas */
-    border-radius: 0.5rem;
+    border-radius: 01rem;
     margin-top: 1rem;
     border: none;
     max-width: 100%;                /* never bigger than the original canvas resolution, 100 percent of the parent container (@body-article) */
@@ -304,32 +306,35 @@ body {
 /* Individual button styling inside the collection */
 .sim-control-button-collection button {
     flex: 1;                        /* make buttons grow equally to fill the container */
-    padding: 0.2rem 0.5rem;          /* padding inside buttons */
-    border-radius: 1.5rem;         /* rounded corners */
-    border: var(--accent-color) solid 2px;
-    background-color: white;
+    padding: 0.3rem 0.5rem;          /* padding inside buttons */
+    border-radius: 0rem;         /* rounded corners */
+    border: var(--accent-color) solid 1px;
+    background-color: var(--accent-color);
     cursor: pointer;
     transition: all 0.3s ease;
     text-transform: uppercase;
     font-weight: 900;
     font-family: monospace;
+    color: var(--white-color);
 }
 
 .sim-control-button-collection button:hover {
-    background-color: #f0f0f0;
+    border: var(--accent-color) solid 2px;
+    color: var(--accent-color);
+    background-color: var(--white-color);
 }
 
 .sim-control-button-collection button.active {
     background-color: var(--accent-color);
-    color: white;
+    color: var(--white-color);
     font-weight: bold;
 }
 
 .sim-control-button-collection button:disabled {
-    background-color: var(--accent-color);
-    text-emphasis-color: ;
+    background-color: var(--white-color);
+    color: var(--accent-color);
     cursor: not-allowed;
-    opacity: 0.5;
+    opacity: 0.7;
 }
 
 /* Container for slider controls - stacks vertically */
@@ -491,8 +496,8 @@ body {
 /* This overlay will hold the SVG agent that follows the mouse cursor */
 #svg-anchor-agent-overlay {
     position: fixed;        /* fixed position to stay on screen */
-    top: 0;                 /* top of the viewport */
-    left: 0;                /* left of the viewport */
+    top: 50dvh;                 /* top of the viewport */
+    left: 500dvw;                /* left of the viewport */
     width: 100vw;            /* full width */
     height: 100vh;          /* full height */
     pointer-events: none;   /* allow clicks to pass through */

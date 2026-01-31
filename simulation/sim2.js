@@ -41,7 +41,7 @@
         y: school.y+60,
         isContaminated: false,           // track waterbody contamination state
         infectedVisitCount: 0,           // track number of infected agent visit to the waterbody
-        contaminationThreshold: 3        // threshold of infected visit to contaminate the waterbody
+        contaminationThreshold: 4       // threshold of infected visit to contaminate the waterbody
     }
 
     /**
@@ -261,7 +261,7 @@
      * duration of infection in days before agent becomes immune
      * @type {number}
      */
-    const infectionDuration = 2; // 7 days of infection before immunity
+    const infectionDuration = 7; // 7 days of infection before immunity
 
     /** 
      * Duration of recovered agent in day
@@ -1096,14 +1096,14 @@
             agent.y = houses[index].y + 10;
             agent.currentLocation = 'house';
             agent.targetLocation = 'house';
-            agent.isInfected = index === 1 || index === 2 ? true : false;
+            agent.isInfected = index === 0 || index === 1 ? true : false;
             agent.isAtSchool = false;
             agent.schoolBathroomHour = null;
             agent.houseBathroomHour = null;
             agent.hasVisitedSchoolBathroomToday = false;
             agent.hasVisitedHouseBathroomToday = false;
             agent.isTravelingToBathroom = false;
-            agent.infectionStartDay = index === 1 || index === 2 ? 1 : null;  
+            agent.infectionStartDay = index === 0 || index === 1 ? 0 : null;  
             agent.isRecovered = false;             
             agent.recoveryStartDay = 0;
         });

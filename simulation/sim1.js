@@ -47,7 +47,7 @@
     let agent = {
         x: house.x+10,          // Agent initial x position
         y: house.y+10,          // Agent initial y position
-        speed: 1.5,                // Agent movement speed
+        speed: 2,                // Agent movement speed
         itinerary: ['school', 'schoolWater', 'school', 'house', 'houseWater', 'house'],         // Agent array of locations to visit
         stepIndex: 0,              // current index in the itinerary
         isInfected: false,         // track agent infection state
