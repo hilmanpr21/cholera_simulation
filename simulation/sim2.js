@@ -240,10 +240,10 @@
     const agents = houses.map((house, index) => ({
         x: house.x + 10,
         y: house.y + 10, 
-        speed: 1.5,
+        speed: 2,
         currentLocation: 'house',               // initial location set to 'house'
         targetLocation: 'house',                // initial target location is staying at 'house'
-        isInfected: index === 0 || index === 1 ? true : false,                      // track agent infection state
+        isInfected: false,                      // track agent infection state
         houseId: index,                         // associate agent to the house
         isActive: true,                         // track if agent is still active in the simulation based on slider input
         isAtSchool: false,                      // track if agent currently at school or not
@@ -252,7 +252,7 @@
         hasVisitedSchoolBathroomToday: false,        // track if agent has visited school bathroom today
         hasVisitedHouseBathroomToday: false,          // track if agent has visited home bathroom today
         isTravelingToBathroom: false,            // track if agent is currently traveling to bathroom
-        infectionStartDay: index === 0 || index === 1 ? 1 : null,   // track the day when agent got infected, initial infected agents (agent index 0 and 1) start at day 0
+        infectionStartDay: null,   // track the day when agent got infected, initial no agent infected
         isRecovered: false,                         // track if agent has recovered and become immune
         recoveryStartDay: 0                         // track the day when agent recovered from infection
     }));
@@ -604,6 +604,109 @@
         }
     }
 
+    /**
+     * count the number of currently infected agents 
+     * @param {Array} agentsArray - array of agent objects
+     */
+    function countInfectedAgents() {
+        return agents.filter(agent => agent.isActive && agent.isInfected).length;
+    }
+
+    /**
+     * Update the infected count display element with the current number of infected agents
+     */
+    function updateInfectedCountDisplay() {
+        // store the length of infected agents in a variable
+        const infectedCount = countInfectedAgents() ;
+        
+        // update the infected count display element
+        const infectedCountElement = document.getElementById('sim2-infected-count');
+        infectedCountElement.textContent = infectedCount;
+    }
+
+    /**
+     * function to stop the simulaton when all agent got infected
+     */
+    function allAgentsGotInfected() {
+        const healthyAgent = agents.filter(agent => agent.isActive && !agent.isInfected).length
+
+        if (healthyAgent === 0) {
+            setTimeout(() => {
+                // change the state to stol the simullation from running
+                isRunning = false;    
+
+                // show game over overlay
+                showGameOverOverlay();
+            }, 1000)
+        }
+    }
+
+    
+
+    /**
+     * Show game over overlay with day count when all agents are infected
+     */
+    function showGameOverOverlay() {
+        const overlay = document.getElementById('sim2-game-over-overlay');
+        const dayCountElement = document.getElementById('sim2-game-over-day-count');
+        const canvas = document.getElementById('choleraSim2');
+
+        // get position and dimensions of the canvas
+        const canvasRect = canvas.getBoundingClientRect();
+
+        // set the day count text
+        dayCountElement.textContent = timeManager.currentDay;
+
+        // set the the position the overlay over the canvas
+        overlay.style.top = canvasRect.top + 'px';
+        overlay.style.left = canvasRect.left + 'px';
+        overlay.style.width = canvasRect.width + 'px';
+        overlay.style.height = canvasRect.height + 'px';
+
+        // show the overlay by adding the 'show' class
+        overlay.classList.add('show');
+
+        startButton.disabled = true;
+        pauseButton.disabled = true;
+        resetButton.disabled = true;
+    }
+
+    /**
+     * Hide the game over overlay
+     */
+    function hideGameOverOverlay() {
+        const overlay = document.getElementById('sim2-game-over-overlay');
+        
+        if (overlay) {
+            overlay.classList.remove('show');
+
+            // Clear inline styles to fully reset the overlay
+            overlay.style.top = '';
+            overlay.style.left = '';
+            overlay.style.width = '';
+            overlay.style.height = '';
+        }
+    }
+
+    /**
+     * Update overlay postion on windows rest to match with the canvas position
+     */
+    window.addEventListener('resize', function() {
+        const overlay = document.getElementById('sim2-game-over-overlay');
+        const canvas = document.getElementById('choleraSim2');
+
+        // get position and dimensions of the canvas
+        const canvasRect = canvas.getBoundingClientRect();
+
+        if (overlay && overlay.classList.contains('show')) {
+            // set the the position the overlay over the canvas
+            overlay.style.top = canvasRect.top + 'px';
+            overlay.style.left = canvasRect.left + 'px';
+            overlay.style.width = canvasRect.width + 'px';
+            overlay.style.height = canvasRect.height + 'px';
+        }
+    });
+
     // Image loading management
     let imagesLoaded = 0;
     const totalImages = 5;
@@ -616,6 +719,10 @@
         }
     }
 
+    /**
+     * Load images for house (normal and infected), school, and water bodies (contaminated and clean)
+     * Calls onImageLoad when each image is loaded to track loading progress
+     */
     const houseNormalImage = new Image();
     houseNormalImage.onload = onImageLoad;
     houseNormalImage.src = 'assets/house_normal.PNG';
@@ -927,12 +1034,25 @@
         // uppdate house infection state
         updateHouseInfectionState(deltaTime);
 
+        // update infected count display
+        updateInfectedCountDisplay();
+
+        // stop simulation when all agent got infected
+        allAgentsGotInfected()
+
         // Redraw the scene
         drawScene();
 
-        // Request the next animation frame
-        animationId = requestAnimationFrame(animate)
+        // Request the next animation frame only if simulation is still running
+        if (isRunning) {
+            animationId = requestAnimationFrame(animate)
+        }
     }
+
+    /**
+     * Defines the initial number of infected agents at simulation start
+     */
+    let initialInfectedAgentCount = 2; 
 
     /**
      * Slider input element for controlling number of active agents
@@ -947,9 +1067,11 @@
      */
     let neighborhoodNumberLabel = document.getElementById('sim2-neighbour-label');
     
-    // set initial slider value
+    /**
+     * Change the neighborhood number label and active agent count based on slider value
+     */
     neighborhoodNumberLabel.textContent = neighborhoodNumber.value;
-    activeAgentCount = parseInt(neighborhoodNumber.value);
+    initialInfectedAgentCount = parseInt(neighborhoodNumber.value);              // change the number into the integer
 
     /**
      * Updates which agents are active based on slider value
@@ -958,16 +1080,17 @@
      * @returns {void}
      */
     //  declare function to update active agent based on slider value
-    function updateActiveAgents(count) {
-        // update agent active state based on the slider value
-        activeAgentCount = count;
+    function updateInitialInfectedAgent(count) {
+        // update the initial infected agent count based on the slider value
+        initialInfectedAgentCount = count;
 
-        // update isActive flag for each agent
+        // infect agent based on the initial infected agent count
         agents.forEach((agent, agentIndex) => {
-            agent.isActive = agentIndex < activeAgentCount;
+            agent.isInfected = agentIndex < initialInfectedAgentCount ? true : false;
+            agent.infectionStartDay = agentIndex < initialInfectedAgentCount ? 1 : null;  // set infection start day to day 1 for initially infected agents
         });
 
-        // redraw the scene to reflect changes
+        // redraw the scene to reflect changes imidiately when the slider is moved
         drawScene();
     }
 
@@ -976,11 +1099,21 @@
         neighborhoodNumberLabel.textContent = this.value;
 
         // update active agents based on the slider value
-        updateActiveAgents(parseInt(this.value));
+        updateInitialInfectedAgent(parseInt(this.value));
+
+        // update infected agent count display
+        updateInfectedCountDisplay();
     });
 
-    // initialise active agents based on the initital slider value
-    updateActiveAgents(activeAgentCount);
+    /**
+     * Initially calling to set infected agents based on initial slider value
+     */
+    updateInitialInfectedAgent(initialInfectedAgentCount);
+
+    /**
+     * Update infected agent count display initially before the simulation starts
+     */
+    updateInfectedCountDisplay();
 
     /**
      * Tracks whether the simulation is currently running
@@ -997,11 +1130,23 @@
     const startButton = document.getElementById('start-button-sim2');
     const pauseButton = document.getElementById('pause-button-sim2');
     const resetButton = document.getElementById('reset-button-sim2');
+    const tryAgainButton = document.getElementById('sim2-try-again-button');
 
     // add event listeners to buttons
     startButton.addEventListener('click', startSimulation);
     pauseButton.addEventListener('click', pauseSimulation);
     resetButton.addEventListener('click', resetSimulation);
+    tryAgainButton.addEventListener('click', tryAgainSimulation);
+
+    /**
+     * Handles "Try Again" button click from game over overlay
+     * Hides overlay and resets the simulation
+     * @returns {void}
+     */
+    function tryAgainSimulation() {
+        hideGameOverOverlay();
+        resetSimulation();
+    }
 
     /**
      * Starts the simulation animation
@@ -1053,7 +1198,7 @@
         resetButton.disabled = false;
 
         //disable the neighborhood slider
-        neighborhoodNumber.disabled = false;
+        neighborhoodNumber.disabled = true;
 
         // cancel the animation frame
         cancelAnimationFrame(animationId);              // stop the animation
@@ -1096,14 +1241,14 @@
             agent.y = houses[index].y + 10;
             agent.currentLocation = 'house';
             agent.targetLocation = 'house';
-            agent.isInfected = index === 0 || index === 1 ? true : false;
+            agent.isInfected = false;
             agent.isAtSchool = false;
             agent.schoolBathroomHour = null;
             agent.houseBathroomHour = null;
             agent.hasVisitedSchoolBathroomToday = false;
             agent.hasVisitedHouseBathroomToday = false;
             agent.isTravelingToBathroom = false;
-            agent.infectionStartDay = index === 0 || index === 1 ? 0 : null;  
+            agent.infectionStartDay = null;  
             agent.isRecovered = false;             
             agent.recoveryStartDay = 0;
         });
@@ -1126,6 +1271,12 @@
 
         // Assign initial bathroom schedules for day 0
         assignDailyBathroomSchedules(); 
+
+        // re-infect initial infected agents based on slider value
+        updateInitialInfectedAgent(initialInfectedAgentCount);
+
+        // update infected agent count display
+        updateInfectedCountDisplay();
 
         // redraw the initial scene
         drawScene();

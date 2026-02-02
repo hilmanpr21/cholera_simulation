@@ -4,7 +4,7 @@
     --canvas-bg-color:#ffefc1;
     --accent-color: #007bff;
     --agent-color: #010101;
-    --infected-color: #D94350;
+    --infected-color: #FF0000;
     --house-color: #7BC950;
     --school-color: #FFD700;
     --clean-water-color: #00bfff;
@@ -15,15 +15,15 @@
     --text-accent-color: #161a50;
     --white-color: #FFFFFF;
     --isolation-color: #609e3e;
+    --gameover-overlay-bg-color: rgba(227, 0, 0, 0.9); /* semi-transparent dark overlay */
 }
 
 h1 {
     text-align: center;
-    color: var(--text-accent-color);
     font-size: 1.5rem;
     font-weight: 900;
     margin-top: 0;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0rem;
 }
 
 h2 {
@@ -165,7 +165,6 @@ body {
     }
 }
 
-
 .chevron {
     opacity: 0.9;
 }
@@ -183,13 +182,12 @@ body {
     margin: 0;
 }
 
-
 #anchor-overlay {
     position: fixed;        /* fixed position to stay on screen while scrolling */
     top: 0;                /* top of the viewport */
     left: 0;               /* left of the viewport */
     pointer-events: none;   /* allow clicks to pass through */
-    z-index: 1000;          /* on top of other elements */
+    z-index: 10;          /* on top of other elements */
     align-items: center;    /* Centers children vertically */
     justify-content: center;/* Centers children horizontally */
 }
@@ -286,13 +284,109 @@ body {
 }
 
 .canvas-container {
+
     background-color: var(--canvas-bg-color);
     display: block;                /* remove inline element space below canvas */
-    border-radius: 01rem;
+    border-radius: 1rem;
     margin-top: 1rem;
     border: none;
     max-width: 100%;                /* never bigger than the original canvas resolution, 100 percent of the parent container (@body-article) */
     height: auto;                   /* maintain aspect ratio */
+}
+
+/* Game Over Overlay */
+.game-over-overlay {
+    position: fixed;     /* absolute position within parents (sim-wrapper) */
+    top: 0;
+    left: 0;
+    margin-top: 0rem;       /* match canvas margin-top */
+    width: 100%;
+    height: auto;           /* match canvas height */
+    background-color: var(--gameover-overlay-bg-color);
+    display: none;          /* hidden by default */
+    pointer-events: none;   /* prevent interaction when layer hidden */
+    opacity: 0;
+    flex-direction: column;     /* stack the children vertically */
+    align-items: center;        /* center children horizontally */
+    justify-content: center;    /* center children vertically */
+    z-index: 100;                 /* on top of canvas */
+    transition: opacity 0.5s ease;
+    border-radius: 1rem;        /* match canvas border-radius */
+}
+
+.game-over-overlay.show {
+    display: flex;
+    opacity: 1;
+    pointer-events: auto;      /* allow interaction whne layer shown */
+}
+
+.game-over-content {
+    color: var(--text-accent-color);
+    display: flex;
+    flex-direction: column;     /* stack the children vertically */
+    align-items: center;        /* center children horizontally */
+    justify-content: center;    /* center children vertically */
+}
+
+.game-over-text {
+    font-weight: 600;;
+    color: var(--text-accent-color);
+    margin: 0 0 0.5rem 0;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.game-over-content p {
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+.game-over-content h3 {
+    font-size: 1.5rem;
+    font-weight: 900;
+    text-align: center;
+}
+
+.game-over-days-count {
+    font-size: 2rem;
+    font-weight: 900;
+} 
+
+.exclamation-mark {
+    font-size: 3rem;
+    font-weight: 900;
+    color: var(--text-accent-color);
+    margin: 0 0;
+    animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.5);
+    }
+}
+
+.try-again-button {
+    padding: 0.4rem 2rem;
+    font-size: 1rem;
+    font-weight: 900;
+    font-family: monospace;
+    text-transform: uppercase;
+    background-color: var(--accent-color);
+    color: var(--white-color);
+    border: 2px solid var(--accent-color);
+    border-radius: 0rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+}
+
+.try-again-button:hover {
+    background-color: var(--white-color);
+    color: var(--accent-color);
 }
 
 /* Simulation Control Buttons Collection - Container for start/pause/reset buttons */
@@ -501,7 +595,7 @@ body {
     width: 100vw;            /* full width */
     height: 100vh;          /* full height */
     pointer-events: none;   /* allow clicks to pass through */
-    z-index: 1000;          /* on top of other elements */
+    z-index: 10;          /* on top of other elements */
     background-color: transparent; /* transparent background */
     opacity: 0;             /* initially hidden */
 }
@@ -553,7 +647,6 @@ body {
     fill: none;
     stroke: var(--vaccinated-color);
     stroke-width: 3;
-
 }
 
 /* tested State - agent has orange dot */
@@ -599,10 +692,39 @@ body {
     .sim-wrapper {
         width: 85vw;
     }
+
+    .game-over-text p {
+        font-size: 1rem;
+    }
+
+    .game-over-text h3 {
+        font-size: 1.2rem;
+        text-align: center;
+    }
+    
+    .game-over-days {
+        font-size: 0.9rem;
+        text-align: center;
+    }
+    
+    .game-over-days-count {
+        font-size: 2rem;
+        font-weight: 900;
+    }
+    
+    .exclamation-mark {
+        font-size: 2.5rem;
+    }
+    
+    .try-again-button {
+        padding: 0.5rem 1.2rem;
+        font-size: 0.8rem;
+    }
 }
 
 /* Mobile responsiveness */ 
 @media (max-width: 768px) {
+    
     #body_section {
         width: 95vw;
     }
@@ -630,6 +752,34 @@ body {
     .sim-section {
         width: 90vw;
         padding: 0 1rem;
+    }
+
+    .game-over-content p {
+        font-size: 1rem;
+    }
+
+    .game-over-content h3 {
+        font-size: 1.2rem;
+        text-align: center;
+    }
+    
+    
+    .game-over-days {
+        font-size: 0.9rem;
+    }
+    
+    .game-over-days-count {
+        font-size: 2rem;
+        font-weight: 900;
+    }
+    
+    .exclamation-mark {
+        font-size: 2.5rem;
+    }
+    
+    .try-again-button {
+        padding: 0.5rem 1.2rem;
+        font-size: 0.8rem;
     }
 }
 

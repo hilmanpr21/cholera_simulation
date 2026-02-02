@@ -13,7 +13,6 @@
     </head>
 
     <body>
-
         <main id="scrolly">
            <div class="sticky-frame">
                 <div class="slide is-active is-center" data-slide="0">
@@ -81,14 +80,16 @@
                     <div class="slide-text-content">
                         <p>Rafi lives in a community with many neighbours. The children go to the same school and drink water from the same water source. Rafi and another student are infected with cholera, and <strong>contaminate the school water</strong>. The infected students then bring cholera back to their families. See how fast cholera spreads when more neighbours are infected.</p>
                     </div>
+
                     <div id="sim2-wrapper" class="sim-wrapper">
                         <canvas id="choleraSim2" class="canvas-container"></canvas>
+
                         <div class="time-bar-container">
                             <div class="time-bar-header">
-                                <h4>Total Population:</h4>
-                                <span id="sim2-current-time" class="current-time-and-day">08:00</span> <!-- Initial total population display-->
-                                <h4>Infected Population:</h4>
-                                <span id="sim2-infected-count" class="current-time-and-day">0</span>  <!-- Initial infected count display-->
+                                <h4>Total neighbours:</h4>
+                                <span id="sim2-neighbour-count" class="current-time-and-day">10</span> <!-- Initial total population display-->
+                                <h4>Infected neighbours:</h4>
+                                <span id="sim2-infected-count" class="current-time-and-day">2</span>  <!-- Initial infected count display-->
                                 <h4>Day:</h4>
                                 <span id="sim2-current-day" class="current-time-and-day">1</span>  <!-- Initial day display-->
                             </div>
@@ -126,8 +127,8 @@
                             <button id="pause-button-sim2" class="sim-control-button" type="button">pause</button>
                         </div>
                         <div id="sim2-control-button" class="sim-control-button">
-                            <input type="range" id="sim2-neighbour-number" min="4" max="10" value="10" step="1" class="sim-slider">
-                            <label for="sim2-neighbour-number">Number of Neighbors: <span id="sim2-neighbour-label">10</span> </label>
+                            <input type="range" id="sim2-neighbour-number" min="1" max="5" value="2" step="1" class="sim-slider">
+                            <label for="sim2-neighbour-number">Number of neighbours: <span id="sim2-neighbour-label">2</span> </label>
                         </div>
                     </div>
                 </div>
@@ -144,6 +145,8 @@
                             <div class="time-bar-header">
                                 <h4>Simulation time</h4>
                                 <span id="sim4-current-time" class="current-time-and-day">08:00</span> <!-- Initial time display-->
+                                <h4>Infected Population:</h4>
+                                <span id="sim4-infected-count" class="current-time-and-day">0</span>  <!-- Initial infected count display-->
                                 <h4>Day:</h4>
                                 <span id="sim4-current-day" class="current-time-and-day">1</span>  <!-- Initial day display-->
                             </div>
@@ -182,8 +185,8 @@
                         </div>
                         <div id="sim4-control-button" class="sim-control-button">
                             <div id="sim4-neighbour-slider-wrapper">
-                                <input type="range" id="sim4-neighbour-number" min="4" max="10" value="10" step="1" class="sim-slider">
-                                <label for="sim4-neighbour-number">Number of Neighbors: <span id="sim4-neighbour-label">5</span> </label>
+                                <input type="range" id="sim4-neighbour-number" min="1" max="5" value="2" step="1" class="sim-slider">
+                                <label for="sim4-neighbour-number">Number of neighbours: <span id="sim4-neighbour-label">2</span> </label>
                             </div>                            
                             <div id="sim4-rapid-test-slider-wrapper">
                                 <input type="range" id="sim4-rapid-test-slider" min="0" max="100" value="50" step="10" class="sim-slider">
@@ -242,7 +245,7 @@
                         <div id="sim5-control-button" class="sim-control-button">
                             <div id="sim5-neighbour-slider-wrapper">
                                 <input type="range" id="sim5-neighbour-number" min="4" max="10" value="10" step="1" class="sim-slider">
-                                <label for="sim5-neighbour-number">Number of Neighbors: <span id="sim5-neighbour-label">5</span> </label>
+                                <label for="sim5-neighbour-number">Number of neighbours: <span id="sim5-neighbour-label">5</span> </label>
                             </div>
                             <div id="sim5-rapid-test-slider-wrapper">
                                 <input type="range" id="sim5-rapid-test-slider" min="0" max="100" value="50" step="10" class="sim-slider">
@@ -273,6 +276,27 @@
         <!-- Load SVG agent anchor overlay -->
         <div id="anchor-overlay">
             <img id="anchor-image" class="hidden" src="assets/rafi_normal.PNG" alt="Rafi">
+        </div>
+
+        <!--Game over overlays-->
+        <!--Simulation 2-->
+        <div id="sim2-game-over-overlay" class="game-over-overlay">
+            <div class="game-over-content">
+                <h1 class="game-over-text exclamation-mark">!</h1>
+                <h3 class="game-over-text">All neighbours caught cholera</h2>
+                <p class="game-over-text">In <span class="game-over-days-count" id="sim2-game-over-day-count">1</span> days</p>
+                <button id="sim2-try-again-button" class="try-again-button">Try Again</button>
+            </div>
+        </div>
+
+        <!--Simulation 4-->
+        <div id="sim4-game-over-overlay" class="game-over-overlay">
+            <div class="game-over-content">
+                <h1 class="game-over-text exclamation-mark">!</h1>
+                <h3 class="game-over-text">All neighbours caught cholera</h2>
+                <p class="game-over-text">In <span class="game-over-days-count" id="sim4-game-over-day-count">1</span> days</p>
+                <button id="sim4-try-again-button" class="try-again-button">Try Again</button>
+            </div>
         </div>
         
         <script src="script/visual_anchor_controller.js"></script>
