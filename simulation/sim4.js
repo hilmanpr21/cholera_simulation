@@ -854,12 +854,40 @@
        
         // draw school waterbody
         ctx.drawImage(
-            schoolWaterBody.isContaminated ? contaminatedWaterImage : cleanWaterImage,
+            cleanWaterImage,
             schoolWaterBody.x - schoolWaterWidth/2, 
-            schoolWaterBody.y - schoolWaterWidth/4,
+            schoolWaterBody.y - schoolWaterWidth/6,
             schoolWaterWidth,
             schoolWaterWidth
         );
+
+        // if there are infeted visit to school waterbody, draw contaminated water progressively
+        if (schoolWaterBody.infectedVisitCount > 0) {
+            // calculate contamination ratio
+            const contaminationRatio = schoolWaterBody.infectedVisitCount / schoolWaterBody.contaminationThreshold;
+
+            // calculate the heigh contaminated portion
+            const contaminatedHeight = schoolWaterWidth  * contaminationRatio;
+
+            // start cropping from this Y position
+            const sourceY = contaminatedWaterImage.height * (1 - contaminationRatio);  
+            
+            // height to crop from the image
+            const sourceHeight = contaminatedWaterImage.height * contaminationRatio;    
+
+            // draw contaminated portion
+            ctx.drawImage(
+                contaminatedWaterImage,
+                0,                          // source X start cropping the image (start from left of image)
+                sourceY,                    // source Y start cropping the image (crop from this Y position)
+                contaminatedWaterImage.width,           // source width, how much to crop (full width of image)
+                sourceHeight,               // source height, how much to crop (only contamianted portion)
+                schoolWaterBody.x - schoolWaterWidth/2,    // destination X (where to place on canvas)
+                schoolWaterBody.y - schoolWaterWidth/6 + schoolWaterWidth - contaminatedHeight, // destination Y (where to place on canvas) (align to the bottom of the waterbody)
+                schoolWaterWidth,           // destination width
+                contaminatedHeight          // destination height
+            )
+        }
     }
 
     /**
