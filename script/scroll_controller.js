@@ -74,6 +74,9 @@
 
         // setup character controller to follow simulation
         characterFollowSimulationSetup(stepIndex);
+
+        // update slide navigation visibility and state
+        updateSlideNavigation(stepIndex);
     }
 
     /**
@@ -185,6 +188,64 @@
     } else {
         init();
     }
+
+    // slide navigation control
+    const slideNavigation = document.querySelector('.slide-navigation');
+    const slideCounter = document.querySelector('.slide-counter');
+    const prevSlideButton = document.getElementById('previous-slide-button');
+    const nextSlideButton = document.getElementById('next-slide-button');
+
+    const totalSlides = document.querySelectorAll('.step').length;
+
+    /**
+     * update slide navigation bar 0visibilit and state
+     */
+    function updateSlideNavigation(currentSlide) {
+        // show navigation bar only slide 0
+        if (currentSlide === 0) {
+            slideNavigation.classList.add('hidden');
+        } else {
+            // show slide navigation
+            slideNavigation.classList.remove('hidden');
+
+            // update slide counter
+            slideCounter.textContent = `${currentSlide} / ${totalSlides - 1}`;
+
+            // enable/disable prev button based on current position
+            prevSlideButton.disabled = currentSlide === 0;
+            nextSlideButton.disabled = currentSlide === 7;
+        }
+    }
+
+    /**
+     * Navigate to a specific slide programatically
+     * @param {number} slideIndex - index of the slide to navigate to
+     */
+    function navigateToSlide(targetSlide) {
+        // Ensure target is within a valid range
+        if (targetSlide < 0 || targetSlide > totalSlides - 1) return;
+
+        // calculate scroll position for the target slide
+        const stepElements = document.querySelectorAll('.step');
+        if (stepElements[targetSlide]) {
+            stepElements[targetSlide].scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    }
+
+    // evenet listeners for navigation buttons
+    prevSlideButton.addEventListener('click', () => {
+        const currentSlide = parseInt(slideCounter.textContent.split('/')[0]);
+        navigateToSlide(currentSlide - 1);
+    });
+
+    nextSlideButton.addEventListener('click', () => {
+        const currentSlide = parseInt(slideCounter.textContent.split('/')[0]);
+        navigateToSlide(currentSlide + 1);
+    });
+
 
     // handle window resize events
     window.addEventListener('resize', () => {

@@ -242,28 +242,6 @@
      * @returns {void}
      */
     function drawWaterbody() {
-        /*
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = 1.5;
-        ctx.lineJoin = 'round';
-        ctx.lineCap = 'round'; 
-
-        // draw house waterbody
-        ctx.beginPath();
-        ctx.arc(houseWaterBody.x, houseWaterBody.y, 15, 0, Math.PI * 2);
-        ctx.fillStyle = houseWaterBody.isContaminated ? 'darkblue' : 'lightblue';
-        ctx.fill();
-        ctx.strokeStyle = 'black';
-        ctx.stroke();
-
-        // draw school waterbody
-        ctx.beginPath();
-        ctx.arc(schoolWaterBody.x, schoolWaterBody.y, 15, 0, Math.PI * 2);
-        ctx.fillStyle = schoolWaterBody.isContaminated ? 'darkblue' : 'lightblue';
-        ctx.fill();
-        ctx.strokeStyle = 'black';
-        ctx.stroke()
-        */
 
         // draw houseWaterBody
         const houseWaterWidth = 50;
@@ -360,34 +338,6 @@
      * @returns {void}
      */
     function drawHouse() {
-        /*
-        const houseStrokeColor = house.isInfected ? 'red' : 'black';
-
-        ctx.strokeStyle = houseStrokeColor;
-        ctx.lineWidth = 2.5;
-        ctx.lineJoin = 'round';
-        ctx.lineCap = 'round';
-
-        // draw rectangle
-        ctx.beginPath();
-        ctx.rect(house.x - 10, house.y - 10, 20, 20);
-        ctx.fillStyle = 'yellow';
-        ctx.fill();
-        ctx.strokeStyle = houseStrokeColor;
-        ctx.stroke();
-
-        // draw roof
-        ctx.beginPath();
-        ctx.moveTo(house.x-10, house.y-10);
-        ctx.lineTo(house.x+10, house.y-10);
-        ctx.lineTo(house.x, house.y-20);
-        ctx.closePath();
-        ctx.fillStyle = 'yellow';
-        ctx.fill();
-        ctx.strokeStyle = houseStrokeColor;
-        ctx.lineWidth = 2.5;
-        ctx.stroke();
-        */
 
         const houseWidth = 80;
         const houseHeight = 60;
