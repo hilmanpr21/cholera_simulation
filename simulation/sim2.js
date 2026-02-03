@@ -641,8 +641,6 @@
         }
     }
 
-    
-
     /**
      * Show game over overlay with day count when all agents are infected
      */

@@ -128,7 +128,7 @@
                         </div>
                         <div id="sim2-control-button" class="sim-control-button">
                             <input type="range" id="sim2-neighbour-number" min="1" max="5" value="2" step="1" class="sim-slider">
-                            <label for="sim2-neighbour-number">Number of neighbours: <span id="sim2-neighbour-label">2</span> </label>
+                            <label for="sim2-neighbour-number">Number of infected neighbours: <span id="sim2-neighbour-label">2</span> </label>
                         </div>
                     </div>
                 </div>
@@ -186,7 +186,7 @@
                         <div id="sim4-control-button" class="sim-control-button">
                             <div id="sim4-neighbour-slider-wrapper">
                                 <input type="range" id="sim4-neighbour-number" min="1" max="5" value="2" step="1" class="sim-slider">
-                                <label for="sim4-neighbour-number">Number of neighbours: <span id="sim4-neighbour-label">2</span> </label>
+                                <label for="sim4-neighbour-number">Number of infected neighbours: <span id="sim4-neighbour-label">2</span> </label>
                             </div>                            
                             <div id="sim4-rapid-test-slider-wrapper">
                                 <input type="range" id="sim4-rapid-test-slider" min="0" max="100" value="50" step="10" class="sim-slider">
@@ -204,8 +204,10 @@
                         <canvas id="choleraSim5" class="canvas-container"></canvas>
                         <div class="time-bar-container">
                             <div class="time-bar-header">
-                                <h4>Simulation time</h4>
-                                <span id="sim5-current-time" class="current-time-and-day">08:00</span> <!-- Initial time display-->
+                                <h4>Total neighbours:</h4>
+                                <span id="sim5-neighbour-count" class="current-time-and-day">70</span> <!-- Initial total population display-->
+                                <h4>Infected neighbours:</h4>
+                                <span id="sim5-infected-count" class="current-time-and-day">2</span>  <!-- Initial infected count display-->
                                 <h4>Day:</h4>
                                 <span id="sim5-current-day" class="current-time-and-day">1</span>  <!-- Initial day display-->
                             </div>
@@ -244,8 +246,8 @@
                         </div>
                         <div id="sim5-control-button" class="sim-control-button">
                             <div id="sim5-neighbour-slider-wrapper">
-                                <input type="range" id="sim5-neighbour-number" min="4" max="10" value="10" step="1" class="sim-slider">
-                                <label for="sim5-neighbour-number">Number of neighbours: <span id="sim5-neighbour-label">5</span> </label>
+                                <input type="range" id="sim5-neighbour-number" min="1" max="10" value="2" step="1" class="sim-slider">
+                                <label for="sim5-neighbour-number">Number of infected neighbours: <span id="sim5-neighbour-label">2</span> </label>
                             </div>
                             <div id="sim5-rapid-test-slider-wrapper">
                                 <input type="range" id="sim5-rapid-test-slider" min="0" max="100" value="50" step="10" class="sim-slider">
@@ -296,6 +298,16 @@
                 <h3 class="game-over-text">All neighbours caught cholera</h3>
                 <p class="game-over-text">In <span class="game-over-days-count" id="sim4-game-over-day-count">1</span> days</p>
                 <button id="sim4-try-again-button" class="try-again-button">Try Again</button>
+            </div>
+        </div>
+
+        <!--Simulation 5-->
+        <div id="sim5-game-over-overlay" class="game-over-overlay">
+            <div class="game-over-content">
+                <h1 class="game-over-text exclamation-mark">!</h1>
+                <h3 class="game-over-text">All neighbours caught cholera</h3>
+                <p class="game-over-text">In <span class="game-over-days-count" id="sim5-game-over-day-count">1</span> days</p>
+                <button id="sim5-try-again-button" class="try-again-button">Try Again</button>
             </div>
         </div>
         

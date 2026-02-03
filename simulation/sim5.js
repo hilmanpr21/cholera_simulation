@@ -211,7 +211,7 @@
         x: pos.x,
         y: pos.y,
         communityId: index,
-        isContaminated: index === 0 ? true : false, // only first waterbody is contaminated at start
+        isContaminated: false, // only first waterbody is contaminated at start
         infectedAgentVisits: 0,    // counter for infected agent visits
     }));
 
@@ -263,7 +263,7 @@
                 communityId: index,   // community identifier based on the community index
                 agentId: agentIndex,                 // agent index within community
                 speed: 2,
-                targetCommunityId: agentIndex % communitiesPositions.length,       // no target community at start
+                targetCommunityId: (agentIndex+5) % communitiesPositions.length,       // no target community at start
                 currentLocation: 'house',       // all agents start at house
                 targetLocation: 'house',        // all agents target house at start
                 isInfected: index === 0 && (agentIndex === 1 || agentIndex === 2) ? true : false,              // initally only agent 1 and 2 in community 0 are infected
@@ -301,7 +301,7 @@
             if (currentDay === 1) {
                 // only community 0 agents are active on day 1
                 agent.isActive = true;               // set active state only for community 0 on the first day
-                agent.isMobile = (agent.communityId === 0);                                 // all agents are stationary on day 1
+                agent.isMobile = (agent.communityId === 0);                                 // all agents are stationary on day 1 except community 0
             } if (currentDay >= 2) {
                 // all agents active from day 2 onwards
                 agent.isActive = true;
@@ -674,7 +674,108 @@
         });
     }
 
-     // Image loading management
+    /**
+     * count the number of currently infected agents 
+     * @param {Array} agentsArray - array of agent objects
+     */
+    function countInfectedAgents() {
+        return agents.filter(agent => agent.isActive && agent.isInfected).length;
+    }
+
+    /**
+     * Update the infected count display element with the current number of infected agents
+     */
+    function updateInfectedCountDisplay() {
+        // store the length of infected agents in a variable
+        const infectedCount = countInfectedAgents() ;
+        
+        // update the infected count display element
+        const infectedCountElement = document.getElementById('sim5-infected-count');
+        infectedCountElement.textContent = infectedCount;
+    }
+
+    /**
+     * function to stop the simulaton when all agent got infected
+     */
+    function allAgentsGotInfected() {
+        const healthyAgent = agents.filter(agent => agent.isActive && !agent.isInfected).length
+
+        if (healthyAgent === 0) {
+            setTimeout(() => {
+                // change the state to stol the simullation from running
+                isRunning = false;    
+
+                // show game over overlay
+                showGameOverOverlay();
+            }, 1000)
+        }
+    }
+
+    /**
+     * Show game over overlay with day count when all agents are infected
+     */
+    function showGameOverOverlay() {
+        const overlay = document.getElementById('sim5-game-over-overlay');
+        const dayCountElement = document.getElementById('sim5-game-over-day-count');
+        const canvas = document.getElementById('choleraSim5');
+
+        // get position and dimensions of the canvas
+        const canvasRect = canvas.getBoundingClientRect();
+
+        // set the day count text
+        dayCountElement.textContent = timeManager.currentDay;
+
+        // set the the position the overlay over the canvas
+        overlay.style.top = canvasRect.top + 'px';
+        overlay.style.left = canvasRect.left + 'px';
+        overlay.style.width = canvasRect.width + 'px';
+        overlay.style.height = canvasRect.height + 'px';
+
+        // show the overlay by adding the 'show' class
+        overlay.classList.add('show');
+
+        startButton.disabled = true;
+        pauseButton.disabled = true;
+        resetButton.disabled = true;
+    }
+
+     /**
+     * Hide the game over overlay
+     */
+    function hideGameOverOverlay() {
+        const overlay = document.getElementById('sim5-game-over-overlay');
+        
+        if (overlay) {
+            overlay.classList.remove('show');
+
+            // Clear inline styles to fully reset the overlay
+            overlay.style.top = '';
+            overlay.style.left = '';
+            overlay.style.width = '';
+            overlay.style.height = '';
+        }
+    }
+
+    /**
+     * Update overlay postion on windows reset to match with the canvas position
+     */
+    window.addEventListener('resize', function() {
+        const overlay = document.getElementById('sim5-game-over-overlay');
+        const canvas = document.getElementById('choleraSim5');
+        // get position and dimensions of the canvas
+        const canvasRect = canvas.getBoundingClientRect();
+
+        if (overlay && overlay.classList.contains('show')) {
+            // set the the position the overlay over the canvas
+            overlay.style.top = canvasRect.top + 'px';
+            overlay.style.left = canvasRect.left + 'px';
+            overlay.style.width = canvasRect.width + 'px';
+            overlay.style.height = canvasRect.height + 'px';
+        }
+    });
+
+
+    // Image loading management
     let imagesLoaded = 0;
     const totalImages = 2;
 
@@ -699,18 +800,46 @@
      * DrawWater function
      */
     function drawWaterbody() {
-        const waterWidth = 30;
+        const waterWidth = 40;
 
         // draw waterbody for each community
         waterbodies.forEach((waterbody) => {
-            // draw houseWaterBody
+            // draw cleanwater
             ctx.drawImage(
-                waterbody.isContaminated ? contaminatedWaterImage : cleanWaterImage,
+                cleanWaterImage,
                 waterbody.x - waterWidth/2, 
                 waterbody.y - waterWidth/2,
                 waterWidth,
                 waterWidth
             );
+
+            //draw contaminated water overlay if waterbody is contaminated
+            if (waterbody.infectedAgentVisits > 0) {
+                // calculate contamination ratio
+                const contaminationRatio = waterbody.infectedAgentVisits / contaminationThreshold;
+
+                // calculate the heigh contaminated portion
+                const contaminatedHeight = waterWidth  * contaminationRatio;
+
+                // start cropping from this Y position
+                const sourceY = contaminatedWaterImage.height * (1 - contaminationRatio);  
+                
+                // height to crop from the image
+                const sourceHeight = contaminatedWaterImage.height * contaminationRatio;    
+
+                // draw contaminated portion
+                ctx.drawImage(
+                    contaminatedWaterImage,
+                    0,                          // source X start cropping the image (start from left of image)
+                    sourceY,                    // source Y start cropping the image (crop from this Y position)
+                    contaminatedWaterImage.width,           // source width, how much to crop (full width of image)
+                    sourceHeight,               // source height, how much to crop (only contamianted portion)
+                    waterbody.x - waterWidth/2,    // destination X (where to place on canvas)
+                    waterbody.y - waterWidth/2 + waterWidth - contaminatedHeight, // destination Y (where to place on canvas) (align to the bottom of the waterbody)
+                    waterWidth,           // destination width
+                    contaminatedHeight          // destination height
+                )
+            }
         })
     }
 
@@ -868,12 +997,87 @@
         // Update agent position based on movement logic
         updateAgentMovement();
 
+        // stop simulation when all agent got infected
+        allAgentsGotInfected()
+        
+        // update infected count display
+        updateInfectedCountDisplay();
+
         // draw entire screen
         drawScene();
 
-        // request next animation frame to continue the animation loop
-        animationId = requestAnimationFrame(animate);
+        // Request the next animation frame only if simulation is still running
+        if (isRunning) {
+            animationId = requestAnimationFrame(animate)
+        }
     }
+
+    /**
+     * Defines the initial number of infected agents at simulation start
+     */
+    let initialInfectedAgentCount = 2; 
+
+    /**
+     * Slider input element for controlling number of active agents
+     * @type {HTMLInputElement}
+     */
+    // track the slider label number of the current neighborhood number
+    let neighborhoodNumber = document.getElementById('sim5-neighbour-number');
+    
+    /**
+     * Label element displaying current slider value
+     * @type {HTMLSpanElement}
+     */
+    let neighborhoodNumberLabel = document.getElementById('sim5-neighbour-label');
+
+    /**
+     * Change the neighborhood number label and active agent count based on slider value
+     */
+    neighborhoodNumberLabel.textContent = neighborhoodNumber.value;
+    initialInfectedAgentCount = parseInt(neighborhoodNumber.value);              // change the number into the integer
+
+    /**
+     * Updates which agents are active based on slider value
+     * Agents with index less than count are made active, others inactive
+     * @param {number} count - Number of agents to activate
+     * @returns {void}
+     */
+    //  declare function to update active agent based on slider value
+    function updateInitialInfectedAgent(count) {
+        // update the initial infected agent count based on the slider value
+        initialInfectedAgentCount = count;
+
+        // infect agent based on the initial infected agent count
+        agents.forEach((agent, agentIndex) => {
+            agent.isInfected = agent.communityId === 0 && agentIndex < initialInfectedAgentCount ? true : false;
+            agent.infectionStartDay = agent.communityId === 0 && agentIndex < initialInfectedAgentCount ? 1 : null;  // set infection start day to day 1 for initially infected agents
+        });
+
+        // redraw the scene to reflect changes imidiately when the slider is moved
+        drawScene();
+    }
+
+    // update slider initial value and add event listener
+    neighborhoodNumber.addEventListener('input', function() {
+        neighborhoodNumberLabel.textContent = this.value;
+
+        // update active agents based on the slider value
+        updateInitialInfectedAgent(parseInt(this.value));
+
+        // update infected agent count display
+        updateInfectedCountDisplay();
+    });
+
+    /**
+     * Initially calling to set infected agents based on initial slider value
+     */
+    updateInitialInfectedAgent(initialInfectedAgentCount);
+
+    /**
+     * Update infected agent count display initially before the simulation starts
+     */
+    updateInfectedCountDisplay();
+
     
     /**
      * Slider input Element for controlling rapid test coverage
@@ -916,11 +1120,24 @@
     const startButton = document.getElementById('start-button-sim5');
     const pauseButton = document.getElementById('pause-button-sim5');
     const resetButton = document.getElementById('reset-button-sim5');
+    const tryAgainButton = document.getElementById('sim5-try-again-button');
 
     // add event listeners to buttons
     startButton.addEventListener('click', startSimulation);
     pauseButton.addEventListener('click', pauseSimulation);
     resetButton.addEventListener('click', resetSimulation);
+    tryAgainButton.addEventListener('click', tryAgainSimulation);
+
+    /**
+     * Handles "Try Again" button click from game over overlay
+     * Hides overlay and resets the simulation
+     * @returns {void}
+     */
+    function tryAgainSimulation() {
+        hideGameOverOverlay();
+        resetSimulation();
+    }
+
 
     /**
      * Starts the simulation animation
@@ -1016,8 +1233,8 @@
             agent.y = agent.houseY;
             agent.currentLocation = 'house';
             agent.targetLocation = 'house';
-            agent.isInfected = agent.communityId === 0 && (agent.agentId === 1 || agent.agentId === 2) ? true : false;;
-            agent.infectionStartDay = agent.communityId === 0 && (agent.agentId === 1 || agent.agentId === 2) ? 0 : null;
+            agent.isInfected = false;
+            agent.infectionStartDay = null;
             agent.isRecovered = false;
             agent.recoveryStartDay = null;
             agent.isActive = true;
@@ -1036,7 +1253,7 @@
 
         // reset waterbodies to initial state
         waterbodies.forEach((waterbody) => {
-            waterbody.isContaminated = waterbody.communityId === 0 ? true : false; // only first waterbody is contaminated at start
+            waterbody.isContaminated = false; // only first waterbody is contaminated at start
             waterbody.infectedAgentVisits = 0;    // reset infected agent visits counter
         });
 
@@ -1051,6 +1268,12 @@
 
         // reset assignment bathroom slots for all active agents
         assignDailyBathroomSchedules();
+
+        // reset initial infected agents based on slider value
+        updateInitialInfectedAgent(initialInfectedAgentCount);
+
+        // update infected agent count display
+        updateInfectedCountDisplay();
 
         // redraw the initial scene
         drawScene();
