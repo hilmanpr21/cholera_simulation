@@ -9,7 +9,6 @@
         <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/roughjs@latest/bundled/rough.js"></script>
         <script src="https://unpkg.com/scrollama"></script>
-
     </head>
 
     <body>
@@ -47,7 +46,7 @@
 
                 <div class="slide" data-slide="2">
                     <div class="slide-text-content">
-                        <p>Every day, Rafi goes to school from 8 am to 3 pm. At home and at school, he uses water from <strong>shared water sources</strong> for washing and consumption. When the water is clean (light blue), Rafi and his family stay healthy.</p>
+                        <p>Every day, Rafi goes to school from 8 am to 5 pm. At home and at school, he uses water from <strong>shared water sources</strong> for washing and consumption. When the water is clean (light blue), Rafi and his family stay healthy.</p>
                     </div>
                     <div id="sim1-wrapper" class="sim-wrapper">
                         <canvas id="choleraSim1" class="canvas-container"></canvas>
@@ -61,7 +60,7 @@
 
                 <div class="slide" data-slide="3">
                     <div class="slide-text-content">
-                        <p>One day, Rafi becomes <strong>infected with cholera</strong> (Rafi turns red). As Rafi is infected, he <strong>contaminates the water</strong> at school and at home (it turns dark blue). When Rafi's family drinks contaminated water at home, his whole household becomes infected.</p>
+                        <p>One day, Rafi becomes <strong>infected with cholera</strong> (Rafi turns red). As Rafi is infected, he <strong>contaminates the water</strong> at school and at home (it turns dark blue). When Rafi's family drinks contaminated water at home, his whole household becomes infected (the house turns red).</p>
                     </div>
                     <div id="sim1B-wrapper" class="sim-wrapper">
                         <canvas id="choleraSim1B" class="canvas-container"></canvas>
@@ -135,8 +134,7 @@
 
                 <div class="slide" data-slide="5">
                     <div class="slide-text-content">
-                        <p>Now, let’s try to slow down the spread of cholera in Rafi’s neighbourhood. </p>
-                        <p>We introduce <strong>rapid testing for cholera</strong> to quickly find neighbours who are infected, and ask them to stay at home for 3 days. Isolating neighbours are shown with green borders.</p>
+                        <p>Now, let’s introduce <strong>rapid testing for cholera</strong> to quickly find neighbours who are infected, and ask them to stay at home for 3 days. Isolating neighbours are shown with green borders.</p>
                         <p>Rapid tests are conducted every morning. You can increase availability of rapid tests for neighbours with symptoms.</p>    
                     </div>
                     <div id="sim4-wrapper" class="sim-wrapper">
@@ -268,35 +266,37 @@
                     <img id="anchor-image" class="hidden" src="assets/rafi_normal.PNG" alt="Rafi">
                 </div>
 
-                <!--GAME OVER OVERLAYS-->
-                <!--Simulation 2-->
-                <div id="sim2-game-over-overlay" class="game-over-overlay">
-                    <div class="game-over-content">
-                        <h1 class="game-over-text exclamation-mark">!</h1>
-                        <h3 class="game-over-text">All neighbours caught cholera</h3>
-                        <p class="game-over-text">In <span class="game-over-days-count" id="sim2-game-over-day-count">1</span> days</p>
-                        <button id="sim2-try-again-button" class="try-again-button">Try Again</button>
-                    </div>
-                </div>
+                
+            </div>
 
-                <!--Simulation 4-->
-                <div id="sim4-game-over-overlay" class="game-over-overlay">
-                    <div class="game-over-content">
-                        <h1 class="game-over-text exclamation-mark">!</h1>
-                        <h3 class="game-over-text">All neighbours caught cholera</h3>
-                        <p class="game-over-text">In <span class="game-over-days-count" id="sim4-game-over-day-count">1</span> days</p>
-                        <button id="sim4-try-again-button" class="try-again-button">Try Again</button>
-                    </div>
+            <!--GAME OVER OVERLAYS-->
+            <!--Simulation 2-->
+            <div id="sim2-game-over-overlay" class="game-over-overlay">
+                <div class="game-over-content">
+                    <h1 class="game-over-text exclamation-mark">!</h1>
+                    <h3 class="game-over-text">All neighbours caught cholera</h3>
+                    <p class="game-over-text">In <span class="game-over-days-count" id="sim2-game-over-day-count">1</span> days</p>
+                    <button id="sim2-try-again-button" class="try-again-button">Try Again</button>
                 </div>
+            </div>
 
-                <!--Simulation 5-->
-                <div id="sim5-game-over-overlay" class="game-over-overlay">
-                    <div class="game-over-content">
-                        <h1 class="game-over-text exclamation-mark">!</h1>
-                        <h3 class="game-over-text">All neighbours caught cholera</h3>
-                        <p class="game-over-text">In <span class="game-over-days-count" id="sim5-game-over-day-count">1</span> days</p>
-                        <button id="sim5-try-again-button" class="try-again-button">Try Again</button>
-                    </div>
+            <!--Simulation 4-->
+            <div id="sim4-game-over-overlay" class="game-over-overlay">
+                <div class="game-over-content">
+                    <h1 class="game-over-text exclamation-mark">!</h1>
+                    <h3 class="game-over-text">All neighbours caught cholera</h3>
+                    <p class="game-over-text">In <span class="game-over-days-count" id="sim4-game-over-day-count">1</span> days</p>
+                    <button id="sim4-try-again-button" class="try-again-button">Try Again</button>
+                </div>
+            </div>
+
+            <!--Simulation 5-->
+            <div id="sim5-game-over-overlay" class="game-over-overlay">
+                <div class="game-over-content">
+                    <h1 class="game-over-text exclamation-mark">!</h1>
+                    <h3 class="game-over-text">All neighbours caught cholera</h3>
+                    <p class="game-over-text">In <span class="game-over-days-count" id="sim5-game-over-day-count">1</span> days</p>
+                    <button id="sim5-try-again-button" class="try-again-button">Try Again</button>
                 </div>
             </div>
 

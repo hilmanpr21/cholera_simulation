@@ -331,7 +331,7 @@
      */
     function assignDailyBathroomSchedules() {
         agents.forEach((agent) => {
-            if(!agent.isActive) return;    // skip inactive agents
+            if(!agent.isActive || agent.isIsolated) return;    // skip inactive or isolated agents
 
             // assign bathroom slot based on current location
             agent.otherCommunityBathroomSlot = assignBathroomSlot('otherCommunity');
@@ -348,7 +348,7 @@
      * @return {string|null} - 'otherCommunityWaterbody' or 'hopuseWaterbody' if agent should visit bathroom, null otherwise
      */
     function shouldVisitBathroom(agent, currentHour) {
-        if (!agent.isActive) return null;    // skip inactive agents
+        if (!agent.isActive || agent.isIsolated) return null;    // skip inactive or isolated agents
 
         // check if agent is at other community and current hour matches bathroom slot
         if (agent.currentLocation === 'visitOtherCommunity' && currentHour === agent.otherCommunityBathroomSlot) {
@@ -707,6 +707,9 @@
 
                 // show game over overlay
                 showGameOverOverlay();
+
+                // disable the start, pause, reset buttons
+                
             }, 1000)
         }
     }
@@ -734,6 +737,9 @@
         // show the overlay by adding the 'show' class
         overlay.classList.add('show');
 
+        // set the overlay state in local storage into true
+        window.storeOverlayState('sim5-game-over-overlay');
+
         startButton.disabled = true;
         pauseButton.disabled = true;
         resetButton.disabled = true;
@@ -747,6 +753,9 @@
         
         if (overlay) {
             overlay.classList.remove('show');
+
+            // clear the overlay state in local storage by calling the global function
+            window.clearOverlayState('sim5-game-over-overlay');
 
             // Clear inline styles to fully reset the overlay
             overlay.style.top = '';
@@ -1157,6 +1166,9 @@
         pauseButton.disabled = false;
         resetButton.disabled = false;
 
+        // disable the neighborhood number slider while simulation is running to avoid confusion
+        neighborhoodNumber.disabled = true;
+
         // disable the rapid test slider while simulation is running
         rapidTestSlider.disabled = true;
 
@@ -1195,6 +1207,9 @@
         pauseButton.disabled = true;
         resetButton.disabled = false;
 
+        //disable the neighborhood slider
+        neighborhoodNumber.disabled = true;
+
         // cancel the animation frame
         cancelAnimationFrame(animationId);              // stop the animation
     }
@@ -1223,7 +1238,9 @@
         pauseButton.disabled = true;
         resetButton.disabled = true;
     
-
+        // enable the neighborhood slider
+        neighborhoodNumber.disabled = false;
+        
         // disable the rapid test slider while simulation is running
         rapidTestSlider.disabled = false;
 
@@ -1286,5 +1303,22 @@
 
     // initial draw
     drawScene();
+
+     /**
+     * Make simulations namespace if not already present
+     */
+    if (!window.simulations) {
+        window.simulations = {};
+    }
+
+    /**
+     * make global access to main agent position and status to change the visual anchor
+     */
+    window.simulations.sim5 = {
+        canvasId: 'choleraSim5',
+        showGameOverOverlay: showGameOverOverlay,  // expose the showGameOverOverlay function
+        hideGameOverOverlay: hideGameOverOverlay   // expose the hideGameOverOverlay function
+
+    };
 
 }) ();

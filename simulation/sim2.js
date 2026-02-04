@@ -655,6 +655,9 @@
         // set the day count text
         dayCountElement.textContent = timeManager.currentDay;
 
+        // set the overlay state in local storage into true
+        window.storeOverlayState('sim2-game-over-overlay');
+
         // set the the position the overlay over the canvas
         overlay.style.top = canvasRect.top + 'px';
         overlay.style.left = canvasRect.left + 'px';
@@ -677,6 +680,9 @@
         
         if (overlay) {
             overlay.classList.remove('show');
+
+            // clear the overlay state in local storage by calling the global function
+            window.clearOverlayState('sim2-game-over-overlay');
 
             // Clear inline styles to fully reset the overlay
             overlay.style.top = '';
@@ -1250,8 +1256,7 @@
 
         // enable the neighborhood slider
         neighborhoodNumber.disabled = false;
-
-
+        
         // Stop the animation frame
         cancelAnimationFrame(animationId);
 
@@ -1314,6 +1319,9 @@
 
     drawScene();
 
+    /**
+     * Make simulations namespace if not already present
+     */
     if (!window.simulations) {
         window.simulations = {};
     }
@@ -1339,7 +1347,10 @@
         },
         isRunning() {
             return isRunning;
-        }
+        },
+        showGameOverOverlay: showGameOverOverlay,  // expose the showGameOverOverlay function
+        hideGameOverOverlay: hideGameOverOverlay   // expose the hideGameOverOverlay function
+
     };
 
 })();

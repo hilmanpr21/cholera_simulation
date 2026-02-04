@@ -16,12 +16,43 @@
         2: 'sim1',          // simulation 1 - initial main agent movement
         3: 'sim1B',         // simulation 1B - initial water contamintation
         4: 'sim2',          // simulation 2 - Multiple neighbour simulation#
-        5: 'sim4'           // simulation 4 - rapid testing simulation
+        5: 'sim4',           // simulation 4 - rapid testing simulation
+        6: 'sim5'
     };
 
     /**
-     * 
-     * 
+     * track which overlays should be shown for each simulation
+     * @type {Object.<string, boolean>}
+     */
+    const overlayStates = {
+        'sim2-game-over-overlay': false,
+        'sim4-game-over-overlay': false,
+        'sim5-game-over-overlay': false
+    };
+
+    /** 
+     * global function to store overlay state whn it's shown
+     * Called by simulation modules when game over occurs
+     * @param {string} overlayId - ID of the overlay element to show
+     */
+    window.storeOverlayState = function(overlayId) {
+        overlayStates[overlayId] = true;
+        console.log(`Overlay state updated: ${overlayId} set to true`);
+    };
+
+    /** 
+     * Global function to clear game over overlay state when restarting simulation
+     * called when user click "try again" button
+     * @param {string} overlayId - ID of the overlay element to clear
+     */
+    window.clearOverlayState = function(overlayId) {
+        overlayStates[overlayId] = false;
+        console.log(`Overlay state updated: ${overlayId} set to false`);
+    };
+
+    /**
+     * Function to handle step enter events
+     * @param {Object} response - response object from scrollama
      */
     function handleStepEnter(response) {
         const stepIndex = response.index;
@@ -29,6 +60,12 @@
         const visualAnchor = document.getElementById('anchor-image');
 
         console.log('entered step:', stepIndex);
+
+        // Hide all game over overlays when changing slides
+        hideGameOverOverlays();
+
+        // Then restore overlay for current slide if it was previously shown
+        restoreOverlayForCurrentSlide(stepIndex);
 
         // remove active class from all slides
         document.querySelectorAll('.slide').forEach(slide => {
@@ -77,6 +114,67 @@
 
         // update slide navigation visibility and state
         updateSlideNavigation(stepIndex);
+    }
+
+    /** 
+     * Hide all game over overlays
+     */
+    function hideGameOverOverlays() {
+        const overlays = [
+            'sim2-game-over-overlay',
+            'sim4-game-over-overlay',
+            'sim5-game-over-overlay'
+        ]; 
+
+        overlays.forEach(overlayId => {
+            const overlay = document.getElementById(overlayId);
+            
+            // check if overlay exists and is currently shown
+            if (overlay && overlay.classList.contains('show')) {
+                // hide overlay
+                overlay.classList.remove('show');
+
+                // clear inline styles
+                overlay.style.top = '';
+                overlay.style.left = '';
+                overlay.style.width = '';
+                overlay.style.height = '';
+            }
+        });
+    }
+
+    /**
+     * function to restore overlay for current slide if it previously shown
+     * @param {number} stepIndex - current step index
+     */
+    function restoreOverlayForCurrentSlide(stepIndex) {
+        // store simulation key from the mapping
+        const simKey = slideTosimulationMap[stepIndex]; // will return 'sim2, 'sim4', 'sim5' etc
+
+        if (!simKey) return; // exit if no simulation for this slide
+
+        // map simulation key to overlay ID
+        const overlayMap = {
+            'sim2': 'sim2-game-over-overlay',
+            'sim4': 'sim4-game-over-overlay',
+            'sim5': 'sim5-game-over-overlay'
+        };
+
+        // store overlay ID from the mapping
+        const overlayId = overlayMap[simKey];
+
+        // if the overlay whas previously shown, show it agein
+        // overlayStates[overlayId] is true means game overlay was shown
+        if (overlayId && overlayStates[overlayId]) {
+            setTimeout(() => {
+                //store simulation object
+                const sim = window.simulations?.[simKey]; 
+                if (sim && sim.showGameOverOverlay) {
+                    // calling simulation method to show game over overlay
+                    sim.showGameOverOverlay();
+                }
+            }, 100);
+        }
     }
 
     /**
