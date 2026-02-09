@@ -56,7 +56,6 @@
     const timeManager = {
         scheduleStartTime: 8,           // Start at 8:00 AM
         currentSimulationTime: 0,       // Elapsed time in seconds when  the simulation start running
-        timeScale: 2,                   // 2 simulated hours per real second (adjustable)
         currentDay: 0,                  // initial simulation start at day 0                      
     }
 
@@ -66,7 +65,7 @@
      * @returns {number} - current hour in 24-hour format
      */
     function getCurrentHour(timeManager) {
-        const totalHours = timeManager.currentSimulationTime * timeManager.timeScale;
+        const totalHours = timeManager.currentSimulationTime;
         return Math.floor(totalHours + timeManager.scheduleStartTime) % 24;
     }
 
@@ -76,8 +75,21 @@
      * @returns {number} - current day number
      */ 
     function getCurrentDay(timeManager) {
-        const totalHours = timeManager.currentSimulationTime * timeManager.timeScale;
+        const totalHours = timeManager.currentSimulationTime;
         return Math.ceil((totalHours + timeManager.scheduleStartTime) / 24);
+    }
+
+    /**
+     *  Get the time scale multiplier based on the current hour of the day
+     *  This creates a day/night cycle where nighttime (0:00-7:59) passes faster
+     * @param {*} hour 
+     * @returns 
+     */
+    function getTimeScale(hour) {
+        if (hour >= 0 && hour < 8) {
+            return 3;   // fast night
+        }
+        return 2;       // normal day
     }
 
     /**
@@ -87,8 +99,17 @@
      * @returns {void}
      */
     function updateTimeManager(timeManager, deltaTime) {
-        timeManager.currentSimulationTime += deltaTime / 1000;          // convert ms to seconds
+        const currentHour = getCurrentHour(timeManager);
+
+        // get current hour before update time manager
+        const timeScale = getTimeScale(currentHour);
+        
+        // update current simulation time
+        timeManager.currentSimulationTime += deltaTime / 1000 * timeScale;          // convert ms to seconds
+        // update current day
         timeManager.currentDay = getCurrentDay(timeManager);
+
+        console.log(`timescale: ${timeScale}, currentHour: ${currentHour}`)
     }
 
     /** 

@@ -51,11 +51,21 @@
     };
 
     /**
+     * Track the Curren Slide index to contorol auto advance from slide 0 to slide 1, and prevent multiple triggers
+     */
+    let currentSlideIndex = 0;
+    let canAutoAdvance = true;
+
+    /**
      * Function to handle step enter events
      * @param {Object} response - response object from scrollama
      */
     function handleStepEnter(response) {
         const stepIndex = response.index;
+
+        // Update current slide tracker
+        currentSlideIndex = stepIndex;
+        canAutoAdvance = true; // Reset on each slide change
 
         const visualAnchor = document.getElementById('anchor-image');
 
@@ -274,18 +284,82 @@
         scroller
             .setup({
                 step: '.step',
-                offset: 0.4,        // trigger when step reaches middle of viewport
+                offset: 0.5,        // trigger when step reaches 70% from top of viewport
                 progress: true      // track progress through each step
             })
             .onStepEnter(handleStepEnter);
     }
 
-    // initialise after the DOM is loaded
+    /**
+     * Initialize when DOM content is loaded, or immediately if already loaded (e.g. from cache)
+     */
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {
         init();
     }
+
+    /**
+     * Listener to detect scroll down on slide 0 to auto advance to slide 1, only trigger when user scroll down (e.deltaY > 0) and prevent multiple triggers with canAutoAdvance flag
+     */
+    window.addEventListener('wheel', (e) => {
+        // check if the user is on the first slide, can auto advance, and scrolls down ( e.deltaY > 0 means scrolling down)
+        if (currentSlideIndex === 0 && canAutoAdvance && e.deltaY > 0) {
+            // User scrolled down on slide 0
+            canAutoAdvance = false; // Prevent multiple triggers
+            const stepElements = document.querySelectorAll('.step');
+            if (stepElements[1]) {
+                stepElements[1].scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }
+    }, { passive: true });          // With passive: true, the browser can scroll immediately without waiting the code to finish before scrolling, make the scrollig more responsif
+
+    /**
+     * Listen for touch events (mobile) to detect swipe up on slide 0
+     */
+    let touchStartY = 0;
+    window.addEventListener('touchstart', (e) => {
+        touchStartY = e.touches[0].clientY;         // Record where finger touched (Y position)
+    }, { passive: true });
+
+    window.addEventListener('touchend', (e) => {
+        if (currentSlideIndex !== 0 || !canAutoAdvance) return;
+
+        const touchEndY = e.changedTouches[0].clientY;          // Record where finger lifted (Y position)
+        const swipeDistance = touchStartY - touchEndY;          // Calculate the distance swiped
+
+        // If swiped up (positive distance) more than 50px
+        if (swipeDistance > 50) {
+            canAutoAdvance = false;                             // Prevent multiple triggers
+            const stepElements = document.querySelectorAll('.step');
+            if (stepElements[1]) {
+                stepElements[1].scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }   
+    }, { passive: true });
+
+    /**
+     * Event listener to amke the swipe indicator as a button so make the user can click
+     */
+    const swipeUpIndicator = document.getElementById('swipe-up-indicator');
+    swipeUpIndicator.addEventListener('click', () => {
+        if (currentSlideIndex === 0 && canAutoAdvance) {
+            canAutoAdvance = false; // Prevent multiple triggers
+            const stepElements = document.querySelectorAll('.step');
+            if (stepElements[1]) {
+                stepElements[1].scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }
+    });
 
     // slide navigation control
     const slideNavigation = document.querySelector('.slide-navigation');

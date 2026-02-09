@@ -138,7 +138,8 @@ body {
     justify-content: center;
     background: linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
     opacity: 0;                  /* initially hidden */      
-    pointer-events: none;
+    cursor: pointer;
+    pointer-events: auto;
     transition: opacity 0.5s ease;
     z-index: 10;                 /* on top of other elements */
 }

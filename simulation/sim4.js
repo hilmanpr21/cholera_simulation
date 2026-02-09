@@ -81,14 +81,35 @@
     }
 
     /**
+     *  Get the time scale multiplier based on the current hour of the day
+     *  This creates a day/night cycle where nighttime (0:00-7:59) passes faster
+     * @param {*} hour 
+     * @returns 
+     */
+    function getTimeScale(hour) {
+        if (hour >= 0 && hour < 8) {
+            return 3;   // fast night
+        }
+        return 2;       // normal day
+    }
+
+    /**
      * Update Simulation time manager to update the currentSimulationTime (total hour simulation has been running) and currentDay (how many day simulation has been running) based on elapsed time
      * @param {object} timeManager - the time manager object
      * @param {number} deltaTime - time elapsed since last update in milliseconds
      * @returns {void}
      */
     function updateTimeManager(timeManager, deltaTime) {
-        timeManager.currentSimulationTime += deltaTime / 1000;          // convert ms to seconds
-        timeManager.currentDay = getCurrentDay(timeManager);            // update the property for current day
+        const currentHour = getCurrentHour(timeManager);
+
+        // get current hour before update time manager
+        const timeScale = getTimeScale(currentHour);
+        
+        // update current simulation time
+        timeManager.currentSimulationTime += deltaTime / 1000 * timeScale;          // convert ms to seconds
+        // update current day
+        timeManager.currentDay = getCurrentDay(timeManager);
+
     }
 
     /** 
