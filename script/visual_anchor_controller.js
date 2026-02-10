@@ -122,16 +122,33 @@ function anchorLoop() {
 anchorLoop();   // start the anchor loop
 
 /**
- * 
+ * Set visual anchor mode to slide mode (fixed position on screen) or follow mode (follow agent position on canvas)
  */
 function setAnchorModeSlide() {
     visualAnchor.classList.remove('mode-follow');
     visualAnchor.classList.add('mode-slide');
 }
 
+/**
+ * Set visual anchor mode to follow mode (follow agent position on canvas)
+ */
 function setAnchorModeFollow() {
     visualAnchor.classList.remove('mode-slide');
     visualAnchor.classList.add('mode-follow');
+}
+
+/**
+ * Start bouncing animation for visual anchor
+ */
+function startAnchorBounce() {
+    visualAnchor.classList.add('bounce');
+}
+
+/**
+ * Stop bouncing animation for visual anchor
+ */
+function stopAnchorBounce() {
+    visualAnchor.classList.remove('bounce');
 }
 
 // set initial visual anchor mode to slide
@@ -144,5 +161,7 @@ setAnchorModeSlide();
 window.syncVisualAnchor = syncVisualAnchor;         // function to sync visual anchor position
 window.setAnchorModeSlide = setAnchorModeSlide;     // function to set visual anchor to slide mode
 window.setAnchorModeFollow = setAnchorModeFollow;   // function to set visual anchor to follow mode
+window.startAnchorBounce = startAnchorBounce;       // function to start bouncing animation
+window.stopAnchorBounce = stopAnchorBounce;         // function to stop bouncing animation
 
 

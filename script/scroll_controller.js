@@ -99,9 +99,12 @@
         if (stepIndex === 1) {
             // show visual anchor at center of viewport
             showVisualAnchor();
+            window.startAnchorBounce(); // start bouncing animation to draw attention
 
             // call function to move visual anchor to specific position
-            moveAnchorToViewport(window.innerWidth / 2, window.innerHeight / 2 + 50 );
+            moveAnchorToViewport(window.innerWidth / 2, window.innerHeight / 2 );
+        } else {
+            window.stopAnchorBounce(); // stop bouncing animation when not on slide 1
         }
 
         // stop following simulation 1 after slide 2

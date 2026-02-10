@@ -191,7 +191,7 @@ body {
 
 .slide-navigation {
     position: fixed; 
-    top: 2dvh;
+    bottom: 0dvh;
     left: 50vw;
     transform: translateX(-50%);
     display: flex;
@@ -271,6 +271,19 @@ body {
     transition: none;
 }
 
+#anchor-image.bounce {
+    animation: anchorBounce 1.5s ease-in-out infinite;
+}
+
+@keyframes anchorBounce {
+    0%, 100% {
+        transform: translate(-50%, -25%) scale(1.2);
+    }
+    50% {
+        transform: translate(-50%, 0%) scale(1.2);
+    }
+}
+
 #body_section {
     background-color: var(--main-body-color);
     width: 80vw;
@@ -295,7 +308,7 @@ body {
 .slide-text-content {
     margin-bottom: 1rem;        /* space below the text content */
     opacity: 0;                 /* initially hidden */
-    transform: translateY(10px); /* start slightly below */
+    transform: translateY(-50%); /* start slightly below */
     justify-content: center;
     transition: opacity 0.4s ease, transform 0.4s ease; /* smooth fade-in/out */
 } 
@@ -857,5 +870,67 @@ body {
 
     .body_article {
         width: 80%;
+    }
+}
+
+@media (orientation: landscape) and (max-height: 950px) {
+       
+    .slide {
+        display: flex;      /* ensure the slide is a flex container */
+        flex-direction: row; /* stack children horizontally */
+        width: 90vw;
+        max-width: 1230px;             /* reduce width to fit landscape orientation */   
+        transform: translateY(-50%); /* center vertically using transform */
+        align-items: flex-start; /* align children to the top of the slide */
+        justify-content: center; /* space between text and sim */
+        gap: 3rem;
+    }
+
+    /* For slides WITH sim-wrapper - use space-between */
+    .slide:has(.sim-wrapper) {
+        justify-content: space-between;
+    }
+
+    /* For slides WITHOUT sim-wrapper - keep centered layout */
+    .slide:not(:has(.sim-wrapper)) .slide-text-content {
+        max-width: 640px;
+        margin: 2rem auto;                 /* center horizontally */
+    }
+
+    /* Ensure slide 0 and 7 with is-center class stays centered */
+    .slide.is-center {
+        top: 50vh;
+        transform: translateY(-50%);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .slide-text-content {
+        flex: 1; /* allow text content to grow and fill available space */
+        min-width: 0;
+        max-width: 640px; /* limit the maximum width for larger screens */
+        order: 1; /* ensure it appears first (left side) */
+        align-self: center; /*Center vertically within the slide*/
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* Center text content vertically */
+        text-align: left;
+    }
+
+    .sim-wrapper {
+        flex: 1;
+        min-width: 0;
+        max-width: 450px; /* limit the maximum width for larger screens */
+        order: 2;
+        position: relative; 
+        left: auto;
+        top: auto;
+        transform: none; /* reset transform for landscape layout */
+    }
+
+    .slide.is-center .slide-text-content {
+        text-align: center;             /* Center text for centered slides */
+        padding-top: 0;                 /* Remove padding for centered slides */
+        align-items: center;            /* Center text horizontally */
     }
 }
