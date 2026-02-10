@@ -19,6 +19,11 @@
     --navigation-color: #01010180;
 }
 
+
+* {
+    box-sizing: border-box;
+}
+
 h1 {
     text-align: center;
     font-size: 1.5rem;
@@ -186,7 +191,7 @@ body {
 
 .slide-navigation {
     position: fixed; 
-    bottom: 5px;
+    top: 2dvh;
     left: 50vw;
     transform: translateX(-50%);
     display: flex;
@@ -313,8 +318,7 @@ body {
     top: 22dvh;                       /* center vertically */
     left: 50%;                      /* center horizontally */
     transform: translateX(-50%); /* perfect centering */
-    width: 604px;                   /* fixed width to match the canvas size on bigger screens */
-    max-width: 85%;                 /* responsive width */
+    width: min(600px, 90vw);        /* min(600px, 90vw) ensures the width is at most 600px or 90% of the viewport width, whichever is smaller */
     display: none;                  /* hidden by default */
     flex-direction: column;
     align-items: center;            /* Center children horizontally */
@@ -554,7 +558,7 @@ body {
 /* Time Bar Track */
 .time-bar-track {
     position: relative;
-    width: 600px;
+    width: 100%;
     max-width: 100%;               /* responsive width */
     height: 2px;
     border-radius: 15px;
