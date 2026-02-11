@@ -79,7 +79,6 @@
     const timeManager = {
         scheduleStartTime: 8,           // Start at 8:00 AM
         currentSimulationTime: 0,       // Elapsed time in seconds when  the simulation start running
-        timeScale: 2,                   // 2 simulated hours per real second (adjustable)
         currentDay: 0,                  // initial simulation start at day 0                      
     }
 
@@ -89,7 +88,7 @@
      * @returns {number} - current hour in 24-hour format
      */
     function getCurrentHour(timeManager) {
-        const totalHours = timeManager.currentSimulationTime * timeManager.timeScale;
+        const totalHours = timeManager.currentSimulationTime;
         return Math.floor(totalHours + timeManager.scheduleStartTime) % 24;   // modulo 24 to wrap around after 23
     }
 
@@ -99,7 +98,7 @@
      * @returns {number} - current day number
      */ 
     function getCurrentDay(timeManager) {
-        const totalHours = timeManager.currentSimulationTime * timeManager.timeScale;
+        const totalHours = timeManager.currentSimulationTime;
         return Math.ceil((totalHours + timeManager.scheduleStartTime) / 24);        // calculate day number based on total hours
     }
 
@@ -957,6 +956,115 @@
         drawAgent();
 
     }
+
+    /** 
+     * Get CSS color variable value from root
+     * @param {string} variableName - CSS variable name (e.g., '--canvas-day-color')
+     * @returns {string} - color value as string
+     */
+    function getCSSColor(variableName) {
+        return getComputedStyle(document.documentElement)
+            .getPropertyValue(variableName)
+            .trim();
+    }
+
+    /**
+     * Convert hex color to RGB object
+     * @param {string} hex - Hex color string (e.g., '#ffefc1')
+     * @returns {object} - RGB object {r, g, b}
+     */
+    function hexToRgb(hex) {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+        } : null;
+    }
+
+    /**
+     * Parse CSS color string to RGB object
+     * Handles both hex and rgb() formats
+     * @param {string} colorString - Color string from CSS
+     * @returns {object} - RGB object {r, g, b}
+     */
+    function parseColorToRgb(colorString) {
+        if (colorString.startsWith('#')) {
+            return hexToRgb(colorString);
+        }
+        
+        // Parse rgb() or rgba() format
+        const match = colorString.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+        if (match) {
+            return {
+                r: parseInt(match[1]),
+                g: parseInt(match[2]),
+                b: parseInt(match[3])
+            };
+        }
+        
+        // Default fallback to day color
+        return { r: 255, g: 239, b: 193 };
+    }
+
+    /**
+     * Interpolate between two colors
+     * @param {object} color1 - First color {r, g, b}
+     * @param {object} color2 - Second color {r, g, b}
+     * @param {number} progress - Progress between colors (0-1)
+     * @returns {string} - RGB color string
+     */
+    function interpolateColor(color1, color2, progress) {
+        const r = Math.round(color1.r + (color2.r - color1.r) * progress);
+        const g = Math.round(color1.g + (color2.g - color1.g) * progress);
+        const b = Math.round(color1.b + (color2.b - color1.b) * progress);
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    /**
+     * Get background color based on time of day
+     * Smoothly interpolates between day and night colors from CSS variables
+     * @param {number} hour - current hour (0-23)
+     * @returns {string} - RGB color string
+     */
+    function getBackgroundColorByTime(hour) {
+        // Get colors from CSS variables
+        const dayColorString = getCSSColor('--canvas-day-color');
+        const nightColorString = getCSSColor('--canvas-night-color');
+        
+        // Parse to RGB objects
+        const dayColor = parseColorToRgb(dayColorString);
+        const nightColor = parseColorToRgb(nightColorString);
+        
+        // Sunset transition (18:00-20:00): gradually darken
+        if (hour >= 18 && hour < 20) {
+            const progress = (hour - 18) / 2; // 0 to 1 over 2 hours
+            return interpolateColor(dayColor, nightColor, progress);
+        }
+        
+        // Night time (20:00-04:00): dark
+        if (hour >= 20 || hour < 4) {
+            return `rgb(${nightColor.r}, ${nightColor.g}, ${nightColor.b})`;
+        }
+        
+        // Sunrise transition (04:00-06:00): gradually brighten
+        if (hour >= 4 && hour < 6) {
+            const progress = (hour - 4) / 2; // 0 to 1 over 2 hours
+            return interpolateColor(nightColor, dayColor, progress);
+        }
+        
+        // Day time (06:00-18:00): light
+        return `rgb(${dayColor.r}, ${dayColor.g}, ${dayColor.b})`;
+    }
+
+    /**
+     * Update canvas background color based on time
+     * @param {number} hour - current hour (0-23)
+     * @returns {void}
+     */
+    function updateCanvasBackgroundByTime(hour) {
+        canvas.style.backgroundColor = getBackgroundColorByTime(hour);
+    }
     
     /**
      * Animation frame request ID
@@ -982,6 +1090,12 @@
 
         // update time indicator position
         updateTimeIndicator();
+
+        // Get current hour
+        const currentHour = getCurrentHour(timeManager);
+        
+        // Update canvas background color based on time
+        updateCanvasBackgroundByTime(currentHour);
 
         // check if the day changed
         const currentDay = getCurrentDay(timeManager);
@@ -1012,7 +1126,6 @@
         }
 
         // pertform rapid test daily at 7 am if not yet performed today
-        const currentHour = getCurrentHour(timeManager);
         if (currentHour === 8 && !hasPerformedRapidTestToday) {
             // assign rapid test to agents
             assignRapidTest();

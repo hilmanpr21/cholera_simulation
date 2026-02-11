@@ -1,7 +1,8 @@
 :root {
     --main-body-color: #ffe458;
     --article-color: #F3EDDF;
-    --canvas-bg-color:#ffefc1;
+    --canvas-day-color:#ffefc1;
+    --canvas-night-color: #2A2AB8;
     --accent-color: #007bff;
     --agent-color: #010101;
     --infected-color: #FF0000;
@@ -191,7 +192,7 @@ body {
 
 .slide-navigation {
     position: fixed; 
-    bottom: 0dvh;
+    botto: 2dvh;
     left: 50vw;
     transform: translateX(-50%);
     display: flex;
@@ -345,14 +346,14 @@ body {
 }
 
 .canvas-container {
-
-    background-color: var(--canvas-bg-color);
+    background-color: var(--canvas-day-color);
     display: block;                /* remove inline element space below canvas */
     border-radius: 1rem;
     margin-top: 1rem;
     border: none;
     max-width: 100%;                /* never bigger than the original canvas resolution, 100 percent of the parent container (@body-article) */
     height: auto;                   /* maintain aspect ratio */
+    transition: background-color 1s ease-in-out; /* smooth background color transition */
 }
 
 /* Game Over Overlay */
@@ -604,15 +605,15 @@ body {
 .house-hours-1 {
     left: 0;
     width: 33.33%; /*house from 12am to 8am */
-    background-color: var(--canvas-bg-color);
-    border: 2px solid var(--accent-color);
+    background-color: var(--canvas-day-color);
+    border: 2px solid var(--canvas-color);
 }
 
 .house-hours-2 {
     left: 70.83%;   /*start from 5pm */
-    width: 29.17%; /*house from 5pm to 12am */
-    background-color: var(--canvas-bg-color);
-    border: 2px solid var(--accent-color);
+    width: 29.16%; /*house from 5pm to 12am */
+    background-color: var(--canvas-night-color);
+    border: 2px solid var(--canvas-color);
 }
 
 /* moving time indicator */
@@ -622,8 +623,12 @@ body {
     top: -3px; /* adjust vertical position to align with the time bar */
     width: 2px;
     height: calc(100% + 15px); /* extend a bit above and below the time bar */
-    transition: left 0.5s linear; /* smooth movement during time updates */
     z-index: 10; /* ensure it's above other elements */
+}
+
+/* Add transition class for smooth movement between hour*/
+.time-indicator.smooth-transition {
+    transition: left 0.5s linear;
 }
 
 .indicator-head {
