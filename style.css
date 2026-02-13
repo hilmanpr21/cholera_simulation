@@ -34,14 +34,14 @@ h1 {
 }
 
 h2 {
-    text-align: center;
-    color: var(--text-accent-color);
+    text-align: left;
     font-size: 1.2rem;
+    text-transform: uppercase;
 }
 
 h3 {
     text-align: left;
-    font-size: 1rem;
+    font-size: 1.2rem;
     align-self: flex-start;  /* align h3 to the left within its container, so it can align left although the parent container is centered */
 }
 
@@ -52,7 +52,7 @@ h4 {
 }
 
 p {
-    font-size: 1.2rem;
+    font-size: 1rem;
     line-height: 1.2;
     margin: 0 0 0.8rem 0;
 }
@@ -910,6 +910,10 @@ body {
         align-items: center;
     }
 
+    .slide.is-center .slide-text-content p, h1, h2, h3 {
+        text-align: left;             /* Center text for centered slides */
+    }
+
     .slide-text-content {
         flex: 1; /* allow text content to grow and fill available space */
         min-width: 0;
@@ -920,6 +924,10 @@ body {
         flex-direction: column;
         justify-content: center; /* Center text content vertically */
         text-align: left;
+    }
+
+    #acknowledgement {
+        margin-top: 4rem;
     }
 
     .sim-wrapper {
