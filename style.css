@@ -192,7 +192,7 @@ body {
 
 .slide-navigation {
     position: fixed; 
-    botto: 2dvh;
+    bottom: 2dvh;
     left: 50vw;
     transform: translateX(-50%);
     display: flex;

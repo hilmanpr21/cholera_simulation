@@ -959,43 +959,67 @@
 
     /** 
      * Get CSS color variable value from root
+     * this functionreads CSS custom porperties (variables) defined in :root
      * @param {string} variableName - CSS variable name (e.g., '--canvas-day-color')
      * @returns {string} - color value as string
      */
     function getCSSColor(variableName) {
+        // `getComputedStyle()` gets all CSS properties applied to the document root element 
+        // `document.documentElement` means the <html> element, which is the root of the document
         return getComputedStyle(document.documentElement)
+            // `getPropertyValue(variableName)` retrieves the value of the specified CSS variableName
             .getPropertyValue(variableName)
+            // `.trim` is used to remove any extra whitespace from the beginning and end of the color string, ensuring a clean value is returned
             .trim();
     }
 
     /**
      * Convert hex color to RGB object
+     * this function onlyundestand hex format, so if the color string is in rgb format, it will return null and the program will fallback to default day color
      * @param {string} hex - Hex color string (e.g., '#ffefc1')
      * @returns {object} - RGB object {r, g, b}
      */
     function hexToRgb(hex) {
+        // regular expression to match hex color format: #RRGGBB
+        // ^#? means the string can optionally start with a '#' character
+        // ([a-f\d]{2}) two characters that are a-f or digits (0-9) to split into R, G, B components
+        // $ = end of string
+        // i means case-insensitive matching
         const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+
+        // if regex matched (result is not null) parse each color component into decimal
+        // regex is just a pattern used to find specific text inside a string
         return result ? {
             r: parseInt(result[1], 16),
             g: parseInt(result[2], 16),
             b: parseInt(result[3], 16)
-        } : null;
+        } : null;                       // if regex did not match, return null (invalid hex format)
     }
 
     /**
      * Parse CSS color string to RGB object
-     * Handles both hex and rgb() formats
+     * Handles both hex and rgb() formats, just in case the color we will put is not in hex format, hence need double cheking
      * @param {string} colorString - Color string from CSS
      * @returns {object} - RGB object {r, g, b}
      */
     function parseColorToRgb(colorString) {
+        
+        // if the color string is in hex format, // calling hexToRgb function if the color string is in hex format, it will return RGB object, if not it will return null
         if (colorString.startsWith('#')) {
             return hexToRgb(colorString);
         }
         
-        // Parse rgb() or rgba() format
+        // Check if the color string is in rgb() or rgba() format instead 
+        // `match` will contain the captured groups from the regex, which are the numeric values for r, g, b
+        // `rgba?` matches either 'rgb' or 'rgba', the `?` means previous character (a) is optional
+        // `\(` matches the opening parenthesis '('
+        // `(\d+)` captures one or more digits (the red component) and stores it in the first group, `\d` means a digit 0 to 9, `+` means one or more
+        // `,` matches the comma separating the color components
+        // `\s*` matches any whitespace (spaces or tabs) that may appear after the comma, `*` means zero or more of the preceding whitespace characters
+        // `/)` matches the closing parenthesis ')'
         const match = colorString.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
         if (match) {
+            // parse the captured match groups into integers and return as RGB object,
             return {
                 r: parseInt(match[1]),
                 g: parseInt(match[2]),
@@ -1009,6 +1033,7 @@
 
     /**
      * Interpolate between two colors
+     * Creates smooth transition by calculating intermediate RGB values
      * @param {object} color1 - First color {r, g, b}
      * @param {object} color2 - Second color {r, g, b}
      * @param {number} progress - Progress between colors (0-1)
@@ -1025,7 +1050,7 @@
      * Get background color based on time of day
      * Smoothly interpolates between day and night colors from CSS variables
      * @param {number} hour - current hour (0-23)
-     * @returns {string} - RGB color string
+     * @returns {string} - RGB color string to set as canvas background
      */
     function getBackgroundColorByTime(hour) {
         // Get colors from CSS variables
@@ -1036,9 +1061,11 @@
         const dayColor = parseColorToRgb(dayColorString);
         const nightColor = parseColorToRgb(nightColorString);
         
-        // Sunset transition (18:00-20:00): gradually darken
-        if (hour >= 18 && hour < 20) {
-            const progress = (hour - 18) / 2; // 0 to 1 over 2 hours
+        // Sunset transition (17:00-18:00): gradually darken
+        if (hour >= 17 && hour < 18) {
+            const progress = (hour - 17) / 1; // 0 to 1 over 1 hour
+            //`interpolateColor` function calculates the intermediate color based on the progress of the transition
+            // creating a smooth gradient effect between day and night colors
             return interpolateColor(dayColor, nightColor, progress);
         }
         
@@ -1047,9 +1074,9 @@
             return `rgb(${nightColor.r}, ${nightColor.g}, ${nightColor.b})`;
         }
         
-        // Sunrise transition (04:00-06:00): gradually brighten
-        if (hour >= 4 && hour < 6) {
-            const progress = (hour - 4) / 2; // 0 to 1 over 2 hours
+        // Sunrise transition (05:00-06:00): gradually brighten
+        if (hour >= 5 && hour < 6) {
+            const progress = (hour - 5) / 1; // 0 to 1 over 1 hour
             return interpolateColor(nightColor, dayColor, progress);
         }
         
@@ -1063,6 +1090,7 @@
      * @returns {void}
      */
     function updateCanvasBackgroundByTime(hour) {
+        // change the canvas background color by calling the function getBackgroundColorByTime
         canvas.style.backgroundColor = getBackgroundColorByTime(hour);
     }
     
