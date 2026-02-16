@@ -9,6 +9,7 @@
         <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/roughjs@latest/bundled/rough.js"></script>
         <script src="https://unpkg.com/scrollama"></script>
+        <script src="script/i18n.js"></script>
     </head>
 
     <body>
@@ -17,7 +18,7 @@
                 <div class="slide is-active is-center" data-slide="0">
                     <div class="slide-text-content">
                         <img src="assets/cholera_title.PNG" alt="Chola Chola er Chlera" class="title-image" id="title-image">
-                        <h1>চলা চলার কলেরা</h1>
+                        <h1 data-i18n="slide0.cholera-title">Movement and Cholera</h1>
                     </div>
                 </div>
 
@@ -31,43 +32,43 @@
                             <path d="M5 5L20 15L35 5" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </div>
-                    <p class="swipe-text">Scroll to continue</p>
+                    <p class="swipe-text" data-i18n="slide0.instruction">Scroll to continue</p>
                 </div>
 
                 <div class="slide" data-slide="1">
                     <div class="slide-text-content">
-                        <p><strong>Meet Rafi.</strong></p>
+                        <p><strong data-i18n="slide1.description1">Meet Rafi.</strong></p>
                         <br>
-                        <p>Like many children in Bangladesh, Rafi goes to school every day.</p>
+                        <p data-i18n="slide1.description2">Like many children in Bangladesh, Rafi goes to school every day.</p>
                         <br>
-                        <p>Today, we will follow Rafi and help protect his neighbourhood from cholera.</p>
+                        <p data-i18n="slide1.description3">Today, we will follow Rafi and help protect his neighbourhood from cholera.</p>
                     </div>
                 </div>
 
                 <div class="slide" data-slide="2">
                     <div class="slide-text-content">
-                        <p>Every day, Rafi goes to school from 8 am to 5 pm. At home and at school, he uses water from <strong>shared water sources</strong> for washing and consumption. When the water is clean (light blue), Rafi and his family stay healthy.</p>
+                        <p data-i18n="slide2.description1">Every day, Rafi goes to school from 8 am to 5 pm. At home and at school, he uses water from <strong>shared water sources</strong> for washing and consumption. When the water is clean (light blue), Rafi and his family stay healthy.</p>
                     </div>
                     <div id="sim1-wrapper" class="sim-wrapper">
                         <canvas id="choleraSim1" class="canvas-container"></canvas>
                         <div class="sim-control-button-collection">
-                            <button id="start-button" class="sim-control-button" type="button">start</button>
-                            <button id="reset-button" class="sim-control-button" type="button">reset</button>
-                            <button id="pause-button" class="sim-control-button" type="button">pause</button>
+                            <button id="start-button" class="sim-control-button" type="button" data-i18n="commons.start">start</button>
+                            <button id="reset-button" class="sim-control-button" type="button" data-i18n="commons.reset">reset</button>
+                            <button id="pause-button" class="sim-control-button" type="button" data-i18n="commons.pause">pause</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="slide" data-slide="3">
                     <div class="slide-text-content">
-                        <p>One day, Rafi becomes <strong>infected with cholera</strong> (Rafi turns red). As Rafi is infected, he <strong>contaminates the water</strong> at school and at home (it turns dark blue). When Rafi's family drinks contaminated water at home, his whole household becomes infected (the house turns red).</p>
+                        <p data-i18n="slide3.description1">One day, Rafi becomes <strong>infected with cholera</strong> (Rafi turns red). As Rafi is infected, he <strong>contaminates the water</strong> at school and at home (it turns dark blue). When Rafi's family drinks contaminated water at home, his whole household becomes infected (the house turns red).</p>
                     </div>
                     <div id="sim1B-wrapper" class="sim-wrapper">
                         <canvas id="choleraSim1B" class="canvas-container"></canvas>
                         <div class="sim-control-button-collection">
-                            <button id="start-button-sim1B" class="sim-control-button" type="button">start</button>
-                            <button id="reset-button-sim1B" class="sim-control-button" type="button">reset</button>
-                            <button id="pause-button-sim1B" class="sim-control-button" type="button">pause</button>
+                            <button id="start-button-sim1B" class="sim-control-button" type="button" data-i18n="commons.start">start</button>
+                            <button id="reset-button-sim1B" class="sim-control-button" type="button" data-i18n="commons.reset">reset</button>
+                            <button id="pause-button-sim1B" class="sim-control-button" type="button" data-i18n="commons.pause">pause</button>
                         </div>
                         <div id="sim1B-control-button" class="sim-control-button-collection">
                             <button id="contaminate-water-button" type="button"></button>
@@ -77,7 +78,7 @@
 
                 <div class="slide" data-slide="4">
                     <div class="slide-text-content">
-                        <p>Rafi lives in a community with many neighbours. The children go to the same school and drink water from the same water source. Rafi and another student are infected with cholera, and <strong>contaminate the school water</strong>. The infected students then bring cholera back to their families. See how fast cholera spreads when more neighbours are infected.</p>
+                        <p data-i18n="slide4.description1"></p>
                     </div>
 
                     <div id="sim2-wrapper" class="sim-wrapper">
@@ -85,11 +86,11 @@
 
                         <div class="time-bar-container">
                             <div class="time-bar-header">
-                                <h4>Total neighbours:</h4>
+                                <h4 data-i18n="commons.total-neighbours">Total neighbours:</h4>
                                 <span id="sim2-neighbour-count" class="current-time-and-day">10</span> <!-- Initial total population display-->
                                 <h4>Infected neighbours:</h4>
                                 <span id="sim2-infected-count" class="current-time-and-day">2</span>  <!-- Initial infected count display-->
-                                <h4>Day:</h4>
+                                <h4 data-i18n="commons.day-count">Day:</h4>
                                 <span id="sim2-current-day" class="current-time-and-day">1</span>  <!-- Initial day display-->
                             </div>
 
@@ -121,31 +122,34 @@
                         </div>
 
                         <div class="sim-control-button-collection">
-                            <button id="start-button-sim2" class="sim-control-button" type="button">start</button>
-                            <button id="reset-button-sim2" class="sim-control-button" type="button">reset</button>
-                            <button id="pause-button-sim2" class="sim-control-button" type="button">pause</button>
+                            <button id="start-button-sim2" class="sim-control-button" type="button" data-i18n="commons.start"></button>
+                            <button id="reset-button-sim2" class="sim-control-button" type="button" data-i18n="commons.reset"></button>
+                            <button id="pause-button-sim2" class="sim-control-button" type="button" data-i18n="commons.pause"></button>
                         </div>
                         <div id="sim2-control-button" class="sim-control-button">
                             <input type="range" id="sim2-neighbour-number" min="1" max="5" value="2" step="1" class="sim-slider">
-                            <label for="sim2-neighbour-number">Number of infected neighbours: <span id="sim2-neighbour-label">2</span> </label>
+                            <label for="sim2-neighbour-number">
+                                <span data-i18n="commons.initial-infected-neighbours">Numbers of infected neighbours initially:</span> 
+                                <span id="sim2-neighbour-label">2</span> 
+                            </label>
                         </div>
                     </div>
                 </div>
 
                 <div class="slide" data-slide="5">
                     <div class="slide-text-content">
-                        <p>Now, let’s introduce <strong>rapid testing for cholera</strong> to quickly find neighbours who are infected, and ask them to stay at home for 3 days. Isolating neighbours are shown with green borders.</p>
-                        <p>Rapid tests are conducted every morning at nearby healthcare facilities. You can increase availability of rapid tests for neighbours with symptoms.</p>    
+                        <p data-i18n="slide5.description1">Now, let’s introduce <strong>rapid testing for cholera</strong> to quickly find neighbours who are infected, and ask them to stay at home for 3 days. Isolating neighbours are shown with green borders.</p>
+                        <p data-i18n="slide5.description2">Rapid tests are conducted every morning at nearby healthcare facilities. You can increase availability of rapid tests for neighbours with symptoms.</p>    
                     </div>
                     <div id="sim4-wrapper" class="sim-wrapper">
                         <canvas id="choleraSim4" class="canvas-container"></canvas>
                         <div class="time-bar-container">
                             <div class="time-bar-header">
-                                <h4>Simulation time</h4>
-                                <span id="sim4-current-time" class="current-time-and-day">08:00</span> <!-- Initial time display-->
-                                <h4>Infected Population:</h4>
+                                <h4 data-i18n="commons.total-neighbours"></h4>
+                                <span id="sim4-total-neighbours" class="current-time-and-day">10</span> <!-- Initial total neighbours display-->
+                                <h4 data-i18n="commons.infected-neighbours"></h4>
                                 <span id="sim4-infected-count" class="current-time-and-day">0</span>  <!-- Initial infected count display-->
-                                <h4>Day:</h4>
+                                <h4 data-i18n="commons.day-count"></h4>
                                 <span id="sim4-current-day" class="current-time-and-day">1</span>  <!-- Initial day display-->
                             </div>
 
@@ -177,18 +181,24 @@
                         </div>
                         
                         <div class="sim-control-button-collection">
-                            <button id="start-button-sim4" class="sim-control-button" type="button">start</button>
-                            <button id="reset-button-sim4" class="sim-control-button" type="button">reset</button>
-                            <button id="pause-button-sim4" class="sim-control-button" type="button">pause</button>
+                            <button id="start-button-sim4" class="sim-control-button" type="button" data-i18n="commons.start">start</button>
+                            <button id="reset-button-sim4" class="sim-control-button" type="button" data-i18n="commons.reset">reset</button>
+                            <button id="pause-button-sim4" class="sim-control-button" type="button" data-i18n="commons.pause">pause</button>
                         </div>
                         <div id="sim4-control-button" class="sim-control-button">
                             <div id="sim4-neighbour-slider-wrapper">
                                 <input type="range" id="sim4-neighbour-number" min="1" max="5" value="2" step="1" class="sim-slider">
-                                <label for="sim4-neighbour-number">Number of infected neighbours: <span id="sim4-neighbour-label">2</span> </label>
+                                <label for="sim4-neighbour-number">
+                                    <span data-i18n="commons.initial-infected-neighbours">neighbours initially:</span> 
+                                    <span id="sim4-neighbour-label">2</span> 
+                                </label>
                             </div>                            
                             <div id="sim4-rapid-test-slider-wrapper">
                                 <input type="range" id="sim4-rapid-test-slider" min="0" max="100" value="50" step="10" class="sim-slider">
-                                <label for="sim4-rapid-test-slider">Rapid Test Coverage: <span id="sim4-rapid-test-label">50</span>%</label>
+                                <label for="sim4-rapid-test-slider">
+                                    <span data-i18n="commons.rapid-test-coverage">Rapid test coverage:</span>
+                                    <span id="sim4-rapid-test-label">50</span>%
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -196,7 +206,7 @@
 
                 <div class="slide" data-slide="6">
                     <div class="slide-text-content">
-                        <p>Even when infections slow down in Rafi’s neighbourhood, people continue to <strong>move around</strong> - going to school, to work, and doing activities in other neighbourhoods. Cholera can spread to other neighbourhoods via infected people. Testing people quickly and encouraging isolation helps <strong>protect many communities</strong>, not just Rafi’s.</p>
+                        <p data-i18n="slide6.description1">Even when infections slow down in Rafi’s neighbourhood, people continue to <strong>move around</strong> - going to school, to work, and doing activities in other neighbourhoods. Cholera can spread to other neighbourhoods via infected people. Testing people quickly and encouraging isolation helps <strong>protect many communities</strong>, not just Rafi’s.</p>
                     </div>
                     <div id="sim5_wrapper" class="sim-wrapper">
                         <canvas id="choleraSim5" class="canvas-container"></canvas>
@@ -238,18 +248,24 @@
                         </div>
 
                         <div class="sim-control-button-collection">
-                            <button id="start-button-sim5" class="sim-control-button" type="button">start</button>
-                            <button id="reset-button-sim5" class="sim-control-button" type="button">reset</button>
-                            <button id="pause-button-sim5" class="sim-control-button" type="button">pause</button>
+                            <button id="start-button-sim5" class="sim-control-button" type="button" data-i18n="commons.start">start</button>
+                            <button id="reset-button-sim5" class="sim-control-button" type="button" data-i18n="commons.reset">reset</button>
+                            <button id="pause-button-sim5" class="sim-control-button" type="button" data-i18n="commons.pause">pause</button>
                         </div>
                         <div id="sim5-control-button" class="sim-control-button">
                             <div id="sim5-neighbour-slider-wrapper">
                                 <input type="range" id="sim5-neighbour-number" min="1" max="10" value="2" step="1" class="sim-slider">
-                                <label for="sim5-neighbour-number">Number of infected neighbours: <span id="sim5-neighbour-label">2</span> </label>
+                                <label for="sim5-neighbour-number">
+                                    <span data-i18n="commons.initial-infected-neighbours">neighbours initially:</span>
+                                    <span id="sim5-neighbour-label">2</span> 
+                                </label>
                             </div>
                             <div id="sim5-rapid-test-slider-wrapper">
                                 <input type="range" id="sim5-rapid-test-slider" min="0" max="100" value="50" step="10" class="sim-slider">
-                                <label for="sim5-rapid-test-slider">Rapid Test Coverage: <span id="sim5-rapid-test-label">50</span>%</label>
+                                <label for="sim5-rapid-test-slider">
+                                    <span data-i18n="commons.rapid-test-coverage"></span>
+                                    <span id="sim5-rapid-test-label">50</span>%
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -257,12 +273,12 @@
 
                 <div class="slide is-center" data-slide="7">
                     <div class="slide-text-content">
-                        <h3>Thank you for helping protect Rafi’s community.</h3>
+                        <h3 data-i18n="slide7.description1">Thank you for helping protect Rafi’s community.</h3>
                         <br>
-                        <h3>Rapid testing and isolation can prevent cholera outbreaks and save lives.</h3>
+                        <h3 data-i18n="slide7.description2"></h3>
                         <div id="acknowledgement">
-                            <h2>ACKNOWLEDGEMENTS</h2>
-                            <p>This work was developed by Hilman Prakoso at the <a href="https://mobscilab.com/">Mobility Science Lab</a>, University of Leeds, in collaboration with the <a href="https://www.stevensgroup.org/">Stevens Group</a>, University of Oxford, as part of the ‘Integrated Surveillance Suite for Targeting Interventions to Cholera Outbreaks’ project, funded by the Wellcome Trust. </p>
+                            <h2 data-i18n="slide7.acknowledgement">ACKNOWLEDGEMENTS</h2>
+                            <p data-i18n="slide7.acknowledgement-text"></p>
                         </div>
                     </div>
                 </div>
