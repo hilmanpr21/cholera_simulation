@@ -1,0 +1,43 @@
+{
+    "slide0": {
+        "cholera-title": "Déplacements et choléra", 
+        "instruction": "Faites défiler pour continuer"
+    },
+    "slide1": {
+        "description1": "Voici Rafi.",
+        "description2": "Comme beaucoup d’enfants au Bangladesh, Rafi va à l’école tous les jours",
+        "description3": "Aujourd’hui, nous allons suivre Rafi et aider à protéger son quartier contre le choléra."
+    },
+    "slide2": {
+        "description1": "Chaque jour, Rafi va à l’école de 8 h à 17 h. À la maison et à l’école, il utilise des <strong>sources d’eau partagées</strong> pour se laver et boire. Quand l’eau est propre (bleu clair), Rafi et sa famille restent en bonne santé."
+    },
+    "slide3": {
+        "description1": "Un jour, Rafi est <strong>infecté par le choléra</strong> (Rafi devient rouge). Comme Rafi est infecté, il <strong>contamine l’eau</strong> à l’école et à la maison (elle devient bleu foncé). Quand la famille de Rafi boit de l’eau contaminée à la maison, tout le foyer est infecté (la maison devient rouge)."
+    },
+    "slide4": {
+        "description1": "Rafi vit dans une communauté avec beaucoup de voisins. Les enfants vont à la même école et boivent l’eau de la même source. Rafi et un autre élève sont infectés par le choléra et <strong>contaminent l’eau de l’école</strong>. Les élèves infectés ramènent ensuite le choléra à leurs familles. Voyez à quelle vitesse le choléra se propage quand plus de voisins sont infectés."
+    },
+    "slide5": {
+        "description1": "Maintenant, introduisons des <strong>tests rapides pour le choléra</strong> afin d’identifier rapidement les voisins infectés et leur demander de rester à la maison pendant 3 jours. Les voisins isolés sont indiqués avec des bordures vertes.",
+        "description2": "Des tests rapides sont effectués chaque matin dans les centres de santé proches. Vous pouvez augmenter la disponibilité des tests rapides pour les voisins présentant des symptômes."
+    },
+    "slide6": {
+        "description1": "Même lorsque les infections ralentissent dans le quartier de Rafi, les gens continuent de <strong>se déplacer</strong> - aller à l’école, au travail, et faire des activités dans d’autres quartiers. Le choléra peut se propager vers d’autres quartiers par des personnes infectées. Tester rapidement et encourager l’isolement aide à <strong>protéger de nombreuses communautés</strong>, pas seulement celle de Rafi."
+    },
+    "slide7": {
+        "description1": "Merci d’avoir aidé à protéger la communauté de Rafi.",
+        "description2": "Les tests rapides et l’isolement peuvent prévenir les épidémies de choléra et sauver des vies.",
+        "acknowledgement": "REMERCIEMENTS",
+        "acknowledgement-text": "Ce travail a été développé par Hilman Prakoso au <a href=\"https://mobscilab.com\" target=\"_blank\">Mobility Science Lab</a>, University of Leeds, en collaboration avec le <a href=\"https://www.stevensgroup.org/\" target=\"_blank\">Stevens Group</a>, University of Oxford, dans le cadre du projet « Integrated Surveillance Suite for Targeting Interventions to Cholera Outbreaks », financé par le Wellcome Trust."
+    },
+    "commons": {
+        "start": "démarrer",
+        "reset": "réinitialiser",
+        "pause": "pause",
+        "total-neighbours": "Voisins totaux :",
+        "infected-neighbours": "Voisins infectés :",
+        "day-count": "Jour :",
+        "initial-infected-neighbours": "Nombre initial de voisins infectés : ",
+        "rapid-test-coverage": "Couverture des tests rapides :"
+    }
+}

@@ -737,6 +737,40 @@ body {
     transform: scale(0.7);
 }
 
+/*cintainer for language selector menu*/
+.language-selector-container {
+    display: flex;              /*make the container a flex container*/
+    gap: 0.5rem;                /*space between the child elements, in this case the buttons*/
+    flex-wrap: wrap;            /*allow the buttons to wrap to the next line if there isn't enough horizontal space*/
+    flex-direction: row;        /*arrange the buttons in a row*/
+    justify-content: center;    /*center the buttons horizontally within the container*/
+    margin-top: 2rem;           /*space above the language selector menu*/
+    max-width: 480px;
+}
+
+.language-button {
+    padding: 5px 25px;     /*padding inside the buttons, 10px top/bottom and 25px left/right*/
+    text-transform: uppercase; /*make the button text uppercase*/
+    background-color: var(--accent-color); /*button background color*/
+    color: var(--white-color);
+    border: 2px solid var(--accent-color); /*button border color and width*/
+    border-radius: 0rem;   /*button border radius, 0 for sharp corners*/
+    transition: all 0.3s ease; /*smooth transition for hover effects*/
+    font-family: inherit; /*inherit font from parent element*/
+}
+
+.language-button:hover {
+    background-color: var(--white-color); /*change background color on hover*/
+    color: var(--accent-color); /*change text color on hover*/
+}
+
+.language-button.active {
+    background-color: var(--white-color); /*active button background color*/
+    color: var(--accent-color); /*active button text color*/
+    font-weight: bold; /*make active button text bold*/
+}
+
+
 /* small mobile screens */
 @media (max-width: 390px) {
     .slide {
@@ -787,6 +821,18 @@ body {
     .try-again-button {
         padding: 0.5rem 1.2rem;
         font-size: 0.8rem;
+    }
+
+    .language-selector-container {
+        flex-direction: column; /* stack language buttons vertically on smaller screens */
+        gap: 15px; /* reduce gap between buttons for better fit */
+        width: 100%;
+    }
+
+    .language-button {
+        width: 100%; /* make language buttons full width on smaller screens */
+        max-width: 200px;
+        margin: 0 auto; /* center buttons horizontally */
     }
 }
 

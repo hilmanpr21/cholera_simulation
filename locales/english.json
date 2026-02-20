@@ -28,7 +28,7 @@
         "description1": "Thank you for helping protect Rafi’s community.",
         "description2": "Rapid testing and isolation can prevent cholera outbreaks and save lives.",
         "acknowledgement": "ACKNOWLEDGEMENTS",
-        "acknowledgement-text": "This work was developed by Hilman Prakoso at the <a href=\"https://mobscilab.com\">Mobility Science Lab</a>, University of Leeds, in collaboration with the <a href=\"https://www.stevensgroup.org/\">Stevens Group</a>, University of Oxford, as part of the ‘Integrated Surveillance Suite for Targeting Interventions to Cholera Outbreaks’ project, funded by the Wellcome Trust."
+        "acknowledgement-text": "This work was developed by Hilman Prakoso at the <a href=\"https://mobscilab.com\" target=\"_blank\">Mobility Science Lab</a>, University of Leeds, in collaboration with the <a href=\"https://www.stevensgroup.org/\" target=\"_blank\">Stevens Group</a>, University of Oxford, as part of the ‘Integrated Surveillance Suite for Targeting Interventions to Cholera Outbreaks’ project, funded by the Wellcome Trust."
     },
     "commons": {
         "start": "start",
