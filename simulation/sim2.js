@@ -735,8 +735,11 @@
 
     // Image loading management
     let imagesLoaded = 0;
-    const totalImages = 5;
+    const totalImages = 7;
 
+    /**
+     * Callback function for image load events
+     */
     function onImageLoad() {
         imagesLoaded++;
         if (imagesLoaded === totalImages) {
@@ -768,6 +771,14 @@
     const cleanWaterImage = new Image();
     cleanWaterImage.onload = onImageLoad;
     cleanWaterImage.src = 'assets/clean_water.PNG';
+
+    const sunIcon = new Image();
+    sunIcon.onload = onImageLoad;
+    sunIcon.src = 'assets/sun.png';
+
+    const moonIcon = new Image();
+    moonIcon.onload = onImageLoad;
+    moonIcon.src = 'assets/moon.png';
 
     /**
      * Draws all water bodies (house and school) on the canvas
@@ -995,6 +1006,37 @@
             ctx.stroke();
         });     
     }
+    
+
+    /**
+     * Draw sun and moon icons with smmooth transition
+     */
+    function drawSunAndMoon() {
+        // Set the position for the sun and moon icons
+        const iconSize = 40;
+        const margin = 10;
+        const finalXPosition = canvas.width - iconSize - margin;
+        let finalYPosition = margin;
+        
+
+        // get the current time and hour
+        const currentHour = getCurrentHour(timeManager);
+
+        // define if it is day time on not (6AM to 6PM is day time, otherwise is night time)
+        // return "false" or "true"
+        const isDaytime = currentHour >= 7 && currentHour < 19;
+
+        let iconSource = isDaytime ? sunIcon : moonIcon;
+
+        // drawing the sun icon
+        ctx.drawImage(
+            iconSource,
+            finalXPosition,
+            finalYPosition,
+            iconSize,
+            iconSize
+        )
+    }
 
     /**
      * Draw the simulation environment
@@ -1010,6 +1052,7 @@
         drawSchool();    
         drawHouse();
         drawWaterbody();
+        drawSunAndMoon();
         // drawAgent();
     }
 
@@ -1166,7 +1209,7 @@
         }
         
         // Night time (20:00-04:00): dark
-        if (hour >= 20 || hour < 4) {
+        if (hour >= 19 || hour < 4) {
             return `rgb(${nightColor.r}, ${nightColor.g}, ${nightColor.b})`;
         }
         

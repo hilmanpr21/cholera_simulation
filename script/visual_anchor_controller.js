@@ -98,18 +98,32 @@ function syncVisualAnchor() {
  */
 function updateVisualAnchorVisual() {
     const status = window.AnchorController.getAgentStatus?.();
-    if (!status) return;
 
-    if (status.infected && !status.isolated) {
-        visualAnchor.src = 'assets/rafi_infected.PNG';
-    } else if (!status.infected && status.isolated) {
-        visualAnchor.src = 'assets/rafi_isolated.PNG';
-    } else if (status.infected && status.isolated) {
-        visualAnchor.src = 'assets/rafi_infected_isolated.PNG';
-    } else {
-        visualAnchor.src = 'assets/rafi_normal.PNG';
+    const lang = window.currentLanguage || 'english';
+    
+    const imagePaths = {
+        english: "assets/english_figure_set",
+        french: "assets/french_figure_set",
+        bangla: "assets/bangla_figure_set"
+    };
+
+    const basePath = imagePaths[lang] || imagePaths.french;    //english as default
+
+    // If no status (slide 1), default to normal with current language
+    if (!status) {
+        visualAnchor.src = `${basePath}/figure_1_normal.PNG`;
+        return;
     }
 
+    if (status.infected && !status.isolated) {
+        visualAnchor.src = `${basePath}/figure_1_infected.PNG`;
+    } else if (!status.infected && status.isolated) {
+        visualAnchor.src = `${basePath}/figure_1_isolated.PNG`;
+    } else if (status.infected && status.isolated) {
+        visualAnchor.src = `${basePath}/figure_1_infected_isolated.PNG`;
+    } else {
+        visualAnchor.src = `${basePath}/figure_1_normal.PNG`;
+    }
 }
 
 /**

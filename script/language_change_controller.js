@@ -63,6 +63,65 @@ function getNestedValue(obj, key) {
     return key.split(".").reduce((o, i) => o?.[i], obj);
 }
 
+
+/**
+ * Get the image path based on the language and character index, to change the character bsed on the selected language
+ * @param {string} lang - the language code
+ * @param {number} index - the character index
+ * @param {string} status - character status ('infectd', 'normal', 'isolated', 'infected_isolated')
+ * @returns {strings} - image path
+ */
+function getCharacterImagePath(lang, index, status) {
+    // define the folder path for each language
+    const assetsPath = {
+        english: "assets/english_figure_set",
+        french: "assets/french_figure_set",
+        bangla: "assets/bangla_figure_set"
+    };
+
+    // get the base bathh for the selected language
+    const basePath = assetsPath[lang] || assetsPath.english; // default to english if language not found
+    return `${basePath}/figure_${index}_${status}.PNG`;
+}
+
+/**
+ * Update the character image based on the selected language
+ * @param {string} lang - the language code
+ */
+function updateCharacterImages(lang) {
+    // Update the visual anchor (main character)
+    const visualAnchor = document.getElementById('anchor-image');
+    if (visualAnchor) {
+        const currentStatus = visualAnchor.src.includes('infected_isolated') ? 'infected_isolated' :
+                                visualAnchor.src.includes('infected') ? 'infected' :
+                                visualAnchor.src.includes('isolated') ? 'isolated' : 'normal';
+                                
+        visualAnchor.src = getCharacterImagePath(lang, 1, currentStatus); 
+    }
+
+    // Update all agent characters in the controller
+    const ctrl = window.AgentCharacterController;
+    if (ctrl && ctrl.characters) {
+        ctrl.characters.forEach((img, agentId) => {
+            // Extract current status from image source
+            const currentStatus = img.src.includes('infected_isolated') ? 'infected_isolated' :
+                                img.src.includes('infected') ? 'infected' :
+                                img.src.includes('isolated') ? 'isolated' : 'normal';
+            
+            // Update to new language image
+            const index = agentId + 1;
+            img.src = getCharacterImagePath(lang, index, currentStatus);
+        });
+    }
+
+    // Store current language for future character updates
+    // make it globally accessible so that it can be used in the character_controller.js
+    window.currentLanguage = lang;
+}
+
+
+
+
 /**
  * function to initialise the language selection menu
  * setup click event listner for each language button
@@ -88,9 +147,15 @@ function initialLanguageButton() {
 
             // Load the selected language
             loadLanguage(selectedLang)
+
+            // updatae character images
+            updateCharacterImages(selectedLang);
         });
     });
 }
+
+
+
 
 /**
  * Event listener to change the language when the DOM is loaded, it will load the default language (English) when the page is first loaded
@@ -100,4 +165,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // load english as the default language on page load
     loadLanguage("english"); // Load English by default
+    updateCharacterImages("english"); // Update character images to English by default
+
 });

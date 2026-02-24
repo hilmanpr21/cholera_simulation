@@ -18,15 +18,25 @@ window.AgentCharacterController = {
 function getAgentImageSource(agentId, status) {
     const index = agentId + 1;
 
+    const lang = window.currentLanguage || 'english';
+
+    // Define image folder paths for each language
+    const imagePaths = {
+        english: 'assets/english_figure_set',
+        bangla: 'assets/bangla_figure_set',
+        french: 'assets/french_figure_set'
+    };
+
+    let statusSuffix = 'normal';
     if (status.infected && status.isolated) {
-        return `assets/figure_${index}_infected_isolated.PNG`;
+        statusSuffix = 'infected_isolated';
     } else if (status.infected) {
-        return `assets/figure_${index}_infected.PNG`;
+        statusSuffix = 'infected';
     } else if (status.isolated) {
-        return `assets/figure_${index}_isolated.PNG`;
-    } else {
-        return `assets/figure_${index}_normal.PNG`;
+        statusSuffix = 'isolated';
     }
+
+    return `${imagePaths[lang]}/figure_${index}_${statusSuffix}.PNG`;
 }
 
 /**
