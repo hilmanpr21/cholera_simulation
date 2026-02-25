@@ -1024,7 +1024,7 @@
 
         // define if it is day time on not (6AM to 6PM is day time, otherwise is night time)
         // return "false" or "true"
-        const isDaytime = currentHour >= 7 && currentHour < 19;
+        const isDaytime = currentHour >= 7 && currentHour < 20;
 
         let iconSource = isDaytime ? sunIcon : moonIcon;
 

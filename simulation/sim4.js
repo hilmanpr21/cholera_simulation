@@ -821,7 +821,7 @@
 
     // Image loading management
     let imagesLoaded = 0;
-    const totalImages = 5;
+    const totalImages = 8;
 
     function onImageLoad() {
         imagesLoaded++;
@@ -851,6 +851,17 @@
     cleanWaterImage.onload = onImageLoad;
     cleanWaterImage.src = 'assets/clean_water.PNG';
 
+    const sunIcon = new Image();
+    sunIcon.onload = onImageLoad;
+    sunIcon.src = 'assets/sun.png';
+
+    const moonIcon = new Image();
+    moonIcon.onload = onImageLoad;
+    moonIcon.src = 'assets/moon.png';
+
+    const rdtIcon = new Image();
+    rdtIcon.onload = onImageLoad;
+    rdtIcon.src = 'assets/rapid-test.png';
 
     /**
      * Draws all water bodies (house and school) on the canvas
@@ -1029,6 +1040,67 @@
     }
 
     /**
+     * Draw sun and moon icons with smmooth transition
+     */
+    function drawSunAndMoon() {
+        // Set the position for the sun and moon icons
+        const iconSize = 40;
+        const margin = 10;
+        const finalXPosition = canvas.width - iconSize - margin;
+        let finalYPosition = margin;
+        
+
+        // get the current time and hour
+        const currentHour = getCurrentHour(timeManager);
+
+        // define if it is day time on not (6AM to 6PM is day time, otherwise is night time)
+        // return "false" or "true"
+        const isDaytime = currentHour >= 7 && currentHour < 20;
+
+        let iconSource = isDaytime ? sunIcon : moonIcon;
+
+        // drawing the sun icon
+        ctx.drawImage(
+            iconSource,
+            finalXPosition,
+            finalYPosition,
+            iconSize,
+            iconSize
+        )
+    }
+
+    /** 
+     * Draw RDt rapid test
+     */
+    function drawRDT() {
+        agents.forEach((agent) => {
+            // draw RDT icon if agent is tested positive (tested and isolated)
+            if (agent.isTested && agent.isIsolated) {
+                const rdtIconSize = 30;
+                const rdtOffsetY = -15; // Position slightly above center
+
+                let rdtOffsetX = 0;
+
+                
+                if (agent.x > canvas.width/2) {
+                    rdtOffsetX = -60; // Position to the left of the agent if near the right edge
+                } else {
+                    rdtOffsetX = 45; // Position to the right of the agent
+                }
+               
+                ctx.drawImage(
+                    rdtIcon,
+                    agent.x + rdtOffsetX,
+                    agent.y + rdtOffsetY,
+                    rdtIconSize,
+                    rdtIconSize
+                );
+            }
+        });
+    }
+
+
+    /**
      * Draw the simulation environment
      * Clears canvas and redraws all elements in correct layering order
      * @returns {void}
@@ -1044,6 +1116,8 @@
         drawWaterbody();
         //drawAgent();
         drawIsolationBoxes();
+        drawSunAndMoon();
+        drawRDT() 
     }
 
     /**

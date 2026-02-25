@@ -806,7 +806,7 @@
 
     // Image loading management
     let imagesLoaded = 0;
-    const totalImages = 2;
+    const totalImages = 5;
 
     function onImageLoad() {
         imagesLoaded++;
@@ -823,6 +823,18 @@
     const cleanWaterImage = new Image();
     cleanWaterImage.onload = onImageLoad;
     cleanWaterImage.src = 'assets/clean_water.PNG';
+
+    const sunIcon = new Image();
+    sunIcon.onload = onImageLoad;
+    sunIcon.src = 'assets/sun.png';
+
+    const moonIcon = new Image();
+    moonIcon.onload = onImageLoad;
+    moonIcon.src = 'assets/moon.png';
+
+    const rdtIcon = new Image();
+    rdtIcon.onload = onImageLoad;
+    rdtIcon.src = 'assets/rapid-test.png';
 
 
     /**
@@ -925,6 +937,59 @@
         });     
     }
 
+    /**
+     * Draws all agents as stick figures
+     * Only draws active agents
+     * Outline color changes to red when agent is infected
+     * @returns {void}
+     */
+    function drawAgentOutline() {
+        agents.forEach((agent) => {
+            // check if agent active or not
+            if (!agent.isActive) return;         // skip inactive agents
+
+            ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--agent-outline-color');
+            ctx.lineWidth = 6;
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round'; 
+
+            // draw head
+            ctx.beginPath();
+            ctx.arc(agent.x, agent.y-10, 4, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // draw test indicator if agent is tested
+            if (agent.isTested) {
+                ctx.beginPath();
+                ctx.arc(agent.x, agent.y-12, 2, 0, Math.PI * 2);
+                ctx.fillStyle = 'orange';
+                ctx.fill();
+            }
+
+
+            //draw body
+            ctx.beginPath();
+            ctx.moveTo(agent.x, agent.y-6);
+            ctx.lineTo(agent.x, agent.y+4);
+            ctx.stroke();
+            
+            //draw arms
+            // ctx.beginPath();
+            ctx.moveTo(agent.x-8, agent.y);
+            ctx.lineTo(agent.x, agent.y-6);
+            ctx.lineTo(agent.x+8, agent.y);
+            ctx.stroke();
+
+            //draw legs
+            ctx.beginPath();
+            ctx.moveTo(agent.x-6, agent.y+12);
+            ctx.lineTo(agent.x, agent.y+4);
+            ctx.lineTo(agent.x+6, agent.y+12);
+            ctx.stroke();
+        
+        });     
+    }
+
      /** 
      * Draw isolation boxes around isolated agents
      * @returns {void}
@@ -936,11 +1001,74 @@
 
             // draw isolation box
             ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--isolation-color');
-            ctx.lineWidth = 2;
+            ctx.lineWidth = 3;
             ctx.setLineDash([5, 4]); // dashed line
             ctx.strokeRect(agent.x-10, agent.y-17, 20, 30);
             ctx.setLineDash([]); // reset to solid line
         });
+    }
+
+    /** 
+     * Draw RDt rapid test
+     */
+    function drawRDT() {
+        agents.forEach((agent) => {
+            // draw RDT icon if agent is tested positive (tested and isolated)
+            if (agent.isTested && agent.isIsolated) {
+                const rdtIconSize = 20;
+                const rdtOffsetY = -15; // Position slightly above center
+
+                let rdtOffsetX = 0;
+
+                // Get agent's home waterbody position
+                const waterbody = waterbodies[agent.communityId];
+
+                
+                if (agent.x > waterbody.x) {
+                    rdtOffsetX = 15; // Position to the left of the agent if near the right edge
+                } else {
+                    rdtOffsetX = -25; // Position to the right of the agent
+                }
+               
+                ctx.drawImage(
+                    rdtIcon,
+                    agent.x + rdtOffsetX,
+                    agent.y + rdtOffsetY,
+                    rdtIconSize,
+                    rdtIconSize
+                );
+            }
+        });
+    }
+
+    /**
+     * Draw sun and moon icons with smmooth transition
+     */
+    function drawSunAndMoon() {
+        // Set the position for the sun and moon icons
+        const iconSize = 40;
+        const margin = 10;
+        const finalXPosition = canvas.width - iconSize - margin;
+        let finalYPosition = margin;
+        
+
+        // get the current time and hour
+        const currentHour = getCurrentHour(timeManager);
+
+        // define if it is day time on not (6AM to 6PM is day time, otherwise is night time)
+        // return "false" or "true"
+        const isDaytime = currentHour >= 7 && currentHour < 20;
+
+        let iconSource = isDaytime ? sunIcon : moonIcon;
+
+        // drawing the sun icon
+        ctx.drawImage(
+            iconSource,
+            finalXPosition,
+            finalYPosition,
+            iconSize,
+            iconSize
+        )
     }
 
     /** 
@@ -951,10 +1079,12 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         // draw scene elements
-        drawIsolationBoxes();
         drawWaterbody();
+        drawAgentOutline();
         drawAgent();
-
+        drawSunAndMoon();
+        drawIsolationBoxes();
+        drawRDT();
     }
 
     /** 

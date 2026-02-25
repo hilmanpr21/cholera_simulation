@@ -18,6 +18,7 @@
     --isolation-color: #609e3e;
     --gameover-overlay-bg-color: rgba(227, 0, 0, 0.9); /* semi-transparent dark overlay */
     --navigation-color: #01010180;
+    --agent-outline-color: #FFFFFF;
 }
 
 
@@ -744,7 +745,7 @@ body {
     flex-wrap: wrap;            /*allow the buttons to wrap to the next line if there isn't enough horizontal space*/
     flex-direction: row;        /*arrange the buttons in a row*/
     justify-content: center;    /*center the buttons horizontally within the container*/
-    margin-top: 2rem;           /*space above the language selector menu*/
+    margin-top: 1em;           /*space above the language selector menu*/
     max-width: 480px;
 }
 
