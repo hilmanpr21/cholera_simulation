@@ -3,7 +3,7 @@
     --article-color: #F3EDDF;
     --canvas-day-color:#ffefc1;
     --canvas-night-color: #2A2AB8;
-    --accent-color: #007bff;
+    --accent-color: #E28955;
     --agent-color: #010101;
     --infected-color: #FF0000;
     --house-color: #7BC950;
@@ -73,7 +73,7 @@ body {
     justify-content: center;
     align-items: center; /* Flexbox alignment*/
     width: 100%;
-    font-family: monospace;
+    font-family: 'Roboto Mono',monospace;
     display: flex;
     flex-direction: column;
     overflow-x: hidden;
@@ -992,5 +992,29 @@ body {
         text-align: center;             /* Center text for centered slides */
         padding-top: 0;                 /* Remove padding for centered slides */
         align-items: center;            /* Center text horizontally */
+    }
+}
+
+@media (orientation: portrait) and (max-height: 700px) {
+    .slide-navigation {
+        display: none; /* hide navigation on very short screens in portrait mode */
+    }
+
+    p {
+        font-size: 0.75rem;
+    }
+
+    .slide {
+        padding: 0.5rem 0 0 0;
+    }
+
+    .time-bar-container {
+        margin-top: 10px;
+    }
+
+    .sim-wrapper {
+        width: 85vw;
+        top: 24dvh;
+
     }
 }

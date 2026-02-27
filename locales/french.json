@@ -19,15 +19,15 @@
         "description1": "Tina vit dans une communauté avec beaucoup de voisins. Les enfants vont à la même école et boivent l’eau de la même source. Tina et un autre élève sont infectés par le choléra et <strong>contaminent l’eau de l’école</strong>. Les élèves infectés ramènent ensuite le choléra à leurs familles. Voyez à quelle vitesse le choléra se propage quand plus de voisins sont infectés."
     },
     "slide5": {
-        "description1": "Maintenant, introduisons des <strong>tests rapides pour le choléra</strong> afin d’identifier rapidement les voisins infectés et leur demander de rester à la maison pendant 3 jours. Les voisins isolés sont indiqués avec des bordures vertes.",
-        "description2": "Des tests rapides sont effectués chaque matin dans les centres de santé proches. Vous pouvez augmenter la disponibilité des tests rapides pour les voisins présentant des symptômes."
+        "description1": "Les personnes atteintes du choléra peuvent développer des symptômes tels que diarrhée sévère, vomissements, soif, fatigue, crampes musculaires et étourdissements. Si elles ne se sentent pas bien, elles doivent choisir de <strong>rester à la maison</strong> pendant 3 jours afin d’éviter de propager l’infection.",
+        "description2": "Dans notre ville, les voisins qui restent à la maison sont indiqués par une bordure verte. Observez comment l’isolement ralentit la propagation dans la communauté."
     },
     "slide6": {
         "description1": "Même lorsque les infections ralentissent dans le quartier de Tina, les gens continuent de <strong>se déplacer</strong> - aller à l’école, au travail, et faire des activités dans d’autres quartiers. Le choléra peut se propager vers d’autres quartiers par des personnes infectées. Tester rapidement et encourager l’isolement aide à <strong>protéger de nombreuses communautés</strong>, pas seulement celle de Tina."
     },
     "slide7": {
         "description1": "Merci d’avoir aidé à protéger la communauté de Tina.",
-        "description2": "Les tests rapides et l’isolement peuvent prévenir les épidémies de choléra et sauver des vies.",
+        "description2": "Les déplacements de chacun comptent. S’isoler lorsque l’on présente des symptômes du choléra peut prévenir des épidémies et sauver des vies.",
         "acknowledgement": "REMERCIEMENTS",
         "acknowledgement-text": "Ce travail a été développé par Hilman Prakoso au <a href=\"https://mobscilab.com\" target=\"_blank\">Mobility Science Lab</a>, University of Leeds, en collaboration avec le <a href=\"https://www.stevensgroup.org/\" target=\"_blank\">Stevens Group</a>, University of Oxford, dans le cadre du projet « Integrated Surveillance Suite for Targeting Interventions to Cholera Outbreaks », financé par le Wellcome Trust."
     },
@@ -38,7 +38,7 @@
         "total-neighbours": "Voisins totaux :",
         "infected-neighbours": "Voisins infectés :",
         "day-count": "Jour :",
-        "initial-infected-neighbours": "Nombre initial de voisins infectés : ",
-        "rapid-test-coverage": "Couverture des tests rapides :"
+        "initial-infected-neighbours": "Nombre initial de voisins infectés: ",
+        "rapid-test-coverage": "Voisins symptomatiques restant à la maison:"
     }
 }

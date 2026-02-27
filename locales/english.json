@@ -19,15 +19,15 @@
         "description1": "Rafi lives in a community with many neighbours. The children go to the same school and drink water from the same water source. Rafi and another student are infected with cholera, and <strong>contaminate the school water</strong>. The infected students then bring cholera back to their families. See how fast cholera spreads when more neighbours are infected."
     },
     "slide5": {
-        "description1": "Now, let’s introduce <strong>rapid testing for cholera</strong> to quickly find neighbours who are infected, and ask them to stay at home for 3 days. Isolating neighbours are shown with green borders.",
-        "description2": "Rapid tests are conducted every morning at nearby healthcare facilities. You can increase availability of rapid tests for neighbours with symptoms."
+        "description1": "People who have cholera can develop symptoms such as severe diarrhoea, vomiting, thirst, fatigue, muscle cramps, and dizziness. If they feel unwell, they should choose to <strong>stay at home</strong> for 3 days to avoid spreading the infection.",
+        "description2": "In our town, neighbours who stay at home are shown with a green border. See how isolation slows the spread in the community."
     },
     "slide6": {
         "description1": "Even when infections slow down in Rafi’s neighbourhood, people continue to <strong>move around</strong> - going to school, to work, and doing activities in other neighbourhoods. Cholera can spread to other neighbourhoods via infected people. Testing people quickly and encouraging isolation helps <strong>protect many communities</strong>, not just Rafi’s."
     },
     "slide7": {
         "description1": "Thank you for helping protect Rafi’s community.",
-        "description2": "Rapid testing and isolation can prevent cholera outbreaks and save lives.",
+        "description2": "Everyone’s movements matter! Isolating when you have cholera symptoms can prevent outbreaks and save lives.",
         "acknowledgement": "ACKNOWLEDGEMENTS",
         "acknowledgement-text": "This work was developed by Hilman Prakoso at the <a href=\"https://mobscilab.com\" target=\"_blank\">Mobility Science Lab</a>, University of Leeds, in collaboration with the <a href=\"https://www.stevensgroup.org/\" target=\"_blank\">Stevens Group</a>, University of Oxford, as part of the ‘Integrated Surveillance Suite for Targeting Interventions to Cholera Outbreaks’ project, funded by the Wellcome Trust."
     },
@@ -38,8 +38,7 @@
         "total-neighbours": "Total neighbours:",
         "infected-neighbours": "Infected neighbours:",
         "day-count": "Day:",
-        "initial-infected-neighbours": "Number of infected neighbours initially: ",
-        "rapid-test-coverage": "Rapid test coverage:"
+        "initial-infected-neighbours": "Infected neighbours initially: ",
+        "rapid-test-coverage": "Unwell neighbours staying home:"
     }
-
 }
