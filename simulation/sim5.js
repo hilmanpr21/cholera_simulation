@@ -832,10 +832,6 @@
     moonIcon.onload = onImageLoad;
     moonIcon.src = 'assets/moon.png';
 
-    const rdtIcon = new Image();
-    rdtIcon.onload = onImageLoad;
-    rdtIcon.src = 'assets/rapid-test.png';
-
 
     /**
      * DrawWater function
@@ -1008,39 +1004,7 @@
         });
     }
 
-    /** 
-     * Draw RDt rapid test
-     */
-    function drawRDT() {
-        agents.forEach((agent) => {
-            // draw RDT icon if agent is tested positive (tested and isolated)
-            if (agent.isTested && agent.isIsolated) {
-                const rdtIconSize = 20;
-                const rdtOffsetY = -15; // Position slightly above center
-
-                let rdtOffsetX = 0;
-
-                // Get agent's home waterbody position
-                const waterbody = waterbodies[agent.communityId];
-
-                
-                if (agent.x > waterbody.x) {
-                    rdtOffsetX = 15; // Position to the left of the agent if near the right edge
-                } else {
-                    rdtOffsetX = -25; // Position to the right of the agent
-                }
-               
-                ctx.drawImage(
-                    rdtIcon,
-                    agent.x + rdtOffsetX,
-                    agent.y + rdtOffsetY,
-                    rdtIconSize,
-                    rdtIconSize
-                );
-            }
-        });
-    }
-
+    
     /**
      * Draw sun and moon icons with smmooth transition
      */
@@ -1084,7 +1048,6 @@
         drawAgent();
         drawSunAndMoon();
         drawIsolationBoxes();
-        drawRDT();
     }
 
     /** 

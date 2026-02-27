@@ -859,10 +859,6 @@
     moonIcon.onload = onImageLoad;
     moonIcon.src = 'assets/moon.png';
 
-    const rdtIcon = new Image();
-    rdtIcon.onload = onImageLoad;
-    rdtIcon.src = 'assets/rapid-test.png';
-
     /**
      * Draws all water bodies (house and school) on the canvas
      * Only draws water bodies for active agents
@@ -1069,37 +1065,6 @@
         )
     }
 
-    /** 
-     * Draw RDt rapid test
-     */
-    function drawRDT() {
-        agents.forEach((agent) => {
-            // draw RDT icon if agent is tested positive (tested and isolated)
-            if (agent.isTested && agent.isIsolated) {
-                const rdtIconSize = 30;
-                const rdtOffsetY = -15; // Position slightly above center
-
-                let rdtOffsetX = 0;
-
-                
-                if (agent.x > canvas.width/2) {
-                    rdtOffsetX = -60; // Position to the left of the agent if near the right edge
-                } else {
-                    rdtOffsetX = 45; // Position to the right of the agent
-                }
-               
-                ctx.drawImage(
-                    rdtIcon,
-                    agent.x + rdtOffsetX,
-                    agent.y + rdtOffsetY,
-                    rdtIconSize,
-                    rdtIconSize
-                );
-            }
-        });
-    }
-
-
     /**
      * Draw the simulation environment
      * Clears canvas and redraws all elements in correct layering order
@@ -1117,7 +1082,6 @@
         //drawAgent();
         drawIsolationBoxes();
         drawSunAndMoon();
-        drawRDT() 
     }
 
     /**
