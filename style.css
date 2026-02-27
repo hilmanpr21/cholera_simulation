@@ -783,6 +783,10 @@ body {
         font-size: 0.8rem;
     }
 
+    h3 {
+        font-size: 1rem;
+    }
+
     span {
         font-size: 0.8rem;
     }
@@ -835,6 +839,14 @@ body {
         max-width: 200px;
         margin: 0 auto; /* center buttons horizontally */
     }
+
+    .slide.is-center {
+        top: 40vh;
+        transform: translateY(-50%);
+        justify-content: center;
+        align-items: center;
+    }
+    
 }
 
 /* Mobile responsiveness */ 
@@ -951,7 +963,7 @@ body {
 
     /* Ensure slide 0 and 7 with is-center class stays centered */
     .slide.is-center {
-        top: 50vh;
+        top: 40vh;
         transform: translateY(-50%);
         justify-content: center;
         align-items: center;
